@@ -33,7 +33,7 @@ const ContactEmailSelector = forwardRef((props, ref) => {
 			>
 				<FuseSvgIcon size={20}>heroicons-solid:plus-circle</FuseSvgIcon>
 
-				<span className="ml-8 font-medium text-secondary group-hover:underline">Add an email address</span>
+				<span className="ml-8 font-medium text-secondary group-hover:underline">افزودن آدرس ایمیل</span>
 			</Button>
 		</div>
 	);

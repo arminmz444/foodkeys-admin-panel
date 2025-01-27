@@ -53,7 +53,7 @@ const defaultTheme = {
  */
 export const defaultSettings = {
   customScrollbars: true,
-  direction: "ltr",
+  direction: "rtl",
   theme: {
     main: defaultTheme,
     navbar: defaultTheme,

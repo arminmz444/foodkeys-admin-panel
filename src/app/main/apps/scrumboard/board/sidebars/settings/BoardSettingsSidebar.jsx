@@ -86,7 +86,7 @@ function BoardSettingsSidebar(props) {
 						color="inherit"
 						variant="subtitle1"
 					>
-						Settings
+						تنظیمات
 					</Typography>
 				</Toolbar>
 			</Box>
@@ -96,7 +96,7 @@ function BoardSettingsSidebar(props) {
 					<ListItemIcon className="min-w-40">
 						<FuseSvgIcon>heroicons-outline:photograph</FuseSvgIcon>
 					</ListItemIcon>
-					<ListItemText primary="Card Cover Images" />
+					<ListItemText primary="تصاویر جلد کارت" />
 					<ListItemSecondaryAction>
 						<Controller
 							name="cardCoverImages"
@@ -117,7 +117,7 @@ function BoardSettingsSidebar(props) {
 					<ListItemIcon className="min-w-40">
 						<FuseSvgIcon>heroicons-outline:eye-off</FuseSvgIcon>
 					</ListItemIcon>
-					<ListItemText primary="Subscribe" />
+					<ListItemText primary="اشتراک " />
 					<ListItemSecondaryAction>
 						<Controller
 							name="subscribed"
@@ -146,7 +146,7 @@ function BoardSettingsSidebar(props) {
 					<ListItemIcon className="min-w-40">
 						<FuseSvgIcon>heroicons-outline:trash</FuseSvgIcon>
 					</ListItemIcon>
-					<ListItemText primary="Delete Board" />
+					<ListItemText primary="حذف برد" />
 				</ListItemButton>
 			</List>
 		</div>

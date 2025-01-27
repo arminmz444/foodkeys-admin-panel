@@ -1,5 +1,5 @@
 const locale = {
-  LOADING: "لطفا منتظر بمانید ...",
+  LOADING: "در حال بارگذاری",
   SUB_DASHBOARDS: "بخش داشبورد برنامه",
   INBOX: "صندوق ورودی",
   NOTIFICATIONS: "پیام‌ها و اعلانات",

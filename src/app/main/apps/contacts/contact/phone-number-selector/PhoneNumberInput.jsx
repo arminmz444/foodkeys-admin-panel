@@ -49,8 +49,8 @@ function PhoneNumberInput(props) {
 				render={({ field }) => (
 					<TextField
 						{...field}
-						label="Phone Number"
-						placeholder="Phone Number"
+						label="شماره تلفن"
+						placeholder="شماره تلفن"
 						variant="outlined"
 						fullWidth
 						error={!!errors.phoneNumber}
