@@ -9,14 +9,10 @@ import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import clsx from "clsx";
 import Button from "@mui/material/Button";
-import {
-	useDeleteECommerceProductsMutation,
-	useGetECommerceProductsQuery,
-} from "../ECommerceApi";
 
 function ProductsTable() {
-	const { data: products, isLoading } = useGetECommerceProductsQuery();
-	const [removeProducts] = useDeleteECommerceProductsMutation();
+	// const { data: products, isLoading } = useGetECommerceProductsQuery();
+	// const [removeProducts] = useDeleteECommerceProductsMutation();
 	const columns = useMemo(
 		() => [
 			{
@@ -65,69 +61,69 @@ function ProductsTable() {
 					</Typography>
 				),
 			},
-			// {
-			// 	accessorKey: "categories",
-			// 	header: "Category",
-			// 	accessorFn: (row) => (
-			// 		<div className="flex flex-wrap space-x-2">
-			// 			{row.categories.map((item) => (
-			// 				<Chip
-			// 					key={item}
-			// 					className="text-11"
-			// 					size="small"
-			// 					color="default"
-			// 					label={item}
-			// 				/>
-			// 			))}
-			// 		</div>
-			// 	),
-			// },
-			// {
-			// 	accessorKey: "priceTaxIncl",
-			// 	header: "Price",
-			// 	accessorFn: (row) => `$${row.priceTaxIncl}`,
-			// },
-			// {
-			// 	accessorKey: "quantity",
-			// 	header: "Quantity",
-			// 	accessorFn: (row) => (
-			// 		<div className="flex items-center space-x-8">
-			// 			<span>{row.quantity}</span>
-			// 			<i
-			// 				className={clsx(
-			// 					"inline-block w-8 h-8 rounded",
-			// 					row.quantity <= 5 && "bg-red",
-			// 					row.quantity > 5 && row.quantity <= 25 && "bg-orange",
-			// 					row.quantity > 25 && "bg-green"
-			// 				)}
-			// 			/>
-			// 		</div>
-			// 	),
-			// },
-			// {
-			// 	accessorKey: "active",
-			// 	header: "Active",
-			// 	accessorFn: (row) => (
-			// 		<div className="flex items-center">
-			// 			{row.active ? (
-			// 				<FuseSvgIcon className="text-green" size={20}>
-			// 					heroicons-outline:check-circle
-			// 				</FuseSvgIcon>
-			// 			) : (
-			// 				<FuseSvgIcon className="text-red" size={20}>
-			// 					heroicons-outline:minus-circle
-			// 				</FuseSvgIcon>
-			// 			)}
-			// 		</div>
-			// 	),
-			// },
+			{
+				accessorKey: "categories",
+				header: "Category",
+				accessorFn: (row) => (
+					<div className="flex flex-wrap space-x-2">
+						{row.categories.map((item) => (
+							<Chip
+								key={item}
+								className="text-11"
+								size="small"
+								color="default"
+								label={item}
+							/>
+						))}
+					</div>
+				),
+			},
+			{
+				accessorKey: "priceTaxIncl",
+				header: "Price",
+				accessorFn: (row) => `$${row.priceTaxIncl}`,
+			},
+			{
+				accessorKey: "quantity",
+				header: "Quantity",
+				accessorFn: (row) => (
+					<div className="flex items-center space-x-8">
+						<span>{row.quantity}</span>
+						<i
+							className={clsx(
+								"inline-block w-8 h-8 rounded",
+								row.quantity <= 5 && "bg-red",
+								row.quantity > 5 && row.quantity <= 25 && "bg-orange",
+								row.quantity > 25 && "bg-green"
+							)}
+						/>
+					</div>
+				),
+			},
+			{
+				accessorKey: "active",
+				header: "Active",
+				accessorFn: (row) => (
+					<div className="flex items-center">
+						{row.active ? (
+							<FuseSvgIcon className="text-green" size={20}>
+								heroicons-outline:check-circle
+							</FuseSvgIcon>
+						) : (
+							<FuseSvgIcon className="text-red" size={20}>
+								heroicons-outline:minus-circle
+							</FuseSvgIcon>
+						)}
+					</div>
+				),
+			},
 		],
 		[]
 	);
 
-	if (isLoading) {
-		return <FuseLoading />;
-	}
+	// if (isLoading) {
+	// 	return <FuseLoading />;
+	// }
 
 	return (
 		<Paper
@@ -140,11 +136,11 @@ function ProductsTable() {
 				renderRowActionMenuItems={({ closeMenu, row, table }) => [
 					<MenuItem
 						key={0}
-						onClick={() => {
-							removeProducts([row.original.id]);
-							closeMenu();
-							table.resetRowSelection();
-						}}
+						// onClick={() => {
+						// 	removeProducts([row.original.id]);
+						// 	closeMenu();
+						// 	table.resetRowSelection();
+						// }}
 					>
 						<ListItemIcon>
 							<FuseSvgIcon>heroicons-outline:trash</FuseSvgIcon>
@@ -163,11 +159,11 @@ function ProductsTable() {
 						<Button
 							variant="contained"
 							size="small"
-							onClick={() => {
-								const selectedRows = table.getSelectedRowModel().rows;
-								removeProducts(selectedRows.map((row) => row.original.id));
-								table.resetRowSelection();
-							}}
+							// onClick={() => {
+							// 	const selectedRows = table.getSelectedRowModel().rows;
+							// 	removeProducts(selectedRows.map((row) => row.original.id));
+							// 	table.resetRowSelection();
+							// }}
 							className="flex shrink min-w-40 ltr:mr-8 rtl:ml-8"
 							color="secondary"
 						>

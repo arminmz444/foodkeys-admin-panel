@@ -1,56 +1,61 @@
-import { lazy } from 'react';
-import { Navigate } from 'react-router-dom';
+import { lazy } from "react";
+import { Navigate } from "react-router-dom";
 
-const SettingsApp = lazy(() => import('./SettingsApp'));
-const AccountTab = lazy(() => import('./tabs/AccountTab'));
-const SecurityTab = lazy(() => import('./tabs/SecurityTab'));
-const PlanBillingTab = lazy(() => import('./tabs/PlanBillingTab'));
-const NotificationsTab = lazy(() => import('./tabs/NotificationsTab'));
-const TeamTab = lazy(() => import('./tabs/TeamTab'));
+const SettingsApp = lazy(() => import("./SettingsApp"));
+const HomePageTab = lazy(() => import("./tabs/HomePageTab"));
+const AccountTab = lazy(() => import("./tabs/AccountTab"));
+const SecurityTab = lazy(() => import("./tabs/SecurityTab"));
+const PlanBillingTab = lazy(() => import("./tabs/PlanBillingTab"));
+const NotificationsTab = lazy(() => import("./tabs/NotificationsTab"));
+const TeamTab = lazy(() => import("./tabs/TeamTab"));
 /**
  * The Settings app config.
  */
 const SettingsAppConfig = {
 	settings: {
 		layout: {
-			config: {}
-		}
+			config: {},
+		},
 	},
 	routes: [
 		{
-			path: 'apps/settings',
+			path: "apps/settings",
 			element: <SettingsApp />,
 			children: [
 				{
-					path: 'account',
-					element: <AccountTab />
+					path: "homepage",
+					element: <HomePageTab />,
 				},
 				{
-					path: 'security',
-					element: <SecurityTab />
+					path: "account",
+					element: <AccountTab />,
 				},
 				{
-					path: 'plan-billing',
-					element: <PlanBillingTab />
+					path: "security",
+					element: <SecurityTab />,
 				},
 				{
-					path: 'security',
-					element: <SecurityTab />
+					path: "plan-billing",
+					element: <PlanBillingTab />,
 				},
 				{
-					path: 'notifications',
-					element: <NotificationsTab />
+					path: "security",
+					element: <SecurityTab />,
 				},
 				{
-					path: 'team',
-					element: <TeamTab />
+					path: "notifications",
+					element: <NotificationsTab />,
 				},
 				{
-					path: '',
-					element: <Navigate to="account" />
-				}
-			]
-		}
-	]
+					path: "team",
+					element: <TeamTab />,
+				},
+				{
+					path: "",
+					element: <Navigate to="account" />,
+				},
+			],
+		},
+	],
 };
 export default SettingsAppConfig;
