@@ -56,7 +56,7 @@ function SignInPage() {
 					/>
 
 					<Typography className="mt-32 text-4xl font-extrabold leading-tight tracking-tight">
-						Sign in
+						ورود به حساب کاربری (محت مدیریت)
 					</Typography>
 					<div className="mt-2 flex items-baseline font-medium">
 						<Typography>Don't have an account?</Typography>

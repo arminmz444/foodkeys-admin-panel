@@ -10,6 +10,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import useJwtAuth from '../useJwtAuth';
+import Alert from '@mui/material/Alert';
 /**
  * Form Validation Schema
  */
@@ -99,42 +100,54 @@ function JwtSignInForm() {
 			/>
 
 			<div className="flex flex-col items-center justify-center sm:flex-row sm:justify-between">
-				<Controller
-					name="remember"
-					control={control}
-					render={({ field }) => (
-						<FormControl>
-							<FormControlLabel
-								label="Remember me"
-								control={
-									<Checkbox
-										size="small"
-										{...field}
-									/>
-								}
-							/>
-						</FormControl>
-					)}
-				/>
-
-				<Link
-					className="text-md font-medium"
-					to="/pages/auth/forgot-password"
+				<Alert
+					icon={false}
+					severity="error"
+					className="mt-24 px-16 text-13 leading-relaxed"
 				>
-					Forgot password?
-				</Link>
+					در صورت فراموشی رمزعبور خود، از دکمه روبرو برای ارسال درخواست تغییر رمز به بخش مربوطه ارسال شود
+				</Alert>
+				{/*<Button*/}
+				{/*	variant="contained"*/}
+				{/*	color="secondary"*/}
+				{/*	className=" mt-16 w-full"*/}
+				{/*	aria-label="Sign in"*/}
+				{/*	disabled={_.isEmpty(dirtyFields) || !isValid}*/}
+				{/*	type="submit"*/}
+				{/*	size="large"*/}
+				{/*>*/}
+				{/*	Sign in*/}
+				{/*</Button>*/}
+				{/*<Controller*/}
+				{/*	name="remember"*/}
+				{/*	control={control}*/}
+				{/*	render={({ field }) => (*/}
+				{/*		<FormControl>*/}
+				{/*			<FormControlLabel*/}
+				{/*				label="Remember me"*/}
+				{/*				control={*/}
+				{/*					<Checkbox*/}
+				{/*						size="small"*/}
+				{/*						{...field}*/}
+				{/*					/>*/}
+				{/*				}*/}
+				{/*			/>*/}
+				{/*		</FormControl>*/}
+				{/*	)}*/}
+				{/*/>*/}
+
 			</div>
 
 			<Button
 				variant="contained"
 				color="secondary"
-				className=" mt-16 w-full"
+				className=" mt-16 w-full bg-[#129974]"
 				aria-label="Sign in"
 				disabled={_.isEmpty(dirtyFields) || !isValid}
 				type="submit"
 				size="large"
 			>
-				Sign in
+				ورود
 			</Button>
 		</form>
 	);

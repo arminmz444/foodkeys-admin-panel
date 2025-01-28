@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 
 const SettingsApp = lazy(() => import("./SettingsApp"));
 const HomePageTab = lazy(() => import("./tabs/HomePageTab"));
+const AboutUsPageTab = lazy(() => import("./tabs/AboutUsPageTab"));
 const AccountTab = lazy(() => import("./tabs/AccountTab"));
 const SecurityTab = lazy(() => import("./tabs/SecurityTab"));
 const PlanBillingTab = lazy(() => import("./tabs/PlanBillingTab"));
@@ -22,6 +23,10 @@ const SettingsAppConfig = {
 			path: "apps/settings",
 			element: <SettingsApp />,
 			children: [
+				{
+					path: "about-us-page",
+					element: <AboutUsPageTab />,
+				},
 				{
 					path: "homepage",
 					element: <HomePageTab />,

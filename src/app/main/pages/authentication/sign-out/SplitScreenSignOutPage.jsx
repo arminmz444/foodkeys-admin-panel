@@ -25,12 +25,11 @@ function SplitScreenSignOutPage() {
 					<Typography className="mt-2 flex justify-center font-medium">Redirecting in 5 seconds</Typography>
 
 					<Typography
-						className="mt-32 text-center text-md font-medium"
-						color="text.secondary"
+						className="mt-32 text-center text-md font-medium text-[#129974]"
 					>
 						<span>Go to</span>
 						<Link
-							className="ml-4"
+							className="ml-4 text-[#129974]"
 							to="/sign-in"
 						>
 							sign in

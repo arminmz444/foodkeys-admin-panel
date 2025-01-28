@@ -60,6 +60,33 @@ const navigationConfig = [
 		]
 	},
 	{
+		id: 'category',
+		title: 'category',
+		subtitle: 'Category section of your app',
+		type: 'group',
+		icon: 'heroicons-outline:home',
+		translate: 'CATEGORY',
+		subtitleTranslate: 'SUB_CATEGORY',
+		children: [
+			{
+				id: 'category.list',
+				title: 'List of Categories',
+				type: 'item',
+				icon: 'heroicons-outline:clipboard-check',
+				url: '/category',
+				translate: 'CATEGORY_LIST'
+			},
+			{
+				id: 'categories.subcategory',
+				title: 'gets',
+				type: 'item',
+				icon: 'heroicons-outline:clipboard-check',
+				url: '/category/subcategory',
+				translate: 'SUB_SUB_CATEGORY_LIST'
+			}
+		]
+	},
+	{
 		id: 'apps',
 		title: 'Applications',
 		subtitle: 'Panel applications section',
@@ -83,7 +110,8 @@ const navigationConfig = [
 				type: 'item',
 				icon: 'heroicons-outline:calendar',
 				url: '/apps/calendar',
-				translate: 'CALENDAR'
+				translate: 'CALENDAR',
+				subtitleTranslate: 'SUB_CALENDAR',
 			},
 			{
 				id: 'apps.messenger',

@@ -1,5 +1,5 @@
-import SignInPage from './SignInPage';
 import authRoles from '../../auth/authRoles';
+import SplitScreenSignInPage from '@/app/main/pages/authentication/sign-in/SplitScreenSignInPage.jsx';
 
 const SignInConfig = {
 	settings: {
@@ -27,7 +27,7 @@ const SignInConfig = {
 	routes: [
 		{
 			path: 'sign-in',
-			element: <SignInPage />
+			element: <SplitScreenSignInPage />
 		}
 	]
 };
