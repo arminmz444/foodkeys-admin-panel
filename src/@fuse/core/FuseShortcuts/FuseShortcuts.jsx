@@ -15,8 +15,8 @@ import _ from '@lodash';
 import FuseSvgIcon from '../FuseSvgIcon';
 
 /**
- * The FuseShortcuts component is responsible for rendering a list of shortcuts based on the navigation and shortcuts props.
- * It uses various MUI components to render the list items and search input.
+ * The FuseShortcuts component is responsible for rendering a payments of shortcuts based on the navigation and shortcuts props.
+ * It uses various MUI components to render the payments items and search input.
  * The component is memoized to prevent unnecessary re-renders.
  */
 function FuseShortcuts(props) {

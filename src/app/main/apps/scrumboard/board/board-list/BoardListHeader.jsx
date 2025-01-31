@@ -25,7 +25,7 @@ const schema = z.object({
 });
 
 /**
- * The board list header component.
+ * The board payments header component.
  */
 function BoardListHeader(props) {
 	const { boardId, list, cardIds, className, handleProps } = props;

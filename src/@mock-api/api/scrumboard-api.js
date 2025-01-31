@@ -123,7 +123,7 @@ export const scrumboardApiMocks = (mock) => {
 		});
 		listsDB.push(newList);
 		const board = _.find(boardsDB, { id: boardId });
-		// Add list into board
+		// Add payments into board
 		_.assign(board, {
 			...board,
 			lists: [
@@ -143,14 +143,14 @@ export const scrumboardApiMocks = (mock) => {
 	mock.onDelete('/scrumboard/boards/:boardId/lists/:listId').reply((config) => {
 		const { boardId, listId } = config.params;
 		const board = _.find(boardsDB, { id: boardId });
-		// Remove cards of the list
+		// Remove cards of the payments
 		_.remove(cardsDB, { listId });
-		// Remove list from board
+		// Remove payments from board
 		_.assign(board, {
 			...board,
 			lists: _.reject(board.lists, { id: listId })
 		});
-		// Remove list
+		// Remove payments
 		_.remove(listsDB, { id: listId });
 		return [200, listId];
 	});

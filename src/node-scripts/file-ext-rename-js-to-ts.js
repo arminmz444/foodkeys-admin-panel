@@ -29,12 +29,12 @@ function checkAndRename(file, fromExt, toExt) {
 	}
 }
 
-// Check .js files and rename to .ts if they don't contain JSX
+// Check .js file-manager and rename to .ts if they don't contain JSX
 const jsFiles = glob.sync('**/*.js', {
 	ignore: ['node_modules/**/*']
 });
 jsFiles.forEach((file) => checkAndRename(file, '.js', '.ts'));
-// Check .jsx files and rename to .tsx if they contain JSX
+// Check .jsx file-manager and rename to .tsx if they contain JSX
 const jsxFiles = glob.sync('**/*.jsx', {
 	ignore: ['node_modules/**/*']
 });

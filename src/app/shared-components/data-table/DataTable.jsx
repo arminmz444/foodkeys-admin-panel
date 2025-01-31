@@ -74,8 +74,6 @@ function DataTable(props) {
 		() =>
 			_.defaults(rest, {
 				initialState: {
-					dir: 'rtl',
-					direction: 'rtl',
 					density: 'spacious',
 					showColumnFilters: false,
 					showGlobalFilter: true,

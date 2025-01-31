@@ -573,7 +573,7 @@ async function build() {
 	await removeFile(path.resolve(examplesDirectory, './.eslintrc.js'));
 	log('Eslint file removed.');
 	await removeUnnecessaryFiles();
-	log('Unnecessary files removed.');
+	log('Unnecessary file-manager removed.');
 	await componentFileTypeCorrection();
 	await replaceInExamples();
 	log('Replace in examples done.');

@@ -14,7 +14,7 @@ import NotificationsAppConfig from './notifications/NotificationsAppConfig';
 import SettingsAppConfig from './settings/SettingsAppConfig';
 import UserAppConfig from '@/app/main/apps/users/UserAppConfig.jsx';
 /**
- * The list of application configurations.
+ * The payments of application configurations.
  */
 const appsConfigs = [
 	AcademyAppConfig,

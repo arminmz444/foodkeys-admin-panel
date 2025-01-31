@@ -1,7 +1,7 @@
 import _ from '@lodash';
 
 /**
- * Chat list item model.
+ * Chat payments item model.
  */
 function ChatListItemModel(data) {
 	data = data || {};

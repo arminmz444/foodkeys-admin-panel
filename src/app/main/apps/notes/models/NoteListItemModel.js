@@ -2,7 +2,7 @@ import FuseUtils from '@fuse/utils';
 import _ from '@lodash';
 
 /**
- * The note list item model.
+ * The note payments item model.
  */
 function NoteListItemModel(data) {
 	data = data || {};

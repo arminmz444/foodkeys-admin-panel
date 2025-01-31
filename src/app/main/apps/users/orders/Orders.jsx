@@ -3,7 +3,7 @@ import OrdersHeader from './OrdersHeader';
 import OrdersTable from './OrdersTable';
 
 /**
- * The orders page.
+ * The payments page.
  */
 function Orders() {
 	return (

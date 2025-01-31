@@ -19,7 +19,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
 }));
 
 /**
- * The board list component.
+ * The board payments component.
  */
 function BoardList(props) {
 	const { boardId, listId, cardIds, index } = props;

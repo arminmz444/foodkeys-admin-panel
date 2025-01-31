@@ -28,14 +28,14 @@ const exampleSearchResponse = [
 		title: 'Parallel Platforms',
 		url: 'ourwebaddress.com/articles/parallel-paltforms',
 		excerpt:
-			'Objectively innovate empowered manufactured products whereas parallel platforms. Holisticly predominate extensible testing procedures for reliable supply chains.'
+			'Objectively innovate empowered manufactured companies whereas parallel platforms. Holisticly predominate extensible testing procedures for reliable supply chains.'
 	},
 	{
 		id: '5',
 		title: 'Growth Strategies',
 		url: 'ourwebaddress.com/articles/growth-strategies',
 		excerpt:
-			'Proactively envisioned multimedia based expertise and cross-media growth strategies. Holistically pontificate installed base portals after maintainable products.'
+			'Proactively envisioned multimedia based expertise and cross-media growth strategies. Holistically pontificate installed base portals after maintainable companies.'
 	},
 	{
 		id: '6',

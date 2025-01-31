@@ -68,7 +68,7 @@ function FuseNavVerticalItem(props) {
 		() => (
 			<Root
 				component={component}
-				className={clsx('fuse-list-item', item.active && 'active')}
+				className={clsx('fuse-payments-item', item.active && 'active')}
 				onClick={() => onItemClick && onItemClick(item)}
 				itempadding={itempadding}
 				sx={item.sx}
@@ -76,7 +76,7 @@ function FuseNavVerticalItem(props) {
 			>
 				{item.icon && (
 					<FuseSvgIcon
-						className={clsx('fuse-list-item-icon shrink-0', item.iconClass)}
+						className={clsx('fuse-payments-item-icon shrink-0', item.iconClass)}
 						color="action"
 					>
 						{item.icon}
@@ -88,8 +88,8 @@ function FuseNavVerticalItem(props) {
 					primary={item.title}
 					secondary={item.subtitle}
 					classes={{
-						primary: 'text-13 font-medium fuse-list-item-text-primary truncate',
-						secondary: 'text-11 font-medium fuse-list-item-text-secondary leading-normal truncate'
+						primary: 'text-13 font-medium fuse-payments-item-text-primary truncate',
+						secondary: 'text-11 font-medium fuse-payments-item-text-secondary leading-normal truncate'
 					}}
 				/>
 				{item.badge && <FuseNavBadge badge={item.badge} />}

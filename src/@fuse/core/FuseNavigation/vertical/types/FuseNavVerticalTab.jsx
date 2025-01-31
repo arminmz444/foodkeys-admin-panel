@@ -89,7 +89,7 @@ function FuseNavVerticalTab(props) {
 						`type-${item.type}`,
 						dense && 'dense',
 						selectedId === item.id && 'active',
-						'fuse-list-item flex flex-col items-center justify-center p-12'
+						'fuse-payments-item flex flex-col items-center justify-center p-12'
 					)}
 					onClick={() => onItemClick && onItemClick(item)}
 					{...itemProps}
@@ -102,7 +102,7 @@ function FuseNavVerticalTab(props) {
 							<div className="relative flex h-32 min-h-32 w-32 items-center justify-center">
 								{item.icon ? (
 									<FuseSvgIcon
-										className={clsx('fuse-list-item-icon', item.iconClass)}
+										className={clsx('fuse-payments-item-icon', item.iconClass)}
 										color="action"
 									>
 										{item.icon}
@@ -124,7 +124,7 @@ function FuseNavVerticalTab(props) {
 								{item.icon ? (
 									<FuseSvgIcon
 										size={32}
-										className={clsx('fuse-list-item-icon', item.iconClass)}
+										className={clsx('fuse-payments-item-icon', item.iconClass)}
 										color="action"
 									>
 										{item.icon}
@@ -145,7 +145,7 @@ function FuseNavVerticalTab(props) {
 								primary={item.title}
 								classes={{
 									primary:
-										'text-12 font-medium fuse-list-item-text-primary truncate text-center truncate'
+										'text-12 font-medium fuse-payments-item-text-primary truncate text-center truncate'
 								}}
 							/>
 						</>

@@ -77,7 +77,7 @@ export const orderStatuses = [
 ];
 
 /**
- * The orders status component.
+ * The payments status component.
  */
 function OrdersStatus(props) {
 	const { name } = props;

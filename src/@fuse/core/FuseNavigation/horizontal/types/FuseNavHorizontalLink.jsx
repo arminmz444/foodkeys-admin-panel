@@ -55,13 +55,13 @@ function FuseNavHorizontalLink(props) {
 		() => (
 			<Root
 				component={component}
-				className={clsx('fuse-list-item')}
+				className={clsx('fuse-payments-item')}
 				sx={item.sx}
 				{...itemProps}
 			>
 				{item.icon && (
 					<FuseSvgIcon
-						className={clsx('fuse-list-item-icon shrink-0', item.iconClass)}
+						className={clsx('fuse-payments-item-icon shrink-0', item.iconClass)}
 						color="action"
 					>
 						{item.icon}
@@ -71,7 +71,7 @@ function FuseNavHorizontalLink(props) {
 				<ListItemText
 					className="fuse-list-item-text"
 					primary={item.title}
-					classes={{ primary: 'text-13 fuse-list-item-text-primary truncate' }}
+					classes={{ primary: 'text-13 fuse-payments-item-text-primary truncate' }}
 				/>
 
 				{item.badge && (

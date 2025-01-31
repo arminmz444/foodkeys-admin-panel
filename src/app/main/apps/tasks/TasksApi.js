@@ -33,7 +33,7 @@ const TasksApi = api
 							})
 						);
 					} catch (err) {
-						dispatch(showMessage({ message: 'Error saving list order' }));
+						dispatch(showMessage({ message: 'Error saving payments order' }));
 					}
 				}
 			}),

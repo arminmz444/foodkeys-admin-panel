@@ -10,7 +10,7 @@ import { useGetNotesListQuery } from './NotesApi';
 import { selectSearchText } from './notesAppSlice';
 
 /**
- * The note list.
+ * The note payments.
  */
 function NoteList() {
 	const routeParams = useParams();

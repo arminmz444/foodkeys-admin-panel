@@ -71,7 +71,7 @@ const rows = [
 ];
 
 /**
- * The orders table head.
+ * The payments table head.
  */
 function OrdersTableHead(props) {
 	const { selectedOrderIds, onRequestSort, onSelectAllClick, tableOrder, rowCount, onMenuItemClick } = props;

@@ -1,5 +1,5 @@
 /**
- * Determines whether a given URL is present in the parent's child list or not.
+ * Determines whether a given URL is present in the parent's child payments or not.
  */
 const isUrlInChildren = (parent, url) => {
 	if (!parent.children) {

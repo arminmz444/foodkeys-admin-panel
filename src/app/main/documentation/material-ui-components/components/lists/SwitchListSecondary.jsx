@@ -27,7 +27,7 @@ export default function SwitchListSecondary() {
         </ListItemIcon>
         <ListItemText id="switch-list-label-wifi" primary="Wi-Fi"/>
         <Switch edge="end" onChange={handleToggle('wifi')} checked={checked.indexOf('wifi') !== -1} inputProps={{
-            'aria-labelledby': 'switch-list-label-wifi',
+            'aria-labelledby': 'switch-payments-label-wifi',
         }}/>
       </ListItem>
       <ListItem>
@@ -36,7 +36,7 @@ export default function SwitchListSecondary() {
         </ListItemIcon>
         <ListItemText id="switch-list-label-bluetooth" primary="Bluetooth"/>
         <Switch edge="end" onChange={handleToggle('bluetooth')} checked={checked.indexOf('bluetooth') !== -1} inputProps={{
-            'aria-labelledby': 'switch-list-label-bluetooth',
+            'aria-labelledby': 'switch-payments-label-bluetooth',
         }}/>
       </ListItem>
     </List>);

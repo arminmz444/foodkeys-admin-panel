@@ -2,7 +2,7 @@ import Typography from '@mui/material/Typography';
 import { motion } from 'framer-motion';
 
 /**
- * The orders header.
+ * The payments header.
  */
 function OrdersHeader() {
 	return (

@@ -33,10 +33,10 @@ function RecentTransactionsWidget() {
     <Paper className="flex flex-col flex-auto p-24 shadow rounded-2xl overflow-hidden">
       <div>
         <Typography className="mr-16 text-lg font-medium tracking-tight leading-6 truncate">
-          Recent transactions
+          تراکنش‌های اخیر
         </Typography>
-        <Typography className="font-medium" color="text.secondary">
-          1 pending, 4 completed
+        <Typography className="font-medium text-sm mt-2" color="text.secondary">
+          1 در انتظار تکمیل, 4 تکمیل شده
         </Typography>
       </div>
 
@@ -123,7 +123,7 @@ function RecentTransactionsWidget() {
           </TableBody>
         </Table>
         <div className="pt-24">
-          <Button variant="outlined">See all transactions</Button>
+          <Button variant="outlined">مشاهده تمام تراکنش‌ها</Button>
         </div>
       </div>
     </Paper>

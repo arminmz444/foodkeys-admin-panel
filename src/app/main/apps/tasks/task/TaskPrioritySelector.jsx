@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import _ from '@lodash';
 import clsx from 'clsx';
 /**
- * The priority list data.
+ * The priority payments data.
  */
 const priorityList = [
 	{

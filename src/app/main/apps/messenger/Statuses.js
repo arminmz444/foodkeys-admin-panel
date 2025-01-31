@@ -1,5 +1,5 @@
 /**
- * The list of statuses.
+ * The payments of statuses.
  */
 const Statuses = [
 	{

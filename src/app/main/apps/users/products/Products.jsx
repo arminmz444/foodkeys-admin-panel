@@ -3,7 +3,7 @@ import ProductsHeader from './ProductsHeader';
 import ProductsTable from './ProductsTable';
 
 /**
- * The products page.
+ * The companies page.
  */
 function Products() {
 	return (

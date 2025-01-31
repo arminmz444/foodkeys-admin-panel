@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import { darken } from '@mui/material/styles';
 
 /**
- * The guide list menu component.
+ * The guide payments menu component.
  */
 function GuideListMenu(props) {
 	const { list = [], className, categorySlug = '', maxItems = 999 } = props;

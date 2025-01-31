@@ -26,7 +26,7 @@ const item = {
 };
 
 /**
- * The contact list.
+ * The contact payments.
  */
 function ContactList(props) {
 	const { className } = props;

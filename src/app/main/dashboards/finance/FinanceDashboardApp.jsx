@@ -8,6 +8,7 @@ import AccountBalanceWidget from './widgets/AccountBalanceWidget';
 import RecentTransactionsWidget from './widgets/RecentTransactionsWidget';
 import BudgetWidget from './widgets/BudgetWidget';
 import { useGetFinanceDashboardWidgetsQuery } from './FinanceDashboardApi';
+import RecentPaymentsWidget from '@/app/main/dashboards/finance/widgets/RecentPaymentsWidget.jsx';
 
 const container = {
 	show: {
@@ -75,6 +76,12 @@ function FinanceDashboardApp() {
 								className="xl:col-span-2 flex flex-col flex-auto"
 							>
 								<RecentTransactionsWidget />
+							</motion.div>
+							<motion.div
+								variants={item}
+								className="xl:col-span-2 flex flex-col flex-auto"
+							>
+								<RecentPaymentsWidget />
 							</motion.div>
 							<motion.div
 								variants={item}

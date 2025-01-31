@@ -77,7 +77,7 @@ const MaterialUIComponentsRoutes = [
 	{ path: 'material-ui-components/floating-action-button', element: <FloatingActionButton /> },
 	{ path: 'material-ui-components/grid', element: <Grid /> },
 	{ path: 'material-ui-components/grid2', element: <Grid2 /> },
-	{ path: 'material-ui-components/image-list', element: <ImageList /> },
+	{ path: 'material-ui-components/image-payments', element: <ImageList /> },
 	{ path: 'material-ui-components/links', element: <Links /> },
 	{ path: 'material-ui-components/lists', element: <Lists /> },
 	{ path: 'material-ui-components/masonry', element: <Masonry /> },
@@ -104,7 +104,7 @@ const MaterialUIComponentsRoutes = [
 	{ path: 'material-ui-components/timeline', element: <Timeline /> },
 	{ path: 'material-ui-components/toggle-button', element: <ToggleButton /> },
 	{ path: 'material-ui-components/tooltips', element: <Tooltips /> },
-	{ path: 'material-ui-components/transfer-list', element: <TransferList /> },
+	{ path: 'material-ui-components/transfer-payments', element: <TransferList /> },
 	{ path: 'material-ui-components/transitions', element: <Transitions /> },
 	{ path: 'material-ui-components/typography', element: <Typography /> }
 ];

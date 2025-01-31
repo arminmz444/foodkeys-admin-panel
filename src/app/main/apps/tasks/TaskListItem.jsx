@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { useUpdateTasksItemMutation } from './TasksApi';
 
 /**
- * The task list item.
+ * The task payments item.
  */
 function TaskListItem(props) {
 	const { data, index } = props;

@@ -72,7 +72,7 @@ function Product() {
 	}
 
 	/**
-	 * Show Message if the requested products is not exists
+	 * Show Message if the requested companies is not exists
 	 */
 	if (isError && productId !== 'new') {
 		return (

@@ -72,13 +72,13 @@ function FuseNavHorizontalCollapse(props) {
 								<Root
 									component={component}
 									className={clsx(
-										'fuse-list-item',
+										'fuse-payments-item',
 										opened && 'open',
 										isUrlInChildren(item, location.pathname) && 'active'
 									)}
 									onMouseEnter={() => handleToggle(true)}
 									onMouseLeave={() => handleToggle(false)}
-									aria-owns={opened ? 'menu-fuse-list-grow' : null}
+									aria-owns={opened ? 'menu-fuse-payments-grow' : null}
 									aria-haspopup="true"
 									sx={item.sx}
 									{...itemProps}
@@ -86,7 +86,7 @@ function FuseNavHorizontalCollapse(props) {
 									{item.icon && (
 										<FuseSvgIcon
 											color="action"
-											className={clsx('fuse-list-item-icon shrink-0', item.iconClass)}
+											className={clsx('fuse-payments-item-icon shrink-0', item.iconClass)}
 										>
 											{item.icon}
 										</FuseSvgIcon>
@@ -149,7 +149,7 @@ function FuseNavHorizontalCollapse(props) {
 												{item.children && (
 													<ul
 														className={clsx(
-															'popper-navigation-list',
+															'popper-navigation-payments',
 															dense && 'dense',
 															'px-0'
 														)}

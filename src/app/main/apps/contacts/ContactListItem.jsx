@@ -7,7 +7,7 @@ import NavLinkAdapter from '@fuse/core/NavLinkAdapter';
 import ListItemButton from '@mui/material/ListItemButton';
 
 /**
- * The contact list item.
+ * The contact payments item.
  */
 function ContactListItem(props) {
 	const { contact } = props;

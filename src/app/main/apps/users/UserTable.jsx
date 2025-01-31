@@ -64,7 +64,7 @@ const fabs = [
 function UserTable({ props }) {
 	const theme = useTheme();
 	const products = useGetUsersListQuery() || []
-	// const { data: products, isLoading } = useGetECommerceProductsQuery();
+	// const { data: companies, isLoading } = useGetECommerceProductsQuery();
 	const isLoading = false
 
 	console.log(products)

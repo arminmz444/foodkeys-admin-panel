@@ -28,15 +28,15 @@ const UserAppConfig = {
 					element: <UserList />
 				},
 				{
-					path: 'products/:productId/*',
+					path: 'companies/:productId/*',
 					element: <Product />
 				},
 				{
-					path: 'orders',
+					path: 'list',
 					element: <Orders />
 				},
 				{
-					path: 'orders/:orderId',
+					path: 'payments/:orderId',
 					element: <Order />
 				}
 			]

@@ -3,7 +3,7 @@ import NoteFormAddListItem from './NoteFormAddListItem';
 import NoteFormListItem from './NoteFormListItem';
 
 /**
- * The note form list.
+ * The note form payments.
  */
 function NoteFormList(props) {
 	const { tasks, onCheckListChange, className } = props;

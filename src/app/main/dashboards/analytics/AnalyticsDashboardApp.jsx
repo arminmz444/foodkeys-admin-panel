@@ -1,20 +1,11 @@
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import { motion } from 'framer-motion';
-import Typography from '@mui/material/Typography';
 import FuseLoading from '@fuse/core/FuseLoading';
-import AnalyticsDashboardAppHeader from './AnalyticsDashboardAppHeader';
-import VisitorsOverviewWidget from './widgets/VisitorsOverviewWidget';
-import ConversionsWidget from './widgets/ConversionsWidget';
-import ImpressionsWidget from './widgets/ImpressionsWidget';
-import VisitsWidget from './widgets/VisitsWidget';
-import VisitorsVsPageViewsWidget from './widgets/VisitorsVsPageViewsWidget';
-import NewVsReturningWidget from './widgets/NewVsReturningWidget';
-import AgeWidget from './widgets/AgeWidget';
-import LanguageWidget from './widgets/LanguageWidget';
-import GenderWidget from './widgets/GenderWidget';
+import ReactEmailGalleryComponent from 'app/shared-components/react-email-gallery-component/react-email-gallery-component.jsx';
+import MediaPlayer from 'app/shared-components/media-player/MediaPlayer.jsx';
+import Gallery from 'app/shared-components/media-player/Gallery/Gallery.jsx';
+import MediaPlayerList from 'app/shared-components/media-player/MediaPlayerList.jsx';
 import { useGetAnalyticsDashboardWidgetsQuery } from './AnalyticsDashboardApi';
-import GrapesEditor from 'app/shared-components/GrapesEditor.jsx';
-import MapView from 'app/shared-components/leaflet/MapSelector.jsx';
+import CustomDataGrid from 'app/shared-components/data-grid/CustomDataGrid.jsx';
+import MonacoJsonEditor from 'app/shared-components/monaco-json-editor/MonacoJsonEditor.jsx';
 
 const container = {
 	show: {
@@ -37,11 +28,24 @@ function AnalyticsDashboardApp() {
 	if (isLoading) {
 		return <FuseLoading />;
 	}
+
 	const userLatitude = 40.7128;
-	const userLongitude = -74.0060;
+	const userLongitude = -74.006;
 
 	return (
-		<GrapesEditor />
+		// <GrapesEditor />
+		<>
+			<MediaPlayer mediaId="technology-clean-app-presentation-mockup-promo" />
+			<ReactEmailGalleryComponent />
+			<Gallery />
+			<MediaPlayerList />
+			<CustomDataGrid />
+			<MonacoJsonEditor />
+			{/* <MapView */}
+			{/*	defaultLat={userLatitude} */}
+			{/*	defaultLng={userLongitude} */}
+			{/* /> */}
+		</>
 		// <FusePageSimple
 		// 	header={<AnalyticsDashboardAppHeader />}
 		// 	content={
@@ -122,7 +126,6 @@ function AnalyticsDashboardApp() {
 		// 		defaultLng={userLongitude}
 		// 	/>
 		// </div>
-
 	);
 }
 

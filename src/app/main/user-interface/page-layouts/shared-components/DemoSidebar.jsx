@@ -51,7 +51,7 @@ const navigationData = [
 				id: '2.1',
 				title: 'All tasks',
 				type: 'item',
-				icon: 'heroicons-outline:clipboard-list',
+				icon: 'heroicons-outline:clipboard-payments',
 				badge: {
 					title: '49',
 					classes: 'px-2 bg-primary text-on-primary rounded-full'

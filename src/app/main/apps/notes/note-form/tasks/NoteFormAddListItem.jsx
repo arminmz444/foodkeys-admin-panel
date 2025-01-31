@@ -19,7 +19,7 @@ const defaultValues = {
 };
 
 /**
- * The note form add list item.
+ * The note form add payments item.
  */
 function NoteFormAddListItem(props) {
 	const { onListItemAdd } = props;

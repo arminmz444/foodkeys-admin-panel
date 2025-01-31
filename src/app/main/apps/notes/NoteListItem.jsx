@@ -10,7 +10,7 @@ import setDescriptionStyle from './setDescriptionStyle';
 import { openNoteDialog, selectVariateDescSize } from './notesAppSlice';
 
 /**
- * The note list item.
+ * The note payments item.
  */
 function NoteListItem(props) {
 	const { note, className } = props;

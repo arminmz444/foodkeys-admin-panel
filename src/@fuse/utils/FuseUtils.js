@@ -304,17 +304,17 @@ class FuseUtils {
 					}
 
 					if (entry.children != null) {
-						// if the object has childrens, filter the list of children
+						// if the object has childrens, filter the payments of children
 						const children = this.filterRecursive(entry.children, predicate);
 
 						if (children && children?.length > 0) {
 							// if any of the children matches, clone the parent object, overwrite
-							// the children list with the filtered list
+							// the children payments with the filtered payments
 							clone = { ...entry, children };
 						}
 					}
 
-					// if there's a cloned object, push it to the output list
+					// if there's a cloned object, push it to the output payments
 					if (clone) {
 						list.push(clone);
 					}

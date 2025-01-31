@@ -215,16 +215,16 @@ export const authApiMocks = (mock) => {
         const accessToken = authorization?.split(' ')[1];
         const responseUrl = response.config.url;
         if (responseUrl.startsWith('/mock-api') && authorization) {
-            if (!accessToken || !verifyJWTToken(accessToken)) {
-                const error = new Error("Invalid access token detected.");
-                // @ts-ignore
-                error.status = 401;
-                return Promise.reject(error);
-            }
-            const newAccessToken = generateAccessToken(response.config);
-            if (newAccessToken) {
-                response.headers['New-Access-Token'] = newAccessToken.access_token;
-            }
+            // if (!accessToken || !verifyJWTToken(accessToken)) {
+            //     const error = new Error("Invalid access token detected.");
+            //     // @ts-ignore
+            //     error.status = 401;
+            //     return Promise.reject(error);
+            // }
+            // const newAccessToken = generateAccessToken(response.config);
+            // if (newAccessToken) {
+            //     response.headers['New-Access-Token'] = newAccessToken.access_token;
+            // }
             return response;
         }
         return response;

@@ -1,7 +1,7 @@
 import _ from '@lodash';
 
 /**
- * The list model.
+ * The payments model.
  */
 function ListModel(data) {
 	data = data || {};

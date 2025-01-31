@@ -6,7 +6,7 @@ import FolderItem from './FolderItem';
 import FileItem from './FileItem';
 
 /**
- * The file manager list.
+ * The file manager payments.
  */
 function FileManagerList(props) {
 	const { files, folders } = props;

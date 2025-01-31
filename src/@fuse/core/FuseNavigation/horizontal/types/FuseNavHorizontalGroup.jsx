@@ -42,8 +42,8 @@ const Root = styled(ListItemButton)(({ theme }) => ({
 
 /**
  * FuseNavHorizontalGroup.
- * Represents a horizontal group component used in the Fuse navigation navigation list.
- * It shows the list item as well as its children with a flyout effect.
+ * Represents a horizontal group component used in the Fuse navigation navigation payments.
+ * It shows the payments item as well as its children with a flyout effect.
  */
 function FuseNavHorizontalGroup(props) {
 	const [opened, setOpened] = useState(false);
@@ -85,14 +85,14 @@ function FuseNavHorizontalGroup(props) {
 							<Root
 								component={component}
 								className={clsx(
-									'fuse-list-item',
+									'fuse-payments-item',
 									'relative',
 									`level-${nestedLevel}`,
 									isUrlInChildren(item, location.pathname) && 'active'
 								)}
 								onMouseEnter={() => handleToggle(true)}
 								onMouseLeave={() => handleToggle(false)}
-								aria-owns={opened ? 'menu-fuse-list-grow' : null}
+								aria-owns={opened ? 'menu-fuse-payments-grow' : null}
 								aria-haspopup="true"
 								sx={item.sx}
 								{...itemProps}
@@ -100,7 +100,7 @@ function FuseNavHorizontalGroup(props) {
 								{item.icon && (
 									<FuseSvgIcon
 										color="action"
-										className={clsx('fuse-list-item-icon shrink-0', item.iconClass)}
+										className={clsx('fuse-payments-item-icon shrink-0', item.iconClass)}
 									>
 										{item.icon}
 									</FuseSvgIcon>
@@ -158,7 +158,7 @@ function FuseNavHorizontalGroup(props) {
 										>
 											{item.children && (
 												<ul
-													className={clsx('popper-navigation-list', dense && 'dense', 'px-0')}
+													className={clsx('popper-navigation-payments', dense && 'dense', 'px-0')}
 												>
 													{item.children.map((_item) => (
 														<FuseNavItem

@@ -15,7 +15,7 @@ const StyledListItem = styled(ListItemButton)(({ theme }) => ({
 }));
 
 /**
- * The chat list item.
+ * The chat payments item.
  */
 function ChatListItem(props) {
 	const { item } = props;

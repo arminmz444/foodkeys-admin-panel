@@ -6,7 +6,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 
 /**
- * The section list item.
+ * The section payments item.
  */
 function SectionListItem(props) {
 	const { data, index } = props;

@@ -32,7 +32,7 @@ const StyledListItem = styled(ListItemButton)(({ theme, unread }) => ({
 }));
 
 /**
- * The mail list item.
+ * The mail payments item.
  */
 function MailListItem(props) {
 	const dispatch = useAppDispatch();

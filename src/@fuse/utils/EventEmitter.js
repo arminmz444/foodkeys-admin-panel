@@ -10,8 +10,8 @@ class EventEmitter {
 	}
 
 	/**
-	 * The _getEventListByName method returns the event list for a given event name.
-	 * If the event list does not exist, it creates a new one.
+	 * The _getEventListByName method returns the event payments for a given event name.
+	 * If the event payments does not exist, it creates a new one.
 	 *
 	 */
 	_getEventListByName(eventName) {

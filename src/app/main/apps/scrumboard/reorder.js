@@ -15,7 +15,7 @@ export const reorderQuoteMap = (lists, source, destination) => {
 	const next = _.find(lists, { id: destination?.droppableId });
 	const target = current.cards[source.index];
 
-	// moving to same list
+	// moving to same payments
 	if (source.droppableId === destination?.droppableId) {
 		const reordered = reorder(current.cards, source.index, destination.index);
 		return lists.map((list) => {
@@ -27,7 +27,7 @@ export const reorderQuoteMap = (lists, source, destination) => {
 		});
 	}
 
-	// moving to different list
+	// moving to different payments
 	// remove from original
 	current.cards.splice(source.index, 1);
 	// insert into next

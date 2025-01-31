@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import useSelectMailsTitle from '../hooks/useSelectMailsTitle';
 
 /**
- * The mail list title.
+ * The mail payments title.
  */
 function MailListTitle() {
 	const routeParams = useParams();

@@ -43,7 +43,7 @@ function Board() {
 			return;
 		}
 
-		// reordering list
+		// reordering payments
 		if (result.type === 'list') {
 			reorderList({
 				orderResult: result,

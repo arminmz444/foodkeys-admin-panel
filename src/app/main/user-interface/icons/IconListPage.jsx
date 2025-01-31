@@ -25,7 +25,7 @@ const Root = styled(FusePageSimple)(({ theme }) => ({
 }));
 
 /**
- *  IconListPage component that renders a list of icons.
+ *  IconListPage component that renders a payments of icons.
  */
 function IconListPage(props) {
 	const { pageTitle, referenceUrl, apiUrl, iconName } = props;

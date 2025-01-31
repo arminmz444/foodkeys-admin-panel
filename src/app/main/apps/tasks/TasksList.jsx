@@ -7,7 +7,7 @@ import SectionListItem from './SectionListItem';
 import { useGetTasksQuery, useReorderTasksMutation } from './TasksApi';
 
 /**
- * The tasks list.
+ * The tasks payments.
  */
 function TasksList() {
 	const { data: tasks, isLoading } = useGetTasksQuery();

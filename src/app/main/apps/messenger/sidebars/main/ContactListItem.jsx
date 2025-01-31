@@ -11,7 +11,7 @@ const StyledListItem = styled(ListItemButton)(({ theme }) => ({
 }));
 
 /**
- * The contact list item.
+ * The contact payments item.
  */
 function ContactListItem(props) {
 	const { item } = props;

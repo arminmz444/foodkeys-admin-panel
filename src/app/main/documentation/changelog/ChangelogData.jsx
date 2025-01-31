@@ -27,7 +27,7 @@ const changelogData = [
 			'.eslintrc.cjs updated.',
 			'Minor lint fixes.',
 			'NotificationPanelButton animation added, triggers when a new notification is received.',
-			'Notification list default order changed to time desc.',
+			'Notification payments default order changed to time desc.',
 			'All .defaultProps definitions removed due to will be deprecated on next major react release.',
 			'DateTimePicker controllers updated.',
 			'AWS Auth Social Login Google example added. '
@@ -50,7 +50,7 @@ const changelogData = [
 		date: '2024-03-04',
 		newChanges: [
 			'material-react-table library added',
-			'E-commerce products and orders page tables changed with material-react-table',
+			'E-commerce companies and payments page tables changed with material-react-table',
 			'@reduxjs/toolkit updated to v2.2.1'
 		],
 		breakingChanges: [
@@ -80,9 +80,9 @@ const changelogData = [
 		],
 		breakingChanges: [
 			'Create React App changed with ViteJs.',
-			'All api endpoints moved from ..Slice.ts files into ..Api.ts files.',
-			'...Api.ts files created for rtk query api endpoints.',
-			'All types moved into the ...Api.ts files.',
+			'All api endpoints moved from ..Slice.ts file-manager into ..Api.ts file-manager.',
+			'...Api.ts file-manager created for rtk query api endpoints.',
+			'All types moved into the ...Api.ts file-manager.',
 			'fuse, auth, navigation, settings slices lazy loaded from its own components with HOC'
 		],
 		notes: (
@@ -508,7 +508,7 @@ const changelogData = [
 			'tailwindcss updated to v2',
 			'material-ui updated to v4.11.1',
 			'All dependency packages updated.',
-			'E-Commerce App: Removing items functionality added into the UserList and Orders Table. No result message created for non existed product/order page routes.',
+			'E-Commerce App: Removing items functionality added into the UserList and Files Table. No result message created for non existed product/order page routes.',
 			'Smooth shadows: Material design shadows changed with tailwindcss classes.'
 		],
 		fixedChanges: ['NotesApp dialog do not close when item removed.']
@@ -523,7 +523,7 @@ const changelogData = [
 		date: '2020-11-17',
 		newChanges: [
 			'react updated to v17.0.1,',
-			'E-commerce App: showing loading indicator while fetching products/orders table data.',
+			'E-commerce App: showing loading indicator while fetching companies/payments table data.',
 			'NavbarFoldedToggleButton icon changed with push_pin',
 			'FuseSearch: placeholder and noResults props added for localization.',
 			'material ui icons updated and all variations added for to choose from.',
@@ -554,7 +554,7 @@ const changelogData = [
 			'All dependency packages updated.'
 		],
 		fixedChanges: [
-			'FuseDialog and FuseMessage actions added into serializableCheck ignoredActions list.',
+			'FuseDialog and FuseMessage actions added into serializableCheck ignoredActions payments.',
 			'ScrumboardApp: non-existent board redirect error fixed.',
 			'Formsy components missing color attribute added.',
 			'theme layout footer cannot scroll on mobile.',
@@ -733,7 +733,7 @@ const changelogData = [
 		],
 		fixedChanges: [
 			"react-scripts reverted back to v3.2.0 : v3.3.0 doesn't work in development mode on IE or edge",
-			'Scrumboard App: Board list header menu not working.',
+			'Scrumboard App: Board payments header menu not working.',
 			'Chat Panel: Toggle Button not working on mobile; ClickAwayListener changed with custom event handler.'
 		]
 	},
@@ -847,7 +847,7 @@ const changelogData = [
 		newChanges: ['material-ui updated to v4.3.0', 'tailwind config updated.', 'All dependency packages updated.'],
 		fixedChanges: [
 			'Academy App is not scroll correctly when the theme footer is static.',
-			'Scrumboard App list name form not works.'
+			'Scrumboard App payments name form not works.'
 		],
 		breakingChanges: [
 			'tailwindcss colors matched with material colors (shade values changed with hues for example: .bg-red-dark to .bg-red-700)'
@@ -976,9 +976,9 @@ const changelogData = [
 	{
 		version: '2.2.2',
 		date: '2019-02-18',
-		newChanges: ['Dependency packages updated (react v16.8.1, react-scripts etc).', 'PSD files updated.'],
+		newChanges: ['Dependency packages updated (react v16.8.1, react-scripts etc).', 'PSD file-manager updated.'],
 		fixedChanges: [
-			'Rendering Dom in "window.onload" function to wait all files loaded (esp css files).',
+			'Rendering Dom in "window.onload" function to wait all file-manager loaded (esp css file-manager).',
 			'Theming issues (FuseCountdown, tables of Invoice pages).'
 		]
 	},
@@ -1041,7 +1041,7 @@ const changelogData = [
 			'Authentication timing issues fixed.'
 		],
 		breakingChanges: [
-			'Theme layouts moved out of the @fuse core files which gives developers to create or edit theme layouts easily.',
+			'Theme layouts moved out of the @fuse core file-manager which gives developers to create or edit theme layouts easily.',
 			'Project structure changed after new layout system.',
 			'Theme configuration state moved from FuseTheme to redux store (fuse.settings).'
 		],

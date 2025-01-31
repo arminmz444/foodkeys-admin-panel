@@ -2,8 +2,8 @@ import React from 'react';
 import deepEqual from 'lodash/isEqual';
 
 /**
- * The checkDeps function checks if the dependency list is valid for use with useDeepCompareEffect.
- * It throws an error if the dependency list is empty or contains only primitive values.
+ * The checkDeps function checks if the dependency payments is valid for use with useDeepCompareEffect.
+ * It throws an error if the dependency payments is empty or contains only primitive values.
  */
 function checkDeps(deps) {
 	if (!deps || !deps.length) {

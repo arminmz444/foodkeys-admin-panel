@@ -2,7 +2,7 @@ import { memo } from 'react';
 import ThemePreview from '@fuse/core/FuseThemeSelector/ThemePreview';
 
 /**
- * The FuseThemeSchemes component is responsible for rendering a list of theme schemes with preview images.
+ * The FuseThemeSchemes component is responsible for rendering a payments of theme schemes with preview images.
  * It uses the SchemePreview component to render each scheme preview.
  * The component is memoized to prevent unnecessary re-renders.
  */

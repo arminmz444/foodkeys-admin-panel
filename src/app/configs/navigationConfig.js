@@ -69,7 +69,7 @@ const navigationConfig = [
 		subtitleTranslate: 'SUB_CATEGORY',
 		children: [
 			{
-				id: 'category.list',
+				id: 'category.payments',
 				title: 'List of Categories',
 				type: 'item',
 				icon: 'heroicons-outline:clipboard-check',
@@ -137,7 +137,7 @@ const navigationConfig = [
 				translate: 'ECOMMERCE',
 				children: [
 					{
-						id: 'e-commerce-products',
+						id: 'e-commerce-companies',
 						title: 'Products',
 						type: 'item',
 						url: 'apps/e-commerce/products',
@@ -159,7 +159,7 @@ const navigationConfig = [
 						translate: 'NEW_PRODUCT'
 					},
 					{
-						id: 'e-commerce-orders',
+						id: 'e-commerce-payments',
 						title: 'Orders',
 						type: 'item',
 						url: 'apps/e-commerce/orders',
@@ -378,7 +378,7 @@ const navigationConfig = [
 				icon: 'heroicons-outline:shopping-cart',
 				children: [
 					{
-						id: 'banks.food-industry-bank.list',
+						id: 'banks.food-industry-bank.payments',
 						title: 'FoodIndustryBankList',
 						translate: 'COMPANY_LIST',
 						type: 'item',
@@ -417,7 +417,7 @@ const navigationConfig = [
 				icon: 'heroicons-outline:shopping-cart',
 				children: [
 					{
-						id: 'banks.agriculture-industry-bank.list',
+						id: 'banks.agriculture-industry-bank.payments',
 						title: 'AgricultureIndustryBankList',
 						translate: 'COMPANY_LIST',
 						type: 'item',
@@ -456,7 +456,7 @@ const navigationConfig = [
 				icon: 'heroicons-outline:shopping-cart',
 				children: [
 					{
-						id: 'banks.service-bank.list',
+						id: 'banks.service-bank.payments',
 						title: 'ServiceBankList',
 						translate: 'COMPANY_LIST',
 						type: 'item',
@@ -498,19 +498,19 @@ const navigationConfig = [
 					// 	title: "Order Detail",
 					// 	translate: "جزئیات سفارش",
 					// 	type: "item",
-					// 	url: "apps/e-commerce/orders/1",
+					// 	url: "apps/e-commerce/payments/1",
 					// },
 				]
 			},
 			{
-				id: 'banks.media-bank',
+				id: 'banks.media',
 				title: 'MediaBank',
 				translate: 'MEDIA_BANK',
 				type: 'collapse',
 				icon: 'heroicons-outline:shopping-cart',
 				children: [
 					{
-						id: 'banks.media-bank.list',
+						id: 'banks.media.payments',
 						title: 'MediaBankList',
 						translate: 'COMPANY_LIST',
 						type: 'item',
@@ -518,7 +518,7 @@ const navigationConfig = [
 						end: true
 					},
 					{
-						id: 'banks.media-bank.details',
+						id: 'banks.media.details',
 						title: 'MediaBankDetails',
 						translate: 'جزئیات شرکت',
 						type: 'item',
@@ -526,14 +526,14 @@ const navigationConfig = [
 						end: true
 					},
 					{
-						id: 'banks.media-bank.edit',
+						id: 'banks.media.edit',
 						title: 'MediaBankEdit',
 						translate: 'ویرایش شرکت',
 						type: 'item',
 						url: 'banks/media/:id/edit'
 					},
 					{
-						id: 'banks.media-bank.create',
+						id: 'banks.media.create',
 						title: 'Create New Company',
 						translate: 'CREATE_COMPANY',
 						type: 'item',
@@ -549,11 +549,11 @@ const navigationConfig = [
 			// 	icon: "heroicons-outline:shopping-cart",
 			// 	children: [
 			// 		{
-			// 			id: "e-commerce-products",
+			// 			id: "e-commerce-companies",
 			// 			title: "UserList",
 			// 			translate: "COMPANY_LIST",
 			// 			type: "item",
-			// 			url: "apps/e-commerce/products",
+			// 			url: "apps/e-commerce/companies",
 			// 			end: true,
 			// 		},
 			// 		{
@@ -561,21 +561,21 @@ const navigationConfig = [
 			// 			title: "جزییات شرکت",
 			// 			translate: "جزییات شرکت",
 			// 			type: "item",
-			// 			url: "apps/e-commerce/products/1/a-walk-amongst-friends-canvas-print",
+			// 			url: "apps/e-commerce/companies/1/a-walk-amongst-friends-canvas-print",
 			// 		},
 			// 		{
 			// 			id: "e-commerce-new-product",
 			// 			title: "New Product",
 			// 			translate: "شرکت جدید",
 			// 			type: "item",
-			// 			url: "apps/e-commerce/products/new",
+			// 			url: "apps/e-commerce/companies/new",
 			// 		},
 			// 		{
-			// 			id: "e-commerce-orders",
-			// 			title: "Orders",
+			// 			id: "e-commerce-payments",
+			// 			title: "Files",
 			// 			translate: "سفارش ها",
 			// 			type: "item",
-			// 			url: "apps/e-commerce/orders",
+			// 			url: "apps/e-commerce/payments",
 			// 			end: true,
 			// 		},
 			// 		{
@@ -583,7 +583,7 @@ const navigationConfig = [
 			// 			title: "Order Detail",
 			// 			translate: "جزئیات سفارش",
 			// 			type: "item",
-			// 			url: "apps/e-commerce/orders/1",
+			// 			url: "apps/e-commerce/payments/1",
 			// 		},
 			// 	],
 			// },
@@ -595,11 +595,11 @@ const navigationConfig = [
 			// 	icon: "heroicons-outline:shopping-cart",
 			// 	children: [
 			// 		{
-			// 			id: "food-products",
+			// 			id: "food-companies",
 			// 			title: "UserList",
 			// 			translate: "COMPANY_LIST",
 			// 			type: "item",
-			// 			url: "apps/food/products",
+			// 			url: "apps/food/companies",
 			// 			end: true,
 			// 		},
 			// 		{
@@ -607,21 +607,21 @@ const navigationConfig = [
 			// 			title: "جزییات شرکت",
 			// 			translate: "جزئیات شرکت",
 			// 			type: "item",
-			// 			url: "apps/food/products/1/a-walk-amongst-friends-canvas-print",
+			// 			url: "apps/food/companies/1/a-walk-amongst-friends-canvas-print",
 			// 		},
 			// 		{
 			// 			id: "food-new-product",
 			// 			title: "New Product",
 			// 			translate: "شرکت جدید",
 			// 			type: "item",
-			// 			url: "apps/food/products/new",
+			// 			url: "apps/food/companies/new",
 			// 		},
 			// 		{
-			// 			id: "e-commerce-orders",
-			// 			title: "Orders",
+			// 			id: "e-commerce-payments",
+			// 			title: "Files",
 			// 			translate: "سفارش ها",
 			// 			type: "item",
-			// 			url: "apps/e-commerce/orders",
+			// 			url: "apps/e-commerce/payments",
 			// 			end: true,
 			// 		},
 			// 		{
@@ -629,10 +629,39 @@ const navigationConfig = [
 			// 			title: "Order Detail",
 			// 			translate: "جزئیات سفارش",
 			// 			type: "item",
-			// 			url: "apps/e-commerce/orders/1",
+			// 			url: "apps/e-commerce/payments/1",
 			// 		},
 			// 	],
 			// },
+		]
+	},
+	{
+		id: 'file_manager',
+		title: 'File Manager',
+		subtitle: 'File manager section',
+		type: 'group',
+		icon: 'heroicons-outline:document',
+		translate: 'FILE_MANAGER',
+		subtitleTranslate: 'SUB_FILE_MANAGER',
+		children: [
+			{
+				id: 'file_manager.drive',
+				title: 'Drive',
+				translate: 'DRIVE',
+				type: 'item',
+				icon: 'heroicons-outline:folder',
+				url: 'drive',
+				end: true
+			},
+			{
+				id: 'file-manager.file-system',
+				title: 'File System Manager',
+				translate: 'FILE_SYSTEM_MANAGER',
+				type: 'item',
+				icon: 'heroicons-outline:document',
+				url: 'file-system',
+				end: true
+			},
 		]
 	},
 	{
@@ -645,7 +674,7 @@ const navigationConfig = [
 		subtitleTranslate: 'SUB_USERS',
 		children: [
 			{
-				id: 'users.list',
+				id: 'users.payments',
 				title: 'UsersList',
 				translate: 'USER_LIST',
 				type: 'item',

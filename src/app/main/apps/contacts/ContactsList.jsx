@@ -8,7 +8,7 @@ import ContactListItem from './ContactListItem';
 import { selectFilteredContactList, selectGroupedFilteredContacts, useGetContactsListQuery } from './ContactsApi';
 
 /**
- * The contacts list.
+ * The contacts payments.
  */
 function ContactsList() {
 	const { data, isLoading } = useGetContactsListQuery();

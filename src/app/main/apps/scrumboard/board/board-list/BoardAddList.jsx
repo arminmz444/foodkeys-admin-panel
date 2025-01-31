@@ -25,7 +25,7 @@ const schema = z.object({
 });
 
 /**
- * The board add list component.
+ * The board add payments component.
  */
 function BoardAddList() {
 	const routeParams = useParams();

@@ -6,7 +6,7 @@ import NavLinkAdapter from '@fuse/core/NavLinkAdapter';
 import useThemeMediaQuery from '@fuse/hooks/useThemeMediaQuery';
 
 /**
- * The products header.
+ * The companies header.
  */
 function ProductsHeader() {
 	const isMobile = useThemeMediaQuery((theme) => theme.breakpoints.down('lg'));

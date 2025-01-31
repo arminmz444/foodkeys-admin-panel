@@ -71,7 +71,7 @@ function GrapesEditor() {
 			width: 'auto',
 			assetManager: {
 				// upload: '/api/upload-assets', // API endpoint for uploading
-				// uploadName: 'files',
+				// uploadName: 'file-manager',
 				// assets: [
 				// 	// Predefined assets
 				// 	{ src: 'https://via.placeholder.com/350x150', name: 'Placeholder' },

@@ -3,7 +3,7 @@ import UserHeader from './UserHeader.jsx';
 import UserTable from './UserTable.jsx';
 
 /**
- * The products page.
+ * The companies page.
  */
 function UserList() {
 	return (

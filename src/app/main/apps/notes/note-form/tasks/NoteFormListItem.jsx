@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 
 /**
- * The note form list item.
+ * The note form payments item.
  */
 function NoteFormListItem(props) {
 	const { onListItemChange, item, onListItemRemove } = props;

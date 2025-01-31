@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useGetECommerceOrderQuery } from '../../ECommerceApi';
 
 /**
- * The products tab.
+ * The companies tab.
  */
 function ProductsTab() {
 	const routeParams = useParams();

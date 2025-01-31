@@ -13,7 +13,7 @@ import { selectSearchText } from '../mailboxAppSlice';
 import { useGetMailboxMailsQuery } from '../MailboxApi';
 
 /**
- * The mail list.
+ * The mail payments.
  */
 function MailList() {
 	const routeParams = useParams();

@@ -317,8 +317,8 @@ function SplitScreenSignInPage() {
 
 					<div className="relative z-10 w-full max-w-2xl">
 						<div className="text-7xl font-bold leading-none text-gray-100">
-							<div>به پنل مدیریت</div>
-							<div>سایت مراجع صنایع غذایی و کشاورزی ایران</div>
+							<div>پنل مدیریت سایت</div>
+							<div className="text-[#129974] mt-12">مراجع صنایع غذایی و کشاورزی ایران</div>
 
 						</div>
 						<div className="mt-24 text-lg leading-6 tracking-tight text-gray-400">
