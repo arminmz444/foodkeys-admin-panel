@@ -1,4 +1,3 @@
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { randomCreatedDate, randomTraderName, randomUpdatedDate, useDemoData } from '@mui/x-data-grid-generator';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
@@ -6,7 +5,8 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { showMessage } from '@fuse/core/FuseMessage/fuseMessageSlice.js';
 import { faIR } from '@mui/x-data-grid/locales';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 const theme = createTheme(
 	{
@@ -150,6 +150,55 @@ const mockRows = [
 		lastLogin: randomUpdatedDate()
 	}
 ];
+
+// import { DataGridPro, GridToolbar } from '@mui/x-data-grid-pro';
+// import { useDemoData } from '@mui/x-data-grid-generator';
+//
+// const VISIBLE_FIELDS = ['name', 'rating', 'country', 'dateCreated', 'isAdmin'];
+//
+// export default function DisableMultiFiltersDataGridPro() {
+// 	const { data, loading } = useDemoData({
+// 		dataSet: 'Employee',
+// 		visibleFields: VISIBLE_FIELDS,
+// 		rowLength: 100
+// 	});
+//
+// 	const filterColumns = ({ field, columns, currentFilters }) => {
+// 		// remove already filtered fields from list of columns
+// 		const filteredFields = currentFilters?.map((item) => item.field);
+// 		return columns
+// 			.filter((colDef) => colDef.filterable && (colDef.field === field || !filteredFields.includes(colDef.field)))
+// 			.map((column) => column.field);
+// 	};
+//
+// 	const getColumnForNewFilter = ({ currentFilters, columns }) => {
+// 		const filteredFields = currentFilters?.map(({ field }) => field);
+// 		const columnForNewFilter = columns
+// 			.filter((colDef) => colDef.filterable && !filteredFields.includes(colDef.field))
+// 			.find((colDef) => colDef.filterOperators?.length);
+// 		return columnForNewFilter?.field ?? null;
+// 	};
+//
+// 	return (
+// 		<div style={{ height: 400, width: '100%' }}>
+// 			<DataGridPro
+// 				{...data}
+// 				loading={loading}
+// 				slots={{ toolbar: GridToolbar }}
+// 				slotProps={{
+// 					filterPanel: {
+// 						filterFormProps: {
+// 							filterColumns
+// 						},
+// 						getColumnForNewFilter
+// 					}
+// 				}}
+// 			/>
+// 		</div>
+// 	);
+// }
+
+
 //
 // // isCellEditable={(params) => params.row.age % 2 === 0}
 // // processRowUpdate={(updatedRow, originalRow) =>

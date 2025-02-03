@@ -3,9 +3,13 @@ import ReactEmailGalleryComponent from 'app/shared-components/react-email-galler
 import MediaPlayer from 'app/shared-components/media-player/MediaPlayer.jsx';
 import Gallery from 'app/shared-components/media-player/Gallery/Gallery.jsx';
 import MediaPlayerList from 'app/shared-components/media-player/MediaPlayerList.jsx';
-import { useGetAnalyticsDashboardWidgetsQuery } from './AnalyticsDashboardApi';
 import CustomDataGrid from 'app/shared-components/data-grid/CustomDataGrid.jsx';
-import MonacoJsonEditor from 'app/shared-components/monaco-json-editor/MonacoJsonEditor.jsx';
+import CustomPersianDataTable from 'app/shared-components/custom-persian-data-table/CustomPersianDataTable.jsx';
+import DataTable from 'app/shared-components/data-table/DataTable.jsx';
+import { useGetAnalyticsDashboardWidgetsQuery } from './AnalyticsDashboardApi';
+import MRTEditModalDataTable
+	from 'app/shared-components/data-table/mrt-edit-modal-data-table/MRTEditModalDataTable.jsx';
+import MRTTransferList from 'app/shared-components/data-table/mrt-transfer-list/MRTTransferList.jsx';
 
 const container = {
 	show: {
@@ -40,7 +44,11 @@ function AnalyticsDashboardApp() {
 			<Gallery />
 			<MediaPlayerList />
 			<CustomDataGrid />
-			<MonacoJsonEditor />
+			<CustomPersianDataTable />
+			<MRTEditModalDataTable />
+			<MRTTransferList />
+			{/*<DataTable />*/}
+			{/* <MonacoJsonEditor /> */}
 			{/* <MapView */}
 			{/*	defaultLat={userLatitude} */}
 			{/*	defaultLng={userLongitude} */}

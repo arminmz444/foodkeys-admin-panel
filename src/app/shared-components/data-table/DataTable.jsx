@@ -1,7 +1,14 @@
-import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import { MaterialReactTable, MRT_ActionMenuItem, useMaterialReactTable } from 'material-react-table';
 import _ from '@lodash';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
+import { MRT_Localization_FA } from 'material-react-table/locales/fa';
+import Divider from '@mui/material/Divider';
+import { Email, PersonOffOutlined } from '@mui/icons-material';
+import { useTheme } from '@mui/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { faIR } from '@mui/material/locale';
+import axios from 'axios';
 import DataTableTopToolbar from './DataTableTopToolbar';
 
 const tableIcons = {
@@ -70,6 +77,34 @@ const tableIcons = {
 
 function DataTable(props) {
 	const { columns, data, ...rest } = props;
+	// const [data, setData] = useState([]);
+	// const [loading, setLoading] = useState(true);
+	// const [searchQuery, setSearchQuery] = useState('');
+
+	// const fetchData = async (query = '') => {
+	// 	setLoading(true);
+	// 	try {
+	// 		const response = await axios.get(`/api/v1/data?search=${query}`);
+	// 		// setData(response.data);
+	// 	} catch (error) {
+	// 		console.error('Error fetching data:', error);
+	// 	}
+	// 	setLoading(false);
+	// };
+
+	// const debouncedSearch = useCallback(
+	// 	_.debounce((query) => fetchData(query), 500),
+	// 	[]
+	// );
+	//
+	// useEffect(() => {
+	// 	fetchData();
+	// }, []);
+	//
+	// useEffect(() => {
+	// 	debouncedSearch(searchQuery);
+	// }, [searchQuery, debouncedSearch]);
+
 	const defaults = useMemo(
 		() =>
 			_.defaults(rest, {
@@ -84,9 +119,39 @@ function DataTable(props) {
 					pagination: {
 						pageSize: 15
 					},
-					enableFullScreenToggle: false
+					enableFullScreenToggle: true,
+					localization: { MRT_Localization_FA }
 				},
-				enableFullScreenToggle: false,
+				columnResizeDirection: 'rtl',
+				textAlign: 'right',
+				enableCellActions: true,
+				enableClickToCopy: 'context-menu',
+				enableEditing: true,
+				// enableColumnResizing: true,
+				editDisplayMode: 'cell',
+				renderCellActionMenuItems: ({ closeMenu, cell, row, table, internalMenuItems }) => [
+					...internalMenuItems,
+					<Divider />,
+					<MRT_ActionMenuItem
+						icon={<Email />}
+						key={1}
+						label="ارسال ایمیل"
+						onClick={() => {
+							closeMenu();
+						}}
+						table={table}
+					/>,
+					<MRT_ActionMenuItem
+						icon={<PersonOffOutlined />}
+						key={2}
+						label="مسدود کردن"
+						onClick={async () => {
+							closeMenu();
+						}}
+						table={table}
+					/>
+				],
+				enableFullScreenToggle: true,
 				enableColumnFilterModes: true,
 				enableColumnOrdering: true,
 				enableGrouping: true,
@@ -106,9 +171,13 @@ function DataTable(props) {
 					className: 'flex-auto'
 				},
 				enableStickyHeader: true,
-				// enableStickyFooter: true,
-				paginationDisplayMode: 'pages',
+				localization: { MRT_Localization_FA },
+				enableStickyFooter: true,
+				paginationDisplayMode: 'صفحه',
 				positionToolbarAlertBanner: 'top',
+				muiTableBodyCellProps: {
+					sx: { textAlign: 'right', direction: 'rtl' }
+				},
 				muiPaginationProps: {
 					color: 'secondary',
 					rowsPerPageOptions: [10, 20, 30],
@@ -117,7 +186,7 @@ function DataTable(props) {
 					showRowsPerPage: false
 				},
 				muiSearchTextFieldProps: {
-					placeholder: 'Search',
+					placeholder: 'جستجو',
 					sx: { minWidth: '300px' },
 					variant: 'outlined',
 					size: 'small'
@@ -129,7 +198,9 @@ function DataTable(props) {
 						'& .MuiInputBase-root': {
 							padding: '0px 8px',
 							height: '32px!important',
-							minHeight: '32px!important'
+							minHeight: '32px!important',
+							direction: 'rtl',
+							textAlign: 'right'
 						}
 					}
 				},
@@ -165,6 +236,8 @@ function DataTable(props) {
 				},
 				muiTableHeadCellProps: ({ column }) => ({
 					sx: {
+						textAlign: 'right',
+						direction: 'rtl',
 						'& .Mui-TableHeadCell-Content-Labels': {
 							flex: 1,
 							justifyContent: 'space-between'
@@ -176,6 +249,7 @@ function DataTable(props) {
 							color: (theme) => theme.palette.text.disabled,
 							fontSize: 11
 						},
+
 						backgroundColor: (theme) => (column.getIsPinned() ? theme.palette.background.paper : 'inherit')
 					}
 				}),
@@ -186,7 +260,8 @@ function DataTable(props) {
 					pinnedColumnBackgroundColor: theme.palette.background.paper
 				}),
 				renderTopToolbar: (_props) => <DataTableTopToolbar {..._props} />,
-				icons: tableIcons
+				icons: tableIcons,
+				localeText: { MRT_Localization_FA }
 			}),
 		[rest]
 	);
@@ -195,8 +270,24 @@ function DataTable(props) {
 		data,
 		...defaults,
 		...rest
+		// columnResizeDirection: 'rtl',
+
+		// direction: 'rtl',
+		// dir: 'rtl'
 	});
-	return <MaterialReactTable table={table} />;
+	const theme = useTheme();
+	return (
+		<ThemeProvider theme={createTheme({ ...theme, direction: 'rtl' }, faIR)}>
+			<div style={{ direction: 'rtl' }}>
+				<MaterialReactTable
+					localization={MRT_Localization_FA}
+					columnFilterDisplayMode="popover"
+					columnResizeDirection="rtl"
+					table={table}
+				/>
+			</div>
+		</ThemeProvider>
+	);
 }
 
 export default DataTable;

@@ -14,6 +14,7 @@ import DocumentationConfig from '../main/documentation/DocumentationConfig';
 import authRoleExamplesConfigs from '../main/auth/authRoleExamplesConfigs';
 import banksConfigs from '../main/banks/banksConfigs.js';
 import fileManagerConfigs from '../main/file-manager/FileManagerConfig.jsx';
+import userAppConfig from '../main/users/UserAppConfig.jsx';
 
 const routeConfigs = [
 	SignOutConfig,
@@ -21,6 +22,7 @@ const routeConfigs = [
 	SignUpConfig,
 	DocumentationConfig,
 	fileManagerConfigs,
+	userAppConfig,
 	...PagesConfigs,
 	...UserInterfaceConfigs,
 	...DashboardsConfigs,

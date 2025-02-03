@@ -27,15 +27,15 @@ const ECommerceAppConfig = {
 					element: <Products />
 				},
 				{
-					path: 'companies/:productId/*',
+					path: 'products/:productId/*',
 					element: <Product />
 				},
 				{
-					path: 'list',
+					path: 'orders',
 					element: <Orders />
 				},
 				{
-					path: 'payments/:orderId',
+					path: 'orders/:orderId',
 					element: <Order />
 				}
 			]

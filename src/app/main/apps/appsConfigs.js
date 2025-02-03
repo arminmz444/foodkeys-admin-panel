@@ -12,7 +12,6 @@ import ScrumboardAppConfig from './scrumboard/ScrumboardAppConfig';
 import TasksAppConfig from './tasks/TasksAppConfig';
 import NotificationsAppConfig from './notifications/NotificationsAppConfig';
 import SettingsAppConfig from './settings/SettingsAppConfig';
-import UserAppConfig from '@/app/main/apps/users/UserAppConfig.jsx';
 /**
  * The payments of application configurations.
  */
@@ -30,7 +29,6 @@ const appsConfigs = [
 	ScrumboardAppConfig,
 	TasksAppConfig,
 	NotificationsAppConfig,
-	SettingsAppConfig,
-	UserAppConfig
+	SettingsAppConfig
 ];
 export default appsConfigs;

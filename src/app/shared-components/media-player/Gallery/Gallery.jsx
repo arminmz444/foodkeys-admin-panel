@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import { RowsPhotoAlbum } from 'react-photo-album';
 import 'react-photo-album/rows.css';
@@ -14,12 +14,17 @@ import Download from 'yet-another-react-lightbox/plugins/download';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
 
 import { Video } from 'yet-another-react-lightbox/plugins';
-import SliderFilter from 'app/shared-components/gallery/checkbox-filter/SliderFilter.jsx';
-import SelectFilter from 'app/shared-components/gallery/checkbox-filter/SelectFilter.jsx';
-import FlexLineBreak from 'app/shared-components/gallery/checkbox-filter/FlexLineBreak.jsx';
-import CheckboxFilter from 'app/shared-components/gallery/checkbox-filter/CheckboxFilter.jsx';
 import { Title } from '@mui/icons-material';
-import { LightboxButton, Paragraph, TextFieldFilter } from '../../gallery/playground/index.js';
+import {
+	LightboxButton,
+	Paragraph,
+	SliderFilter,
+	SelectFilter,
+	FlexLineBreak,
+	CheckboxFilter,
+	TextFieldFilter,
+	Settings
+} from '../../gallery/playground/index.js';
 
 import photos from './photos';
 
@@ -255,6 +260,7 @@ export default function Gallery() {
 				/>
 
 				<Lightbox
+					controller={{ closeOnPullDown, closeOnBackdropClick }}
 					slides={photos}
 					open={index >= 0}
 					index={index}

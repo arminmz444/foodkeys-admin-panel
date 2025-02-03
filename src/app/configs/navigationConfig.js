@@ -70,7 +70,7 @@ const navigationConfig = [
 		children: [
 			{
 				id: 'category.payments',
-				title: 'List of Categories',
+				title: 'List of CategoriesOutlet',
 				type: 'item',
 				icon: 'heroicons-outline:clipboard-check',
 				url: '/category',

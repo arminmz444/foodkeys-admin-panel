@@ -29,7 +29,6 @@ function MonacoJsonEditor({ value = '{}', onChange, height = 400, readOnly = fal
 				defaultValue={editorValue}
 				onChange={handleEditorChange}
 				options={{
-					readOnly,
 					minimap: { enabled: false },
 					wordWrap: 'on',
 					automaticLayout: true,

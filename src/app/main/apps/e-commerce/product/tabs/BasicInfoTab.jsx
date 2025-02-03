@@ -66,7 +66,7 @@ function BasicInfoTab() {
 							<TextField
 								{...params}
 								placeholder="Select multiple categories"
-								label="Categories"
+								label="CategoriesOutlet"
 								variant="outlined"
 								InputLabelProps={{
 									shrink: true
