@@ -1,15 +1,16 @@
 import { MaterialReactTable, MRT_ActionMenuItem, useMaterialReactTable } from 'material-react-table';
 import _ from '@lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { MRT_Localization_FA } from 'material-react-table/locales/fa';
 import Divider from '@mui/material/Divider';
 import { Email, PersonOffOutlined } from '@mui/icons-material';
-import { useTheme } from '@mui/styles';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { faIR } from '@mui/material/locale';
-import axios from 'axios';
+import DataTableBottomToolbar from 'app/shared-components/data-table/DataTableBottomToolbar.jsx';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import FuseScrollbars from '@fuse/core/FuseScrollbars/index.js';
 import DataTableTopToolbar from './DataTableTopToolbar';
+
+const queryClient = new QueryClient();
 
 const tableIcons = {
 	ArrowDownwardIcon: (props) => (
@@ -176,7 +177,7 @@ function DataTable(props) {
 				paginationDisplayMode: 'صفحه',
 				positionToolbarAlertBanner: 'top',
 				muiTableBodyCellProps: {
-					sx: { textAlign: 'right', direction: 'rtl' }
+					sx: { textAlign: 'left', direction: 'ltr' }
 				},
 				muiPaginationProps: {
 					color: 'secondary',
@@ -236,8 +237,8 @@ function DataTable(props) {
 				},
 				muiTableHeadCellProps: ({ column }) => ({
 					sx: {
-						textAlign: 'right',
-						direction: 'rtl',
+						textAlign: 'left',
+						direction: 'ltr',
 						'& .Mui-TableHeadCell-Content-Labels': {
 							flex: 1,
 							justifyContent: 'space-between'
@@ -260,6 +261,7 @@ function DataTable(props) {
 					pinnedColumnBackgroundColor: theme.palette.background.paper
 				}),
 				renderTopToolbar: (_props) => <DataTableTopToolbar {..._props} />,
+				renderBottomToolbar: (props) => <DataTableBottomToolbar {...props} />,
 				icons: tableIcons,
 				localeText: { MRT_Localization_FA }
 			}),
@@ -269,24 +271,29 @@ function DataTable(props) {
 		columns,
 		data,
 		...defaults,
-		...rest
+		...rest,
+		localization: MRT_Localization_FA
 		// columnResizeDirection: 'rtl',
 
 		// direction: 'rtl',
 		// dir: 'rtl'
 	});
-	const theme = useTheme();
+
 	return (
-		<ThemeProvider theme={createTheme({ ...theme, direction: 'rtl' }, faIR)}>
-			<div style={{ direction: 'rtl' }}>
-				<MaterialReactTable
-					localization={MRT_Localization_FA}
-					columnFilterDisplayMode="popover"
-					columnResizeDirection="rtl"
-					table={table}
-				/>
-			</div>
-		</ThemeProvider>
+		<div
+			style={{ direction: 'rtl' }}
+			className="w-full flex flex-col min-h-full"
+		>
+			<FuseScrollbars className="grow overflow-x-auto">
+				<QueryClientProvider client={queryClient}>
+					<MaterialReactTable
+						table={table}
+						columnFilterDisplayMode="popover"
+						columnResizeDirection="rtl"
+					/>
+				</QueryClientProvider>
+			</FuseScrollbars>
+		</div>
 	);
 }
 

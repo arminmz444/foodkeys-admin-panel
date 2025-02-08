@@ -5,7 +5,6 @@ import Typography from '@mui/material/Typography';
 import clsx from 'clsx';
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import NavLinkAdapter from '@fuse/core/NavLinkAdapter';
-import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { useAppSelector } from 'app/store/hooks';
 import { selectContrastMainTheme } from '@fuse/core/FuseSettings/fuseSettingsSlice';
 import { darken, useTheme } from '@mui/material/styles';
@@ -15,6 +14,8 @@ import red from '@mui/material/colors/red';
 import orange from '@mui/material/colors/orange';
 import FuseTheme from '@fuse/core/FuseTheme';
 import yellow from '@mui/material/colors/yellow';
+import { formatDistanceToNow } from 'date-fns-jalali';
+
 
 const variantBgColors = {
 	success: green[600],
@@ -92,15 +93,15 @@ function NotificationCard(props) {
 				<div className="flex flex-auto flex-col">
 					{item.title && <Typography className="line-clamp-1 font-semibold">{item.title}</Typography>}
 
-					{item.description && (
+					{item.message && (
 						<div
 							className="line-clamp-2"
 							// eslint-disable-next-line react/no-danger
-							dangerouslySetInnerHTML={{ __html: item.description }}
+							dangerouslySetInnerHTML={{ __html: item.message }}
 						/>
 					)}
 
-					{item.time && (
+					{item.times && (
 						<Typography
 							className="mt-8 text-sm leading-none "
 							color="text.secondary"

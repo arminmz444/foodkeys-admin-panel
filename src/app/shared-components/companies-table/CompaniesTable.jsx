@@ -12,11 +12,15 @@ function CompaniesTable({ categoryId }) {
 	const [filter, setFilter] = useState('');
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
-		pageSize: 15,
+		pageSize: 15
 	});
 	const [page, setPage] = useState(0);
 	const [pageSize, setPageSize] = useState(1);
-	const { data: companies, isLoading, isError } = useGetCompaniesQuery({
+	const {
+		data: companies,
+		isLoading,
+		isError
+	} = useGetCompaniesQuery({
 		pageNumber: pagination?.pageIndex || 0,
 		pageSize: pagination?.pageSize || 1,
 		categoryId,
@@ -29,7 +33,10 @@ function CompaniesTable({ categoryId }) {
 				accessorKey: 'companyName',
 				header: 'Company Name',
 				Cell: ({ row }) => (
-					<Typography component="span" className="font-bold">
+					<Typography
+						component="span"
+						className="font-bold"
+					>
 						{row.original.companyName}
 					</Typography>
 				)
@@ -64,6 +71,7 @@ function CompaniesTable({ categoryId }) {
 	);
 
 	if (isLoading) return <CircularProgress />;
+
 	if (isError) return <div>Error loading data</div>;
 
 	return (
@@ -96,18 +104,17 @@ function CompaniesTable({ categoryId }) {
 				data={companies?.data || []}
 				columns={columns}
 				getRowId={(originalRow) => originalRow.username}
-			onPaginationChange={setPagination}
-			// onRowSelectionChange={setRowSelection}
-			// onSortingChange={setSorting}
-			state={ pagination, rowSelection, sorting }
+				onPaginationChange={setPagination}
+				// onRowSelectionChange={setRowSelection}
+				// onSortingChange={setSorting}
+				state={(pagination, rowSelection, sorting)}
 				initialState={{
 					pagination: {
 						pageIndex: 0,
 						pageSize: 1
 					}
 				}}
-
-				manualPagination={true}
+				manualPagination
 				rowCount={companies?.pagination?.totalElements ?? 0}
 				// onPaginationChange={({ pageIndex, pageSize: newPageSize }) => {
 				// 	console.log(`Page index: ${  pageIndex  } and page size: ${  pageSize} and new page size = ${ newPageSize}`)

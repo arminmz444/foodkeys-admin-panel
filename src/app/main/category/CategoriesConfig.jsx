@@ -1,13 +1,11 @@
 import { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
-import Categories from '@/app/main/category/Categories.jsx';
 
-
-const CategoriesOutlet = lazy(() => import('./CategoriesOutlet.jsx'));
-const Product = lazy(() => import('./product/Product'));
-const Products = lazy(() => import('./products/Products'));
-const Order = lazy(() => import('./order/Order'));
-const Orders = lazy(() => import('./orders/Orders'));
+const Categories = lazy(() => import('./Categories'));
+const CategoryDetails = lazy(() => import('./CategoryDetails'));
+const CategoryForm = lazy(() => import('./CategoryForm'));
+const CategoriesOutlet = lazy(() => import('./CategoriesOutlet'));
+const SubCategories = lazy(() => import('./sub-category/SubCategories'));
 /**
  * The CategoriesOutlet configuration.
  */
@@ -17,27 +15,35 @@ const CategoriesConfig = {
 	},
 	routes: [
 		{
-			path: 'categories',
+			path: 'category/',
 			element: <CategoriesOutlet />,
 			children: [
 				{
 					path: '',
-					element: <Navigate to="categories" />
+					element: <Navigate to="list" />
 				},
 				{
-					path: 'categories/list',
+					path: 'list',
 					element: <Categories />
 				},
 				{
-					path: 'categories/:categoryId/details',
+					path: 'subcategory/',
+					element: <Navigate to="subcategory/list" />
+				},
+				{
+					path: 'subcategory/list',
+					element: <SubCategories />
+				},
+				{
+					path: ':categoryId/details',
 					element: <CategoryDetails />
 				},
 				{
-					path: 'categories/:categoryId/edit',
+					path: ':categoryId/edit',
 					element: <CategoryForm type="EDIT" />
 				},
 				{
-					path: 'categories/:categoryId/add',
+					path: ':categoryId/add',
 					element: <CategoryForm type="ADD" />
 				}
 			]

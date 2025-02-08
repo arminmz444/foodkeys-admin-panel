@@ -1,6 +1,6 @@
 import Typography from '@mui/material/Typography';
 import { Link, useParams } from 'react-router-dom';
-import { useGetECommerceOrderQuery } from '../../AgricultureIndustryApi.js';
+import { useGetECommerceOrderQuery } from '../../ECommerceApi';
 
 /**
  * The companies tab.

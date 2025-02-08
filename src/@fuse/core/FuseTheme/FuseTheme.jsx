@@ -65,6 +65,10 @@ const inputGlobalStyles = (
 			},
 			'::-webkit-scrollbar-thumb:active': {
 				boxShadow: `inset 0 0 0 20px ${theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.37)' : 'rgba(255, 255, 255, 0.37)'}`
+			},
+			'rdw-editor-toolbar': {
+				direction: 'ltr',
+				textAlign: 'left'
 			}
 		})}
 	/>

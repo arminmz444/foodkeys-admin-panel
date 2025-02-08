@@ -279,7 +279,7 @@ class FuseUtils {
             Check if user role is array,
             */
 		if (userRole && Array.isArray(authArr) && Array.isArray(userRole)) {
-			return authArr.some((r) => userRole.indexOf(r?.name?.toLowerCase()) >= 0);
+			return authArr.some((r) => userRole.indexOf(r?.toLowerCase()) >= 0);
 		}
 
 		/*

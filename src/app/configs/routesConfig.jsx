@@ -12,9 +12,10 @@ import AppsConfigs from '../main/apps/appsConfigs';
 import UserInterfaceConfigs from '../main/user-interface/UserInterfaceConfigs';
 import DocumentationConfig from '../main/documentation/DocumentationConfig';
 import authRoleExamplesConfigs from '../main/auth/authRoleExamplesConfigs';
-import banksConfigs from '../main/banks/banksConfigs.js';
-import fileManagerConfigs from '../main/file-manager/FileManagerConfig.jsx';
-import userAppConfig from '../main/users/UserAppConfig.jsx';
+import banksConfigs from '../main/banks/banksConfigs';
+import fileManagerConfigs from '../main/file-manager/FileManagerConfig';
+import userAppConfig from '../main/users/UserAppConfig';
+import CategoriesConfig from '../main/category/CategoriesConfig';
 
 const routeConfigs = [
 	SignOutConfig,
@@ -22,13 +23,14 @@ const routeConfigs = [
 	SignUpConfig,
 	DocumentationConfig,
 	fileManagerConfigs,
+	CategoriesConfig,
 	userAppConfig,
 	...PagesConfigs,
 	...UserInterfaceConfigs,
 	...DashboardsConfigs,
 	...AppsConfigs,
 	...authRoleExamplesConfigs,
-	...banksConfigs
+	...banksConfigs,
 ];
 /**
  * The routes of the application.

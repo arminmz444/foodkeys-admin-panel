@@ -5,5 +5,14 @@ export const FILE_TYPES = {
 	PDF: 'PDF',
 	ZIP: 'ZIP',
 	RAR: 'RAR',
-	TAR: 'TAR'
+	TAR: 'TAR',
+	Persian: {
+		AUDIO: 'آهنگ',
+		VIDEO: 'ویدیو',
+		IMAGE: 'عکس',
+		PDF: 'پی‌دی‌اف',
+		ZIP: 'فایل فشرده ZIP',
+		RAR: 'فایل فشرده RAR',
+		TAR: 'فایل فشرده TAR'
+	}
 };

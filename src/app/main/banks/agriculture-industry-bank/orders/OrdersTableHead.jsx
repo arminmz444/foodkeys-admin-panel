@@ -14,7 +14,7 @@ import TableHead from '@mui/material/TableHead';
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { darken, lighten } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import { useDeleteECommerceOrdersMutation } from '../AgricultureIndustryApi.js';
+import { useDeleteECommerceOrdersMutation } from '../ECommerceApi';
 /**
  * The rows.
  */

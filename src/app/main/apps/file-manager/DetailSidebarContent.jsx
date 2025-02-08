@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import _ from '@lodash';
 import ItemIcon from './ItemIcon';
 import { resetSelectedItemId, selectSelectedItemId } from './fileManagerAppSlice';
+import { handleDownload } from '@/utils/download-utils.js';
 
 /**
  * The detail sidebar content.
@@ -102,10 +103,11 @@ function DetailSidebarContent(props) {
 					className="flex-auto"
 					color="secondary"
 					variant="contained"
+					onClick={() => handleDownload({ username: '09144226139', filePath: selectedItemId })}
 				>
-					Download
+					دانلود
 				</Button>
-				<Button className="flex-auto">Delete</Button>
+				<Button className="flex-auto">حذف</Button>
 			</div>
 		</motion.div>
 	);

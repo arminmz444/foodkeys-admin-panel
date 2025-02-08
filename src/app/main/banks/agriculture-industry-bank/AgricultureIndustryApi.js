@@ -1,5 +1,5 @@
 import { apiService as api } from 'app/store/apiService';
-import ProdGuctModel from './product/models/ProductModel';
+import CompanyModel from './company/models/CompanyModel.js';
 
 export const addTagTypes = ['eCommerce_products', 'eCommerce_product', 'eCommerce_orders', 'eCommerce_order'];
 const AgricultureIndustryApi = api
@@ -8,9 +8,21 @@ const AgricultureIndustryApi = api
 	})
 	.injectEndpoints({
 		endpoints: (build) => ({
-			getECommerceProducts: build.query({
-				query: () => ({ url: `/mock-api/ecommerce/products` }),
-				providesTags: ['eCommerce_products']
+			getAllCompanies: build.query({
+				query: () => ({
+					url: '/company/?categoryId=2',
+					method: 'GET'
+				}),
+				transformResponse: (response) => response?.data,
+				providesTags: ['agricultureCompanyList']
+			}),
+			getAllCompanyRequests: build.query({
+				query: () => ({
+					url: '/request/company',
+					method: 'GET'
+				}),
+				transformResponse: (response) => response?.data,
+				providesTags: ['agricultureCompanyRequestList']
 			}),
 			deleteECommerceProducts: build.mutation({
 				query: (productIds) => ({
@@ -30,7 +42,7 @@ const AgricultureIndustryApi = api
 				query: (newProduct) => ({
 					url: `/mock-api/ecommerce/products`,
 					method: 'POST',
-					data: ProductModel(newProduct)
+					data: CompanyModel(newProduct)
 				}),
 				invalidatesTags: ['eCommerce_products', 'eCommerce_product']
 			}),
@@ -85,7 +97,8 @@ const AgricultureIndustryApi = api
 	});
 export default AgricultureIndustryApi;
 export const {
-	useGetECommerceProductsQuery,
+	useGetAllCompaniesQuery,
+	useGetAllCompanyRequestsQuery,
 	useDeleteECommerceProductsMutation,
 	useGetECommerceProductQuery,
 	useUpdateECommerceProductMutation,

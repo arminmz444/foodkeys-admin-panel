@@ -69,11 +69,12 @@ const navigationConfig = [
 		subtitleTranslate: 'SUB_CATEGORY',
 		children: [
 			{
-				id: 'category.payments',
+				id: 'category.list',
 				title: 'List of CategoriesOutlet',
 				type: 'item',
 				icon: 'heroicons-outline:clipboard-check',
-				url: '/category',
+				url: '/category/list',
+				end: true,
 				translate: 'CATEGORY_LIST'
 			},
 			{
@@ -81,9 +82,275 @@ const navigationConfig = [
 				title: 'gets',
 				type: 'item',
 				icon: 'heroicons-outline:clipboard-check',
-				url: '/category/subcategory',
+				url: '/category/subcategory/list',
+				end: true,
 				translate: 'SUB_SUB_CATEGORY_LIST'
 			}
+		]
+	},
+	{
+		id: 'banks',
+		title: 'Banks',
+		translate: 'BANKS',
+		subtitle: 'All of the banks',
+		type: 'group',
+		icon: 'heroicons-outline:cube',
+		children: [
+			{
+				id: 'banks.food-industry-bank',
+				title: 'FoodIndustryBank',
+				translate: 'FOOD_INDUSTRY_BANK',
+				type: 'collapse',
+				icon: 'heroicons-outline:shopping-cart',
+				children: [
+					{
+						id: 'banks.food-industry-bank.payments',
+						title: 'FoodIndustryBankList',
+						translate: 'COMPANY_LIST',
+						type: 'item',
+						url: 'banks/food-industry',
+						end: true
+					},
+					{
+						id: 'banks.food-industry-bank.details',
+						title: 'FoodIndustryBankDetails',
+						translate: 'جزئیات شرکت',
+						type: 'item',
+						url: 'banks/food-industry/:id',
+						end: true
+					},
+					{
+						id: 'banks.food-industry-bank.edit',
+						title: 'FoodIndustryBankEdit',
+						translate: 'ویرایش شرکت',
+						type: 'item',
+						url: 'banks/food-industry/:id/edit'
+					},
+					{
+						id: 'banks.food-industry-bank.create',
+						title: 'Create New Company',
+						translate: 'CREATE_COMPANY',
+						type: 'item',
+						url: 'banks/food-industry/create'
+					}
+				]
+			},
+			{
+				id: 'banks.agriculture-industry-bank',
+				title: 'AgricultureIndustryBank',
+				translate: 'AGRICULTURE_INDUSTRY_BANK',
+				type: 'collapse',
+				icon: 'heroicons-outline:shopping-cart',
+				children: [
+					{
+						id: 'banks.agriculture-industry-bank.list',
+						title: 'AgricultureIndustryBankList',
+						translate: 'COMPANY_LIST',
+						type: 'item',
+						url: 'banks/agriculture-industry',
+						end: true
+					},
+					{
+						id: 'banks.agriculture-industry-bank.requests',
+						title: 'USER_REQUESTS',
+						translate: 'USER_REQUESTS',
+						type: 'item',
+						url: 'banks/agriculture-industry/requests/list',
+					},
+					{
+						id: 'banks.agriculture-industry-bank.archive',
+						title: 'BANK_ARCHIVE',
+						translate: 'BANK_ARCHIVE',
+						type: 'item',
+						url: 'banks/agriculture-industry/archive',
+					}
+				]
+			},
+			{
+				id: 'banks.service-bank',
+				title: 'ServiceBank',
+				translate: 'SERVICE_BANK',
+				type: 'collapse',
+				icon: 'heroicons-outline:shopping-cart',
+				children: [
+					{
+						id: 'banks.service-bank.payments',
+						title: 'ServiceBankList',
+						translate: 'COMPANY_LIST',
+						type: 'item',
+						url: 'banks/service',
+						end: true
+					},
+					{
+						id: 'banks.service-bank.details',
+						title: 'ServiceBankDetails',
+						translate: 'جزئیات شرکت',
+						type: 'item',
+						url: 'banks/service/:id',
+						end: true
+					},
+					{
+						id: 'banks.service-bank.edit',
+						title: 'ServiceBankEdit',
+						translate: 'ویرایش شرکت',
+						type: 'item',
+						url: 'banks/service/:id/edit'
+					},
+					{
+						id: 'banks.service-bank.create',
+						title: 'Create New Company',
+						translate: 'CREATE_COMPANY',
+						type: 'item',
+						url: 'banks/service/create'
+					}
+					// {
+					// 	id: "banks.service-bank.requests",
+					// 	title: "Service Bank Requests",
+					// 	translate: "SERVICE_BANK_REQUESTS",
+					// 	type: "item",
+					// 	url: "banks/service/requests",
+					// 	end: true,
+					// },
+					// {
+					// 	id: "e-commerce-order-detail",
+					// 	title: "Order Detail",
+					// 	translate: "جزئیات سفارش",
+					// 	type: "item",
+					// 	url: "apps/e-commerce/payments/1",
+					// },
+				]
+			},
+			{
+				id: 'banks.media',
+				title: 'MediaBank',
+				translate: 'MEDIA_BANK',
+				type: 'collapse',
+				icon: 'heroicons-outline:shopping-cart',
+				children: [
+					{
+						id: 'banks.media.payments',
+						title: 'MediaBankList',
+						translate: 'COMPANY_LIST',
+						type: 'item',
+						url: 'banks/media',
+						end: true
+					},
+					{
+						id: 'banks.media.details',
+						title: 'MediaBankDetails',
+						translate: 'جزئیات شرکت',
+						type: 'item',
+						url: 'banks/media/:id',
+						end: true
+					},
+					{
+						id: 'banks.media.edit',
+						title: 'MediaBankEdit',
+						translate: 'ویرایش شرکت',
+						type: 'item',
+						url: 'banks/media/:id/edit'
+					},
+					{
+						id: 'banks.media.create',
+						title: 'Create New Company',
+						translate: 'CREATE_COMPANY',
+						type: 'item',
+						url: 'banks/media/create'
+					}
+				]
+			}
+			// {
+			// 	id: "apps.ecommerce",
+			// 	title: "ECommerce",
+			// 	translate: "بانک صنایع کشاورزی",
+			// 	type: "collapse",
+			// 	icon: "heroicons-outline:shopping-cart",
+			// 	children: [
+			// 		{
+			// 			id: "e-commerce-companies",
+			// 			title: "UserList",
+			// 			translate: "COMPANY_LIST",
+			// 			type: "item",
+			// 			url: "apps/e-commerce/companies",
+			// 			end: true,
+			// 		},
+			// 		{
+			// 			id: "e-commerce-product-detail",
+			// 			title: "جزییات شرکت",
+			// 			translate: "جزییات شرکت",
+			// 			type: "item",
+			// 			url: "apps/e-commerce/companies/1/a-walk-amongst-friends-canvas-print",
+			// 		},
+			// 		{
+			// 			id: "e-commerce-new-product",
+			// 			title: "New Product",
+			// 			translate: "شرکت جدید",
+			// 			type: "item",
+			// 			url: "apps/e-commerce/companies/new",
+			// 		},
+			// 		{
+			// 			id: "e-commerce-payments",
+			// 			title: "Files",
+			// 			translate: "سفارش ها",
+			// 			type: "item",
+			// 			url: "apps/e-commerce/payments",
+			// 			end: true,
+			// 		},
+			// 		{
+			// 			id: "e-commerce-order-detail",
+			// 			title: "Order Detail",
+			// 			translate: "جزئیات سفارش",
+			// 			type: "item",
+			// 			url: "apps/e-commerce/payments/1",
+			// 		},
+			// 	],
+			// },
+			// {
+			// 	id: "apps.food",
+			// 	title: "Food",
+			// 	translate: "بانک صنایع غذایی",
+			// 	type: "collapse",
+			// 	icon: "heroicons-outline:shopping-cart",
+			// 	children: [
+			// 		{
+			// 			id: "food-companies",
+			// 			title: "UserList",
+			// 			translate: "COMPANY_LIST",
+			// 			type: "item",
+			// 			url: "apps/food/companies",
+			// 			end: true,
+			// 		},
+			// 		{
+			// 			id: "food-product-detail",
+			// 			title: "جزییات شرکت",
+			// 			translate: "جزئیات شرکت",
+			// 			type: "item",
+			// 			url: "apps/food/companies/1/a-walk-amongst-friends-canvas-print",
+			// 		},
+			// 		{
+			// 			id: "food-new-product",
+			// 			title: "New Product",
+			// 			translate: "شرکت جدید",
+			// 			type: "item",
+			// 			url: "apps/food/companies/new",
+			// 		},
+			// 		{
+			// 			id: "e-commerce-payments",
+			// 			title: "Files",
+			// 			translate: "سفارش ها",
+			// 			type: "item",
+			// 			url: "apps/e-commerce/payments",
+			// 			end: true,
+			// 		},
+			// 		{
+			// 			id: "e-commerce-order-detail",
+			// 			title: "Order Detail",
+			// 			translate: "جزئیات سفارش",
+			// 			type: "item",
+			// 			url: "apps/e-commerce/payments/1",
+			// 		},
+			// 	],
+			// },
 		]
 	},
 	{
@@ -111,7 +378,7 @@ const navigationConfig = [
 				icon: 'heroicons-outline:calendar',
 				url: '/apps/calendar',
 				translate: 'CALENDAR',
-				subtitleTranslate: 'SUB_CALENDAR',
+				subtitleTranslate: 'SUB_CALENDAR'
 			},
 			{
 				id: 'apps.messenger',
@@ -330,312 +597,6 @@ const navigationConfig = [
 		]
 	},
 	{
-		id: 'banks',
-		title: 'Banks',
-		translate: 'BANKS',
-		subtitle: 'All of the banks',
-		type: 'group',
-		icon: 'heroicons-outline:cube',
-		children: [
-			{
-				id: 'banks.academy',
-				title: 'Academy',
-				translate: 'آکادمی',
-				type: 'item',
-				icon: 'heroicons-outline:academic-cap',
-				url: '/apps/academy'
-			},
-			{
-				id: 'apps.calendar',
-				title: 'Calendar',
-				translate: 'تقویم',
-				subtitle: '3 رویداد بعدی',
-				type: 'item',
-				icon: 'heroicons-outline:calendar',
-				url: '/apps/calendar'
-			},
-			{
-				id: 'apps.chat',
-				title: 'Chat',
-				translate: 'گفتگو',
-				type: 'item',
-				icon: 'heroicons-outline:chat-alt',
-				url: '/apps/chat'
-			},
-			{
-				id: 'apps.contacts',
-				title: 'Contacts',
-				translate: 'مخاطبین',
-				type: 'item',
-				icon: 'heroicons-outline:user-group',
-				url: '/apps/contacts'
-			},
-			{
-				id: 'banks.food-industry-bank',
-				title: 'FoodIndustryBank',
-				translate: 'FOOD_INDUSTRY_BANK',
-				type: 'collapse',
-				icon: 'heroicons-outline:shopping-cart',
-				children: [
-					{
-						id: 'banks.food-industry-bank.payments',
-						title: 'FoodIndustryBankList',
-						translate: 'COMPANY_LIST',
-						type: 'item',
-						url: 'banks/food-industry',
-						end: true
-					},
-					{
-						id: 'banks.food-industry-bank.details',
-						title: 'FoodIndustryBankDetails',
-						translate: 'جزئیات شرکت',
-						type: 'item',
-						url: 'banks/food-industry/:id',
-						end: true
-					},
-					{
-						id: 'banks.food-industry-bank.edit',
-						title: 'FoodIndustryBankEdit',
-						translate: 'ویرایش شرکت',
-						type: 'item',
-						url: 'banks/food-industry/:id/edit'
-					},
-					{
-						id: 'banks.food-industry-bank.create',
-						title: 'Create New Company',
-						translate: 'CREATE_COMPANY',
-						type: 'item',
-						url: 'banks/food-industry/create'
-					}
-				]
-			},
-			{
-				id: 'banks.agriculture-industry-bank',
-				title: 'AgricultureIndustryBank',
-				translate: 'AGRICULTURE_INDUSTRY_BANK',
-				type: 'collapse',
-				icon: 'heroicons-outline:shopping-cart',
-				children: [
-					{
-						id: 'banks.agriculture-industry-bank.payments',
-						title: 'AgricultureIndustryBankList',
-						translate: 'COMPANY_LIST',
-						type: 'item',
-						url: 'banks/agriculture-industry',
-						end: true
-					},
-					{
-						id: 'banks.agriculture-industry-bank.details',
-						title: 'AgricultureIndustryBankDetails',
-						translate: 'جزئیات شرکت',
-						type: 'item',
-						url: 'banks/agriculture-industry/:id',
-						end: true
-					},
-					{
-						id: 'banks.agriculture-industry-bank.edit',
-						title: 'AgricultureIndustryBankEdit',
-						translate: 'ویرایش شرکت',
-						type: 'item',
-						url: 'banks/agriculture-industry/:id/edit'
-					},
-					{
-						id: 'banks.agriculture-industry-bank.create',
-						title: 'Create New Company',
-						translate: 'CREATE_COMPANY',
-						type: 'item',
-						url: 'banks/agriculture-industry/create'
-					}
-				]
-			},
-			{
-				id: 'banks.service-bank',
-				title: 'ServiceBank',
-				translate: 'SERVICE_BANK',
-				type: 'collapse',
-				icon: 'heroicons-outline:shopping-cart',
-				children: [
-					{
-						id: 'banks.service-bank.payments',
-						title: 'ServiceBankList',
-						translate: 'COMPANY_LIST',
-						type: 'item',
-						url: 'banks/service',
-						end: true
-					},
-					{
-						id: 'banks.service-bank.details',
-						title: 'ServiceBankDetails',
-						translate: 'جزئیات شرکت',
-						type: 'item',
-						url: 'banks/service/:id',
-						end: true
-					},
-					{
-						id: 'banks.service-bank.edit',
-						title: 'ServiceBankEdit',
-						translate: 'ویرایش شرکت',
-						type: 'item',
-						url: 'banks/service/:id/edit'
-					},
-					{
-						id: 'banks.service-bank.create',
-						title: 'Create New Company',
-						translate: 'CREATE_COMPANY',
-						type: 'item',
-						url: 'banks/service/create'
-					}
-					// {
-					// 	id: "banks.service-bank.requests",
-					// 	title: "Service Bank Requests",
-					// 	translate: "SERVICE_BANK_REQUESTS",
-					// 	type: "item",
-					// 	url: "banks/service/requests",
-					// 	end: true,
-					// },
-					// {
-					// 	id: "e-commerce-order-detail",
-					// 	title: "Order Detail",
-					// 	translate: "جزئیات سفارش",
-					// 	type: "item",
-					// 	url: "apps/e-commerce/payments/1",
-					// },
-				]
-			},
-			{
-				id: 'banks.media',
-				title: 'MediaBank',
-				translate: 'MEDIA_BANK',
-				type: 'collapse',
-				icon: 'heroicons-outline:shopping-cart',
-				children: [
-					{
-						id: 'banks.media.payments',
-						title: 'MediaBankList',
-						translate: 'COMPANY_LIST',
-						type: 'item',
-						url: 'banks/media',
-						end: true
-					},
-					{
-						id: 'banks.media.details',
-						title: 'MediaBankDetails',
-						translate: 'جزئیات شرکت',
-						type: 'item',
-						url: 'banks/media/:id',
-						end: true
-					},
-					{
-						id: 'banks.media.edit',
-						title: 'MediaBankEdit',
-						translate: 'ویرایش شرکت',
-						type: 'item',
-						url: 'banks/media/:id/edit'
-					},
-					{
-						id: 'banks.media.create',
-						title: 'Create New Company',
-						translate: 'CREATE_COMPANY',
-						type: 'item',
-						url: 'banks/media/create'
-					}
-				]
-			}
-			// {
-			// 	id: "apps.ecommerce",
-			// 	title: "ECommerce",
-			// 	translate: "بانک صنایع کشاورزی",
-			// 	type: "collapse",
-			// 	icon: "heroicons-outline:shopping-cart",
-			// 	children: [
-			// 		{
-			// 			id: "e-commerce-companies",
-			// 			title: "UserList",
-			// 			translate: "COMPANY_LIST",
-			// 			type: "item",
-			// 			url: "apps/e-commerce/companies",
-			// 			end: true,
-			// 		},
-			// 		{
-			// 			id: "e-commerce-product-detail",
-			// 			title: "جزییات شرکت",
-			// 			translate: "جزییات شرکت",
-			// 			type: "item",
-			// 			url: "apps/e-commerce/companies/1/a-walk-amongst-friends-canvas-print",
-			// 		},
-			// 		{
-			// 			id: "e-commerce-new-product",
-			// 			title: "New Product",
-			// 			translate: "شرکت جدید",
-			// 			type: "item",
-			// 			url: "apps/e-commerce/companies/new",
-			// 		},
-			// 		{
-			// 			id: "e-commerce-payments",
-			// 			title: "Files",
-			// 			translate: "سفارش ها",
-			// 			type: "item",
-			// 			url: "apps/e-commerce/payments",
-			// 			end: true,
-			// 		},
-			// 		{
-			// 			id: "e-commerce-order-detail",
-			// 			title: "Order Detail",
-			// 			translate: "جزئیات سفارش",
-			// 			type: "item",
-			// 			url: "apps/e-commerce/payments/1",
-			// 		},
-			// 	],
-			// },
-			// {
-			// 	id: "apps.food",
-			// 	title: "Food",
-			// 	translate: "بانک صنایع غذایی",
-			// 	type: "collapse",
-			// 	icon: "heroicons-outline:shopping-cart",
-			// 	children: [
-			// 		{
-			// 			id: "food-companies",
-			// 			title: "UserList",
-			// 			translate: "COMPANY_LIST",
-			// 			type: "item",
-			// 			url: "apps/food/companies",
-			// 			end: true,
-			// 		},
-			// 		{
-			// 			id: "food-product-detail",
-			// 			title: "جزییات شرکت",
-			// 			translate: "جزئیات شرکت",
-			// 			type: "item",
-			// 			url: "apps/food/companies/1/a-walk-amongst-friends-canvas-print",
-			// 		},
-			// 		{
-			// 			id: "food-new-product",
-			// 			title: "New Product",
-			// 			translate: "شرکت جدید",
-			// 			type: "item",
-			// 			url: "apps/food/companies/new",
-			// 		},
-			// 		{
-			// 			id: "e-commerce-payments",
-			// 			title: "Files",
-			// 			translate: "سفارش ها",
-			// 			type: "item",
-			// 			url: "apps/e-commerce/payments",
-			// 			end: true,
-			// 		},
-			// 		{
-			// 			id: "e-commerce-order-detail",
-			// 			title: "Order Detail",
-			// 			translate: "جزئیات سفارش",
-			// 			type: "item",
-			// 			url: "apps/e-commerce/payments/1",
-			// 		},
-			// 	],
-			// },
-		]
-	},
-	{
 		id: 'file_manager',
 		title: 'File Manager',
 		subtitle: 'File manager section',
@@ -661,7 +622,7 @@ const navigationConfig = [
 				icon: 'heroicons-outline:document',
 				url: 'file-system',
 				end: true
-			},
+			}
 		]
 	},
 	{
@@ -1631,7 +1592,7 @@ const navigationConfig = [
 				children: [
 					{
 						id: 'navigation-features.disabled-collapse.child',
-						title: 'You shouldn\'t be able to see this child',
+						title: "You shouldn't be able to see this child",
 						type: 'item'
 					}
 				]

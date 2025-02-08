@@ -1,99 +1,258 @@
-import { apiService as api } from 'app/store/apiService';
-import ProductModel from './product/models/ProductModel';
+import { apiService as api } from 'app/store/apiService.js';
+import _ from '@lodash';
+import { createSelector } from '@reduxjs/toolkit';
+import BoardModel from './models/BoardModel.js';
+import CardModel from './models/CardModel.js';
+import reorder, { reorderQuoteMap } from './reorder.js';
 
-export const addTagTypes = ['eCommerce_products', 'eCommerce_product', 'eCommerce_orders', 'eCommerce_order'];
-const ServicesBankApi = api
+export const addTagTypes = [
+	'scrumboard_members',
+	'scrumboard_board_lists',
+	'scrumboard_member',
+	'scrumboard_board_list',
+	'scrumboard_board_labels',
+	'scrumboard_board_label',
+	'scrumboard_board_cards',
+	'scrumboard_board_card',
+	'scrumboard_boards',
+	'scrumboard_board'
+];
+const ServiceBankApi = api
 	.enhanceEndpoints({
 		addTagTypes
 	})
 	.injectEndpoints({
 		endpoints: (build) => ({
-			getECommerceProducts: build.query({
-				query: () => ({ url: `/mock-api/ecommerce/products` }),
-				providesTags: ['eCommerce_products']
+			getScrumboardMembers: build.query({
+				query: () => ({ url: `/mock-api/scrumboard/members` }),
+				providesTags: ['scrumboard_members']
 			}),
-			deleteECommerceProducts: build.mutation({
-				query: (productIds) => ({
-					url: `/mock-api/ecommerce/products`,
-					method: 'DELETE',
-					data: productIds
-				}),
-				invalidatesTags: ['eCommerce_products']
-			}),
-			getECommerceProduct: build.query({
-				query: (productId) => ({
-					url: `/mock-api/ecommerce/products/${productId}`
-				}),
-				providesTags: ['eCommerce_product', 'eCommerce_products']
-			}),
-			createECommerceProduct: build.mutation({
-				query: (newProduct) => ({
-					url: `/mock-api/ecommerce/products`,
+			createScrumboardMember: build.mutation({
+				query: (member) => ({
+					url: `/mock-api/scrumboard/members`,
 					method: 'POST',
-					data: ProductModel(newProduct)
+					data: member
 				}),
-				invalidatesTags: ['eCommerce_products', 'eCommerce_product']
+				invalidatesTags: ['scrumboard_members']
 			}),
-			updateECommerceProduct: build.mutation({
-				query: (product) => ({
-					url: `/mock-api/ecommerce/products/${product.id}`,
+			getScrumboardMember: build.query({
+				query: (memberId) => ({
+					url: `/mock-api/scrumboard/members/${memberId}`
+				}),
+				providesTags: ['scrumboard_member']
+			}),
+			updateScrumboardMember: build.mutation({
+				query: (member) => ({
+					url: `/mock-api/scrumboard/members/${member.id}`,
 					method: 'PUT',
-					data: product
+					data: member
 				}),
-				invalidatesTags: ['eCommerce_product', 'eCommerce_products']
+				invalidatesTags: ['scrumboard_member']
 			}),
-			deleteECommerceProduct: build.mutation({
-				query: (productId) => ({
-					url: `/mock-api/ecommerce/products/${productId}`,
+			deleteScrumboardMember: build.mutation({
+				query: (memberId) => ({
+					url: `/mock-api/scrumboard/members/${memberId}`,
 					method: 'DELETE'
 				}),
-				invalidatesTags: ['eCommerce_product', 'eCommerce_products']
+				invalidatesTags: ['scrumboard_members']
 			}),
-			getECommerceOrders: build.query({
-				query: () => ({ url: `/mock-api/ecommerce/orders` }),
-				providesTags: ['eCommerce_orders']
-			}),
-			getECommerceOrder: build.query({
-				query: (orderId) => ({ url: `/mock-api/ecommerce/orders/${orderId}` }),
-				providesTags: ['eCommerce_order']
-			}),
-			updateECommerceOrder: build.mutation({
-				query: (order) => ({
-					url: `/mock-api/ecommerce/orders/${order.id}`,
-					method: 'PUT',
-					data: order
+			getScrumboardBoardLists: build.query({
+				query: (boardId) => ({
+					url: `/mock-api/scrumboard/boards/${boardId}/lists`
 				}),
-				invalidatesTags: ['eCommerce_order', 'eCommerce_orders']
+				providesTags: ['scrumboard_board_lists']
 			}),
-			deleteECommerceOrder: build.mutation({
-				query: (orderId) => ({
-					url: `/mock-api/ecommerce/orders/${orderId}`,
+			createScrumboardBoardList: build.mutation({
+				query: (queryArg) => ({
+					url: `/mock-api/scrumboard/boards/${queryArg.boardId}/lists`,
+					method: 'POST',
+					data: queryArg.list
+				}),
+				invalidatesTags: ['scrumboard_board_lists', 'scrumboard_board']
+			}),
+			getScrumboardBoardList: build.query({
+				query: (queryArg) => ({
+					url: `/mock-api/scrumboard/boards/${queryArg.boardId}/lists/${queryArg.listId}`
+				}),
+				providesTags: ['scrumboard_board_lists', 'scrumboard_board_list']
+			}),
+			updateScrumboardBoardList: build.mutation({
+				query: (queryArg) => ({
+					url: `/mock-api/scrumboard/boards/${queryArg.boardId}/lists/${queryArg.list.id}`,
+					method: 'PUT',
+					data: queryArg.list
+				}),
+				invalidatesTags: ['scrumboard_board_lists', 'scrumboard_board_list']
+			}),
+			deleteScrumboardBoardList: build.mutation({
+				query: (queryArg) => ({
+					url: `/mock-api/scrumboard/boards/${queryArg.boardId}/lists/${queryArg.listId}`,
 					method: 'DELETE'
 				}),
-				invalidatesTags: ['eCommerce_order', 'eCommerce_orders']
+				invalidatesTags: ['scrumboard_board_lists', 'scrumboard_board']
 			}),
-			deleteECommerceOrders: build.mutation({
-				query: (ordersId) => ({
-					url: `/mock-api/ecommerce/orders`,
-					method: 'DELETE',
-					data: ordersId
+			getScrumboardBoardLabels: build.query({
+				query: (boardId) => ({
+					url: `/mock-api/scrumboard/boards/${boardId}/labels`
 				}),
-				invalidatesTags: ['eCommerce_order', 'eCommerce_orders']
+				providesTags: ['scrumboard_board_labels']
+			}),
+			createScrumboardBoardLabel: build.mutation({
+				query: (queryArg) => ({
+					url: `/mock-api/scrumboard/boards/${queryArg.boardId}/labels`,
+					method: 'POST',
+					data: queryArg.label
+				}),
+				invalidatesTags: ['scrumboard_board_labels']
+			}),
+			getScrumboardBoardLabel: build.query({
+				query: (queryArg) => ({
+					url: `/mock-api/scrumboard/boards/${queryArg.boardId}/labels/${queryArg.labelId}`
+				}),
+				providesTags: ['scrumboard_board_label']
+			}),
+			updateScrumboardBoardLabel: build.mutation({
+				query: (queryArg) => ({
+					url: `/mock-api/scrumboard/boards/${queryArg.boardId}/labels/${queryArg.label.id}`,
+					method: 'PUT',
+					data: queryArg.label
+				}),
+				invalidatesTags: ['scrumboard_board_label']
+			}),
+			deleteScrumboardBoardLabel: build.mutation({
+				query: (queryArg) => ({
+					url: `/mock-api/scrumboard/boards/${queryArg.boardId}/labels/${queryArg.labelId}`,
+					method: 'DELETE'
+				}),
+				invalidatesTags: ['scrumboard_board_labels']
+			}),
+			getScrumboardBoardCards: build.query({
+				query: (boardId) => ({
+					url: `/mock-api/scrumboard/boards/${boardId}/cards`
+				}),
+				providesTags: ['scrumboard_board_cards']
+			}),
+			createScrumboardBoardCard: build.mutation({
+				query: (queryArg) => ({
+					url: `/mock-api/scrumboard/boards/${queryArg.boardId}/lists/${queryArg.listId}/cards`,
+					method: 'POST',
+					data: CardModel(queryArg.card)
+				}),
+				invalidatesTags: ['scrumboard_board_cards', 'scrumboard_board']
+			}),
+			updateScrumboardBoardCard: build.mutation({
+				query: (queryArg) => ({
+					url: `/mock-api/scrumboard/boards/${queryArg.boardId}/cards/${queryArg.card.id}`,
+					method: 'PUT',
+					data: queryArg.card
+				}),
+				invalidatesTags: ['scrumboard_board_cards']
+			}),
+			deleteScrumboardBoardCard: build.mutation({
+				query: (queryArg) => ({
+					url: `/mock-api/scrumboard/boards/${queryArg.boardId}/cards/${queryArg.cardId}`,
+					method: 'DELETE'
+				}),
+				invalidatesTags: ['scrumboard_board_cards']
+			}),
+			getScrumboardBoards: build.query({
+				query: () => ({ url: `/mock-api/scrumboard/boards` }),
+				providesTags: ['scrumboard_boards']
+			}),
+			createScrumboardBoard: build.mutation({
+				query: (board) => ({
+					url: `/mock-api/scrumboard/boards`,
+					method: 'POST',
+					data: BoardModel(board)
+				}),
+				invalidatesTags: ['scrumboard_boards', 'scrumboard_board']
+			}),
+			getScrumboardBoard: build.query({
+				query: (boardId) => ({
+					url: `/mock-api/scrumboard/boards/${boardId}`
+				}),
+				providesTags: ['scrumboard_board']
+			}),
+			updateScrumboardBoard: build.mutation({
+				query: (board) => ({
+					url: `/mock-api/scrumboard/boards/${board.id}`,
+					method: 'PUT',
+					data: board
+				}),
+				invalidatesTags: ['scrumboard_board', 'scrumboard_boards']
+			}),
+			deleteScrumboardBoard: build.mutation({
+				query: (boardId) => ({
+					url: `/mock-api/scrumboard/boards/${boardId}`,
+					method: 'DELETE'
+				}),
+				invalidatesTags: ['scrumboard_boards']
+			}),
+			updateScrumboardBoardListOrder: build.mutation({
+				query: (queryArg) => {
+					const { orderResult, board } = queryArg;
+					const ordered = reorder(
+						_.merge([], board.lists),
+						orderResult.source.index,
+						orderResult.destination.index
+					);
+					return {
+						url: `/mock-api/scrumboard/boards/${board.id}`,
+						method: 'PUT',
+						data: { lists: ordered }
+					};
+				},
+				invalidatesTags: ['scrumboard_boards', 'scrumboard_board']
+			}),
+			updateScrumboardBoardCardOrder: build.mutation({
+				query: (queryArg) => {
+					const { orderResult, board } = queryArg;
+					const ordered = reorderQuoteMap(
+						_.merge([], board.lists),
+						orderResult.source,
+						orderResult.destination
+					);
+					return {
+						url: `/mock-api/scrumboard/boards/${board.id}`,
+						method: 'PUT',
+						data: { lists: ordered }
+					};
+				},
+				invalidatesTags: ['scrumboard_board_list', 'scrumboard_board']
 			})
 		}),
 		overrideExisting: false
 	});
-export default ServicesBankApi;
+export default ServiceBankApi;
 export const {
-	useGetECommerceProductsQuery,
-	useDeleteECommerceProductsMutation,
-	useGetECommerceProductQuery,
-	useUpdateECommerceProductMutation,
-	useDeleteECommerceProductMutation,
-	useGetECommerceOrdersQuery,
-	useGetECommerceOrderQuery,
-	useUpdateECommerceOrderMutation,
-	useDeleteECommerceOrderMutation,
-	useDeleteECommerceOrdersMutation,
-	useCreateECommerceProductMutation
-} = ServicesBankApi;
+	useGetScrumboardMembersQuery,
+	useCreateScrumboardMemberMutation,
+	useGetScrumboardBoardListsQuery,
+	useCreateScrumboardBoardListMutation,
+	useGetScrumboardMemberQuery,
+	useUpdateScrumboardMemberMutation,
+	useDeleteScrumboardMemberMutation,
+	useGetScrumboardBoardListQuery,
+	useUpdateScrumboardBoardListMutation,
+	useDeleteScrumboardBoardListMutation,
+	useGetScrumboardBoardLabelsQuery,
+	useCreateScrumboardBoardLabelMutation,
+	useGetScrumboardBoardLabelQuery,
+	useUpdateScrumboardBoardLabelMutation,
+	useDeleteScrumboardBoardLabelMutation,
+	useGetScrumboardBoardCardsQuery,
+	useCreateScrumboardBoardCardMutation,
+	useUpdateScrumboardBoardCardMutation,
+	useDeleteScrumboardBoardCardMutation,
+	useGetScrumboardBoardsQuery,
+	useCreateScrumboardBoardMutation,
+	useGetScrumboardBoardQuery,
+	useUpdateScrumboardBoardMutation,
+	useDeleteScrumboardBoardMutation,
+	useUpdateScrumboardBoardListOrderMutation,
+	useUpdateScrumboardBoardCardOrderMutation
+} = ServiceBankApi;
+export const selectLabelById = (boardId, id) =>
+	createSelector(
+		(ServiceBankApi.endpoints.getScrumboardBoardLabels.select(boardId), (labels) => _.find(labels, { id }))
+	);

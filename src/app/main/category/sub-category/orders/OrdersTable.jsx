@@ -68,7 +68,7 @@ function OrdersTable() {
 
 	return (
 		<Paper
-			className="flex flex-col flex-auto shadow-3 rounded-t-16 overflow-hidden rounded-b-0 w-full h-full"
+			className="flex flex-col shadow-3 rounded-t-16 overflow-auto rounded-b-0 w-full h-full pb-40"
 			elevation={0}
 		>
 			<DataTable

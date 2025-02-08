@@ -1,0 +1,225 @@
+{
+  "title": "A registration form",
+  "description": "A simple form example with various formData return types per tab.",
+  "type": "object",
+  "properties": {
+    "string": {
+      "type": "object",
+      "title": "String",
+      "required": [
+        "firstName",
+        "lastName"
+      ],
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "title": "نام"
+        },
+        "lastName": {
+          "type": "string",
+          "title": "Last name"
+        },
+        "select": {
+          "type": "string",
+          "title": "Example select",
+          "enum": [
+            "Yes",
+            "No"
+          ]
+        },
+        "react-select": {
+          "type": "string",
+          "title": "Example React select",
+          "enum": [
+            "Yes",
+            "No"
+          ]
+        },
+        "auto-complete": {
+          "type": "string",
+          "title": "Example Auto Complete",
+          "enum": [
+            "Yes",
+            "No"
+          ]
+        },
+        "password": {
+          "type": "string",
+          "title": "Password",
+          "minLength": 3
+        },
+        "upload": {
+          "type": "file",
+          "title": "Please upload your file"
+        },
+        "bio": {
+          "type": "string",
+          "title": "Bio"
+        },
+        "date": {
+          "type": "Date",
+          "title": "Date"
+        },
+        "telephone": {
+          "type": "string",
+          "title": "Telephone"
+        }
+      }
+    },
+    "integer": {
+      "type": "object",
+      "title": "Integer",
+      "properties": {
+        "age": {
+          "type": "integer",
+          "title": "Age"
+        },
+        "customRating": {
+          "type": "integer",
+          "title": "Rating (Custom Component)"
+        }
+      }
+    },
+    "number": {
+      "type": "object",
+      "title": "Number",
+      "properties": {
+        "currency": {
+          "type": "number",
+          "title": "Currency"
+        }
+      }
+    },
+    "boolean": {
+      "type": "object",
+      "title": "Boolean",
+      "properties": {
+        "default": {
+          "type": "boolean",
+          "title": "checkbox (default)",
+          "description": "This is the checkbox-description"
+        },
+        "radio": {
+          "type": "boolean",
+          "title": "radio buttons",
+          "description": "This is the radio-description",
+          "enum": [
+            {
+              "key": true,
+              "value": "Yes"
+            },
+            {
+              "key": false,
+              "value": "No"
+            }
+          ]
+        }
+      }
+    },
+    "array": {
+      "type": "object",
+      "title": "Array",
+      "properties": {
+        "multiSelect": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "title": "Example Multi select",
+            "type": "string",
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "#ff0000",
+                "title": "Red"
+              },
+              {
+                "type": "string",
+                "const": "#00ff00",
+                "title": "Green"
+              },
+              {
+                "type": "string",
+                "const": "#0000ff",
+                "title": "Blue"
+              }
+            ]
+          }
+        },
+        "autoComplete": {
+          "type": "array",
+          "title": "Example Multi-Select Auto Complete",
+          "items": {
+            "type": "string",
+            "enum": [
+              "test",
+              "teete",
+              "etetet"
+            ]
+          }
+        },
+        "creatableSelectTest": {
+          "type": "array",
+          "title": "Example creatable select",
+          "items": {
+            "type": "string",
+            "enum": [
+              "test",
+              "teete",
+              "etetet"
+            ]
+          }
+        },
+        "selectTest": {
+          "type": "array",
+          "title": "Example React Multi Select",
+          "items": {
+            "type": "string",
+            "enum": [
+              {
+                "key": "Yes",
+                "style": {
+                  "borderBottom": "solid 1px black"
+                },
+                "value": "Yes",
+                "disabled": true
+              },
+              "No",
+              "etetet"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "xhrSelectTest": {
+          "type": "array",
+          "title": "Example XHR React Multi Select",
+          "items": {
+            "type": "string",
+            "enum": []
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "object": {
+      "type": "object",
+      "title": "Object",
+      "properties": {
+        "customComponent": {
+          "type": "object",
+          "title": "Custom Component",
+          "component": "customComponent",
+          "properties": {
+            "startDate": {
+              "type": "string",
+              "title": "Start Date"
+            },
+            "endDate": {
+              "type": "string",
+              "title": "End Date"
+            }
+          }
+        }
+      }
+    }
+  }
+}

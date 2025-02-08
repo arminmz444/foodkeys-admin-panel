@@ -13,7 +13,7 @@ import FuseLoading from '@fuse/core/FuseLoading';
 import InvoiceTab from './tabs/InvoiceTab';
 import OrderDetailsTab from './tabs/OrderDetailsTab';
 import ProductsTab from './tabs/ProductsTab';
-import { useGetECommerceOrderQuery } from '../AgricultureIndustryApi.js';
+import { useGetECommerceOrderQuery } from '../ECommerceApi';
 
 /**
  * The order.

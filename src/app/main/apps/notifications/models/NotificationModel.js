@@ -14,7 +14,9 @@ function NotificationModel(data) {
 		description: '',
 		time: new Date().toISOString(),
 		read: false,
-		variant: 'default'
+		variant: 'default',
+		link: '/apps/file-manager',
+		useRouter: true
 	});
 }
 

@@ -247,7 +247,7 @@ function Error404Page() {
 						color="text.secondary"
 						className="mt-8 text-center text-lg font-medium tracking-tight md:text-xl"
 					>
-						The page you requested could not be found.
+						صفحه درخواستی شما پیدا نشد
 					</Typography>
 				</motion.div>
 
@@ -255,7 +255,7 @@ function Error404Page() {
 					className="mt-48 block font-normal"
 					to="/apps/dashboards/project"
 				>
-					Back to Dashboard
+					بازگشت به صفحه اصلی
 				</Link>
 			</div>
 		</div>

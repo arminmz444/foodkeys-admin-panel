@@ -18,13 +18,11 @@ import {
 	toggleNotificationPanel
 } from './notificationPanelSlice';
 import {
-	useCreateNotificationMutation,
-	useDeleteAllNotificationsMutation,
-	useDeleteNotificationMutation,
-	useGetAllNotificationsQuery
+	useGetAdminNotificationsQuery
 } from './NotificationApi';
 import NotificationModel from './models/NotificationModel';
 import NotificationTemplate from './NotificationTemplate';
+import { addNotification } from '@/app/main/apps/notifications/models/notificationSlice.js';
 
 const StyledSwipeableDrawer = styled(SwipeableDrawer)(({ theme }) => ({
 	'& .MuiDrawer-paper': {
@@ -40,10 +38,10 @@ function NotificationPanel() {
 	const location = useLocation();
 	const dispatch = useAppDispatch();
 	const state = useAppSelector(selectNotificationPanelState);
-	const [deleteNotification] = useDeleteNotificationMutation();
-	const [deleteAllNotifications] = useDeleteAllNotificationsMutation();
-	const [addNotification] = useCreateNotificationMutation();
-	const { data: notifications, isLoading } = useGetAllNotificationsQuery();
+	// const [deleteNotification] = useDeleteNotificationMutation();
+	// const [deleteAllNotifications] = useDeleteAllNotificationsMutation();
+	// const [addNotification] = useGetAdminNotificationsQuery();
+	const { data: notifications, isLoading } = useGetAdminNotificationsQuery();
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	useEffect(() => {
 		if (state) {
@@ -51,15 +49,16 @@ function NotificationPanel() {
 		}
 	}, [location, dispatch]);
 	useEffect(() => {
+		dispatch(addNotification(notifications))
 		const item = NotificationModel({
-			title: 'New Fuse React version is released! ',
-			description: ' Checkout the release notes for more information. 🚀 ',
+			title: 'ثبت شرکت جدید',
+			description: 'شرکت جدیدی با شناسه ۶۵۳۷ ثبت شده است',
 			link: '/documentation/changelog',
 			icon: 'heroicons-solid:fire',
 			variant: 'secondary'
 		});
 		setTimeout(() => {
-			addNotification(item);
+			// addNotification(item);
 			enqueueSnackbar(item.title, {
 				key: item.id,
 				autoHideDuration: 6000,
@@ -80,16 +79,16 @@ function NotificationPanel() {
 	}
 
 	function handleDismiss(id) {
-		deleteNotification(id);
+		// deleteNotification(id);
 	}
 
 	function handleDismissAll() {
-		deleteAllNotifications();
+		// deleteAllNotifications();
 	}
 
 	function demoNotification() {
-		const item = NotificationModel({ title: 'Great Job! this is awesome.' });
-		addNotification(item);
+		const item = NotificationModel({ title: 'پیام جدید از طرف مدیر' });
+		// addNotification(item);
 		enqueueSnackbar(item.title, {
 			key: item.id,
 			// autoHideDuration: 3000,
@@ -125,16 +124,16 @@ function NotificationPanel() {
 			</IconButton>
 
 			<FuseScrollbars className="flex flex-col p-16 h-full">
-				{notifications.length > 0 ? (
+				{notifications?.length > 0 ? (
 					<div className="flex flex-auto flex-col">
 						<div className="mb-36 flex items-end justify-between pt-136">
-							<Typography className="text-28 font-semibold leading-none">Notifications</Typography>
+							<Typography className="text-28 font-semibold leading-none">پیام‌ها و اعلانات</Typography>
 							<Typography
 								className="cursor-pointer text-12 underline"
 								color="secondary"
 								onClick={handleDismissAll}
 							>
-								dismiss all
+								پاک کردن همه
 							</Typography>
 						</div>
 						{_.orderBy(notifications, ['time'], ['desc']).map((item) => (
@@ -152,7 +151,7 @@ function NotificationPanel() {
 							className="text-center text-24"
 							color="text.secondary"
 						>
-							There are no notifications for now.
+							هیچ پیام جدیدی ندارید
 						</Typography>
 					</div>
 				)}
@@ -162,7 +161,7 @@ function NotificationPanel() {
 						variant="outlined"
 						onClick={demoNotification}
 					>
-						Create a notification example
+						ایجاد پیام دمو
 					</Button>
 				</div>
 			</FuseScrollbars>

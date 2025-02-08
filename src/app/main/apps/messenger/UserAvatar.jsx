@@ -3,6 +3,7 @@ import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
 import _ from '@lodash';
 import Statuses from './Statuses';
+import { getSafeString } from '@/utils/string-utils.js';
 
 const StyledBadge = styled(Badge)(({ theme, ...props }) => ({
 	width: 40,
@@ -44,10 +45,10 @@ function UserAvatar(props) {
 		>
 			<Avatar
 				src={user?.avatar}
-				alt={user?.name}
+				alt={`${getSafeString(user?.firstName)} ${getSafeString(user?.lastName)}`}
 				className="w-full h-full"
 			>
-				{user?.name && (!user?.avatar || user?.avatar === '') ? user?.name[0] : ''}
+				{user?.firstName && (!user?.avatar || user?.avatar === '') ? user?.firstName[0] : ''}
 			</Avatar>
 		</StyledBadge>
 	);

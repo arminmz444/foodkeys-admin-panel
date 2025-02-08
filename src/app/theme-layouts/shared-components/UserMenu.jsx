@@ -12,6 +12,8 @@ import { selectUser } from 'src/app/auth/user/store/userSlice';
 import useAuth from 'src/app/auth/useAuth';
 import { darken } from '@mui/material/styles';
 import { useAppSelector } from 'app/store/hooks';
+import { getSafeString } from '@/utils/string-utils.js';
+import { ROLES } from '@/core/enums/roles.js';
 
 /**
  * The user menu.
@@ -43,26 +45,26 @@ function UserMenu() {
 						component="span"
 						className="flex font-semibold"
 					>
-						{user.data.displayName}
+						{getSafeString(user?.firstName)}
 					</Typography>
 					<Typography
 						className="text-11 font-medium capitalize"
 						color="text.secondary"
 					>
-						{user.role?.toString()}
-						{(!user.role || (Array.isArray(user.role) && user.role.length === 0)) && 'Guest'}
+						{(user.role && ROLES.Persian[user.role?.toString()?.toUpperCase()]) ||
+							(Array.isArray(user.role) && user.role.length === 0 && 'مهمان')}
 					</Typography>
 				</div>
 
-				{user.data.photoURL ? (
+				{user?.avatar ? (
 					<Avatar
 						sx={{
 							background: (theme) => theme.palette.background.default,
 							color: (theme) => theme.palette.text.secondary
 						}}
 						className="md:mx-4"
-						alt="user photo"
-						src={user.data.photoURL}
+						alt="آواتار کاربر"
+						src={user.avatar.filePath}
 					/>
 				) : (
 					<Avatar
@@ -72,7 +74,7 @@ function UserMenu() {
 						}}
 						className="md:mx-4"
 					>
-						{user?.data?.displayName?.[0]}
+						{user?.firstName?.[0]}
 					</Avatar>
 				)}
 			</Button>

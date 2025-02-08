@@ -107,7 +107,7 @@ export const authApiMocks = (mock) => {
 
 		if (error.length === 0) {
 			const newUser = UserModel({
-				role: ['admin'],
+				role: ['ADMIN'],
 				data: {
 					displayName,
 					photoURL: 'assets/images/avatars/Abbott.jpg',

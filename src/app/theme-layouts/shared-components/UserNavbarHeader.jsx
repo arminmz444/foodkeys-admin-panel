@@ -3,6 +3,8 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { selectUser } from 'src/app/auth/user/store/userSlice';
 import { useAppSelector } from 'app/store/hooks';
+import { API_STATIC_FILES_BASE_URL } from 'app/store/apiService.js';
+import { getSafeString } from '@/utils/string-utils.js';
 
 const Root = styled('div')(({ theme }) => ({
 	'& .username, & .email': {
@@ -38,20 +40,20 @@ function UserNavbarHeader() {
 						color: 'text.secondary'
 					}}
 					className="avatar uppercase h-96 w-96 text-32 font-bold"
-					src={user.data.photoURL}
-					alt={user.data.displayName}
+					src={getSafeString(user?.avatar?.filePath)}
+					alt={user?.firstName}
 				>
-					{user?.data?.displayName?.charAt(0)}
+					{user?.firstName?.charAt(0)}
 				</Avatar>
 			</div>
 			<Typography className="username whitespace-nowrap text-14 font-medium">
-				{user?.data?.displayName}
+				{`${getSafeString(user?.firstName)} ${getSafeString(user?.lastName)}`}
 			</Typography>
 			<Typography
 				className="email whitespace-nowrap text-13 font-medium"
 				color="text.secondary"
 			>
-				{user.data.email}
+				{user?.email || user?.username}
 			</Typography>
 		</Root>
 	);

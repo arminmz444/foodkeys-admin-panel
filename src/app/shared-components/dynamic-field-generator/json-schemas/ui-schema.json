@@ -1,0 +1,10 @@
+{
+  "simple": {
+    "credit_card": {
+      "ui:style": {
+        "direction": "rtl",
+        "text-align": "right"
+      }
+    }
+  }
+}

@@ -1,6 +1,8 @@
 import { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
 
+const Company = lazy(() => import('./company/Company'));
+const RequestsList = lazy(() => import('./requests/RequestsList'));
 const Companies = lazy(() => import('./companies/Companies'));
 const AgricultureIndustryBank = lazy(() => import('./AgricultureIndustryBank'));
 /**
@@ -12,17 +14,38 @@ const AgricultureIndustryBankConfig = {
 	},
 	routes: [
 		{
-			path: 'banks/agriculture-industry',
+			path: 'banks/agriculture-industry/',
 			element: <AgricultureIndustryBank />,
 			children: [
 				{
 					path: '',
-					element: <Navigate to="companies" />
+					element: <Navigate to="company/list" />
 				},
 				{
-					path: 'companies',
+					path: 'company/',
+					element: <Navigate to="company/list" />
+				},
+				{
+					path: 'company/list',
 					element: <Companies />
+				},
+				{
+					path: 'company/:companyId/*',
+					element: <Company />
+				},
+				{
+					path: 'requests/*',
+					element: <RequestsList />
 				}
+
+				// {
+				// 	path: 'company',
+				// 	element: <CompaniesList />
+				// },
+				// {
+				// 	path: 'company/:id/details',
+				// 	element: <Company />
+				// }
 			]
 		}
 	]

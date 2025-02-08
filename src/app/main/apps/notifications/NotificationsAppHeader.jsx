@@ -39,12 +39,12 @@ function NotificationsAppHeader() {
 		<div className="flex w-full container">
 			<div className="flex flex-col sm:flex-row flex-auto sm:items-center min-w-0 p-24 md:p-32 pb-0 md:pb-0">
 				<div className="flex flex-col flex-auto">
-					<Typography className="text-3xl font-semibold tracking-tight leading-8">Notifications</Typography>
+					<Typography className="text-3xl font-semibold tracking-tight leading-8">پیام‌ها و اعلانات</Typography>
 					<Typography
 						className="font-medium tracking-tight"
 						color="text.secondary"
 					>
-						Lists all notifications
+						لیست پیام‌ها و اعلانات شما
 					</Typography>
 				</div>
 				<div className="flex items-center mt-24 sm:mt-0 sm:mx-8 space-x-12">
@@ -62,7 +62,7 @@ function NotificationsAppHeader() {
 						onClick={handleDismissAll}
 						startIcon={<FuseSvgIcon size={20}>heroicons-solid:bell</FuseSvgIcon>}
 					>
-						Dissmiss All
+						پاک کردن همه
 					</Button>
 				</div>
 			</div>

@@ -5,11 +5,11 @@ import Gallery from 'app/shared-components/media-player/Gallery/Gallery.jsx';
 import MediaPlayerList from 'app/shared-components/media-player/MediaPlayerList.jsx';
 import CustomDataGrid from 'app/shared-components/data-grid/CustomDataGrid.jsx';
 import CustomPersianDataTable from 'app/shared-components/custom-persian-data-table/CustomPersianDataTable.jsx';
-import DataTable from 'app/shared-components/data-table/DataTable.jsx';
-import { useGetAnalyticsDashboardWidgetsQuery } from './AnalyticsDashboardApi';
-import MRTEditModalDataTable
-	from 'app/shared-components/data-table/mrt-edit-modal-data-table/MRTEditModalDataTable.jsx';
 import MRTTransferList from 'app/shared-components/data-table/mrt-transfer-list/MRTTransferList.jsx';
+import DynamicFieldGenerator from 'app/shared-components/dynamic-field-generator/DynamicFieldGenerator.jsx';
+import DynamicFormGenerator from 'app/shared-components/dynamic-field-generator/DynamicFormGenerator.jsx';
+import FlowGenerator from 'app/shared-components/flow-generator/FlowGenerator.jsx';
+import { useGetAnalyticsDashboardWidgetsQuery } from './AnalyticsDashboardApi';
 
 const container = {
 	show: {
@@ -45,9 +45,13 @@ function AnalyticsDashboardApp() {
 			<MediaPlayerList />
 			<CustomDataGrid />
 			<CustomPersianDataTable />
-			<MRTEditModalDataTable />
+			<DynamicFieldGenerator />
+			<DynamicFormGenerator />
+			<FlowGenerator />
+			{/* <MRTEditModalDataTable /> */}
 			<MRTTransferList />
-			{/*<DataTable />*/}
+			{/* <Map /> */}
+			{/* <DataTable /> */}
 			{/* <MonacoJsonEditor /> */}
 			{/* <MapView */}
 			{/*	defaultLat={userLatitude} */}

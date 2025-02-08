@@ -101,6 +101,8 @@ function JwtAuthProvider(props) {
 		const attemptAutoLogin = async () => {
 			const accessToken = getAccessToken();
 
+			console.log('Attempting auto login');
+
 			if (isTokenValid(accessToken)) {
 				try {
 					setIsLoading(true);
@@ -108,24 +110,32 @@ function JwtAuthProvider(props) {
 						headers: { Authorization: `Bearer ${accessToken}` }
 					});
 					const userData = response?.data?.data;
+					console.log('Token is valid');
 					handleSignInSuccess(userData, accessToken);
 					return true;
 				} catch (error) {
+					console.log('Error, Token is not valid');
 					const axiosError = error;
 					handleSignInFailure(axiosError);
 					return false;
 				}
 			} else {
+				console.log('Token is not valid');
 				resetSession();
 				return false;
 			}
 		};
 
 		if (!isAuthenticated) {
-			attemptAutoLogin().then((signedIn) => {
-				setIsLoading(false);
-				setAuthStatus(signedIn ? 'authenticated' : 'unauthenticated');
-			});
+			attemptAutoLogin()
+				.then((signedIn) => {
+					setIsLoading(false);
+					setAuthStatus(signedIn ? 'authenticated' : 'unauthenticated');
+				})
+				.catch((e) => {
+					console.error(e);
+					setIsLoading(false);
+				});
 		}
 	}, [
 		isTokenValid,
@@ -139,8 +149,11 @@ function JwtAuthProvider(props) {
 	const handleRequest = async (url, data, handleSuccess, handleFailure) => {
 		try {
 			const response = await axios.post(url, data);
-			const userData = response?.data.user;
-			const accessToken = response?.data?.accessToken;
+			// const userData = response?.data.user;
+			// const accessToken = response?.data?.accessToken;
+			const apiData = response.data?.data;
+			const userData = apiData?.user;
+			const accessToken = apiData?.token;
 			handleSuccess(userData, accessToken);
 			return userData;
 		} catch (error) {
@@ -187,7 +200,9 @@ function JwtAuthProvider(props) {
 		setIsLoading(true);
 		try {
 			const response = await axios.post(config.tokenRefreshUrl);
-			const accessToken = response?.headers?.['New-Access-Token'];
+			const accessToken = config.updateTokenFromHeader
+				? response?.headers?.['New-Access-Token']
+				: response.data?.data?.token;
 
 			if (accessToken) {
 				setSession(accessToken);
@@ -207,31 +222,59 @@ function JwtAuthProvider(props) {
 	 *
 	 */
 	useEffect(() => {
-		if (config.updateTokenFromHeader && isAuthenticated) {
-			axios.interceptors.response.use(
-				(response) => {
-					const newAccessToken = response?.headers?.['New-Access-Token'];
+		// 	if (config.updateTokenFromHeader && isAuthenticated) {
+		// 		axios.interceptors.response.use(
+		// 			(response) => {
+		// 				const newAccessToken = response?.headers?.['New-Access-Token'];
+		//
+		// 				if (newAccessToken) {
+		// 					setSession(newAccessToken);
+		// 				}
+		//
+		// 				return response;
+		// 			},
+		// 			(error) => {
+		// 				const axiosError = error;
+		//
+		// 				if (axiosError?.response?.status === 401) {
+		// 					signOut();
+		// 					// eslint-disable-next-line no-console
+		// 					console.warn('Unauthorized request. User was signed out.');
+		// 				}
+		//
+		// 				return Promise.reject(axiosError);
+		// 			}
+		// 		);
+		// 	}
+		// }, [isAuthenticated]);
+		if (!isAuthenticated) return;
 
-					if (newAccessToken) {
-						setSession(newAccessToken);
-					}
+		const interceptor = axios.interceptors.response.use(
+			(response) => {
+				return response;
+			},
+			async (error) => {
+				if (error.response?.status === 401) {
+					try {
+						const newAccessToken = await refreshToken();
 
-					return response;
-				},
-				(error) => {
-					const axiosError = error;
-
-					if (axiosError?.response?.status === 401) {
+						if (newAccessToken) {
+							error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+							return axios(error.config);
+						}
+					} catch (refreshError) {
 						signOut();
-						// eslint-disable-next-line no-console
-						console.warn('Unauthorized request. User was signed out.');
 					}
-
-					return Promise.reject(axiosError);
 				}
-			);
-		}
-	}, [isAuthenticated]);
+
+				return Promise.reject(error);
+			}
+		);
+		// eslint-disable-next-line consistent-return
+		return () => {
+			axios.interceptors.response.eject(interceptor);
+		};
+	}, [isAuthenticated, signOut, refreshToken]);
 	useEffect(() => {
 		if (user) {
 			setAuthStatus('authenticated');

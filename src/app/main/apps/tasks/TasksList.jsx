@@ -54,7 +54,7 @@ function TasksList() {
 		<List className="w-full m-0 p-0">
 			<DragDropContext onDragEnd={onDragEnd}>
 				<Droppable
-					droppableId="list"
+					droppableId="taskList"
 					type="list"
 					direction="vertical"
 				>

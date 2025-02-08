@@ -94,7 +94,7 @@ function FuseShortcuts(props) {
 						)}
 
 						<Tooltip
-							title="Click to add/remove shortcut"
+							title="برای افزودن/حذف کلید‌های میانبر کلیک کنید"
 							placement={variant === 'horizontal' ? 'bottom' : 'left'}
 						>
 							<IconButton

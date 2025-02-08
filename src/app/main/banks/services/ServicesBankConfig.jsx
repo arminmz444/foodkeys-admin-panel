@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 
 const ServiceBank = lazy(() => import('./ServicesBank'));
 const Product = lazy(() => import('./product/Product'));
-const Products = lazy(() => import('./products/Products'));
+const Services = lazy(() => import('./services/Services'));
 const Order = lazy(() => import('./order/Order'));
 const Orders = lazy(() => import('./orders/Orders'));
 /**
@@ -20,11 +20,11 @@ const ServicesBankConfig = {
 			children: [
 				{
 					path: '',
-					element: <Navigate to="products" />
+					element: <Navigate to="list" />
 				},
 				{
-					path: 'products',
-					element: <Products />
+					path: 'list',
+					element: <Services />
 				},
 				{
 					path: 'companies/:productId/*',

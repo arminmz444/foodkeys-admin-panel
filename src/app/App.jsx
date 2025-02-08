@@ -9,9 +9,13 @@ import themeLayouts from 'app/theme-layouts/themeLayouts';
 import { selectMainTheme } from '@fuse/core/FuseSettings/fuseSettingsSlice';
 import MockAdapterProvider from '@mock-api/MockAdapterProvider';
 import { useAppSelector } from 'app/store/hooks';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 import withAppProviders from './withAppProviders';
 import AuthenticationProvider from './auth/AuthenticationProvider';
+import { addNotification } from './main/apps/notifications/models/notificationSlice.js';
 // import axios from 'axios';
 /**
  * Axios HTTP Request defaults
@@ -44,30 +48,65 @@ function App() {
 	 * The main theme from the Redux store.
 	 */
 	const mainTheme = useSelector(selectMainTheme);
+	// const dispatch = useDispatch();
+	// useEffect(() => {
+	// 	const client = new Client({
+	// 		brokerURL: 'ws://localhost:8080/ws',
+	// 		connectHeaders: {},
+	// 		debug(str) {
+	// 			console.log(str);
+	// 		},
+	// 		reconnectDelay: 5000,
+	// 		heartbeatIncoming: 4000,
+	// 		heartbeatOutgoing: 4000,
+	// 		webSocketFactory: () => new SockJS('http://localhost:8080/ws')
+	// 	});
+	//
+	// 	client.onConnect = () => {
+	// 		client.subscribe('/topic/adminNotifications', (message) => {
+	// 			const notification = JSON.parse(message.body);
+	// 			// const notification = message.body;
+	// 			console.log(notification);
+	// 			// @ts-ignore
+	// 			dispatch(addNotification(notification));
+	// 			// @ts-ignore
+	// 			// setMessages((prev) => [...prev, notification]);
+	// 			// setNo
+	// 		});
+	// 	};
+	//
+	// 	client.activate();
+	//
+	// 	return () => {
+	// 		client.deactivate();
+	// 	};
+	// }, []);
 	return (
-		<MockAdapterProvider>
-			<CacheProvider value={createCache(emotionCacheOptions[langDirection])}>
-				<FuseTheme
-					theme={mainTheme}
-					root
-				>
-					<AuthenticationProvider>
-						<SnackbarProvider
-							maxSnack={5}
-							anchorOrigin={{
-								vertical: 'bottom',
-								horizontal: 'right'
-							}}
-							classes={{
-								containerRoot: 'bottom-0 right-0 mb-52 md:mb-68 mr-8 lg:mr-80 z-99'
-							}}
-						>
-							<FuseLayout layouts={themeLayouts} />
-						</SnackbarProvider>
-					</AuthenticationProvider>
-				</FuseTheme>
-			</CacheProvider>
-		</MockAdapterProvider>
+		<React.StrictMode>
+			<MockAdapterProvider>
+				<CacheProvider value={createCache(emotionCacheOptions[langDirection])}>
+					<FuseTheme
+						theme={mainTheme}
+						root
+					>
+						<AuthenticationProvider>
+							<SnackbarProvider
+								maxSnack={5}
+								anchorOrigin={{
+									vertical: 'bottom',
+									horizontal: 'right'
+								}}
+								classes={{
+									containerRoot: 'bottom-0 right-0 mb-52 md:mb-68 mr-8 lg:mr-80 z-99'
+								}}
+							>
+								<FuseLayout layouts={themeLayouts} />
+							</SnackbarProvider>
+						</AuthenticationProvider>
+					</FuseTheme>
+				</CacheProvider>
+			</MockAdapterProvider>
+		</React.StrictMode>
 	);
 }
 

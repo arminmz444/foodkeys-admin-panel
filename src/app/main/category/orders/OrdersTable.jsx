@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import FuseLoading from '@fuse/core/FuseLoading';
 import { useDeleteECommerceOrdersMutation, useGetECommerceOrdersQuery } from '../CategoriesApi.js';
 import OrdersStatus from '../order/OrdersStatus';
+import FuseScrollbars from '@fuse/core/FuseScrollbars/index.js';
 
 function OrdersTable() {
 	const { data: orders, isLoading } = useGetECommerceOrdersQuery();
@@ -67,68 +68,72 @@ function OrdersTable() {
 	}
 
 	return (
-		<Paper
-			className="flex flex-col flex-auto shadow-3 rounded-t-16 overflow-hidden rounded-b-0 w-full h-full"
-			elevation={0}
-		>
-			<DataTable
-				initialState={{
-					density: 'spacious',
-					showColumnFilters: false,
-					showGlobalFilter: true,
-					columnPinning: {
-						left: ['mrt-row-expand', 'mrt-row-select'],
-						right: ['mrt-row-actions']
-					},
-					pagination: {
-						pageIndex: 0,
-						pageSize: 20
-					}
-				}}
-				data={orders}
-				columns={columns}
-				renderRowActionMenuItems={({ closeMenu, row, table }) => [
-					<MenuItem
-						key={0}
-						onClick={() => {
-							removeOrders([row.original.id]);
-							closeMenu();
-							table.resetRowSelection();
+		<div className="w-full flex flex-col min-h-full">
+			<FuseScrollbars className="grow overflow-x-auto">
+				<Paper
+					className="flex flex-col flex-auto shadow-3 rounded-t-16 overflow-hidden rounded-b-0 w-full h-full"
+					elevation={0}
+				>
+					<DataTable
+						initialState={{
+							density: 'spacious',
+							showColumnFilters: false,
+							showGlobalFilter: true,
+							columnPinning: {
+								left: ['mrt-row-expand', 'mrt-row-select'],
+								right: ['mrt-row-actions']
+							},
+							pagination: {
+								pageIndex: 0,
+								pageSize: 20
+							}
 						}}
-					>
-						<ListItemIcon>
-							<FuseSvgIcon>heroicons-outline:trash</FuseSvgIcon>
-						</ListItemIcon>
-						Delete
-					</MenuItem>
-				]}
-				renderTopToolbarCustomActions={({ table }) => {
-					const { rowSelection } = table.getState();
+						data={orders}
+						columns={columns}
+						renderRowActionMenuItems={({ closeMenu, row, table }) => [
+							<MenuItem
+								key={0}
+								onClick={() => {
+									removeOrders([row.original.id]);
+									closeMenu();
+									table.resetRowSelection();
+								}}
+							>
+								<ListItemIcon>
+									<FuseSvgIcon>heroicons-outline:trash</FuseSvgIcon>
+								</ListItemIcon>
+								Delete
+							</MenuItem>
+						]}
+						renderTopToolbarCustomActions={({ table }) => {
+							const { rowSelection } = table.getState();
 
-					if (Object.keys(rowSelection).length === 0) {
-						return null;
-					}
+							if (Object.keys(rowSelection).length === 0) {
+								return null;
+							}
 
-					return (
-						<Button
-							variant="contained"
-							size="small"
-							onClick={() => {
-								const selectedRows = table.getSelectedRowModel().rows;
-								removeOrders(selectedRows.map((row) => row.original.id));
-								table.resetRowSelection();
-							}}
-							className="flex shrink min-w-40 ltr:mr-8 rtl:ml-8"
-							color="secondary"
-						>
-							<FuseSvgIcon size={16}>heroicons-outline:trash</FuseSvgIcon>
-							<span className="hidden sm:flex mx-8">Delete selected items</span>
-						</Button>
-					);
-				}}
-			/>
-		</Paper>
-	);
-}
+							return (
+								<Button
+									variant="contained"
+									size="small"
+									onClick={() => {
+										const selectedRows = table.getSelectedRowModel().rows;
+										removeOrders(selectedRows.map((row) => row.original.id));
+										table.resetRowSelection();
+									}}
+									className="flex shrink min-w-40 ltr:mr-8 rtl:ml-8"
+									color="secondary"
+								>
+									<FuseSvgIcon size={16}>heroicons-outline:trash</FuseSvgIcon>
+									<span className="hidden sm:flex mx-8">Delete selected items</span>
+								</Button>
+							);
+						}}
+					/>
+				</Paper>
+			</FuseScrollbars>
+		</div>
+				);
+				}
 
-export default OrdersTable;
+				export default OrdersTable;

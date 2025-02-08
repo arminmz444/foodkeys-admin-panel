@@ -15,6 +15,7 @@ function Authentication(props) {
 	const { children } = props;
 	const { setAuthProvider, resetAuthProvider } = useAuth();
 	const userRole = useAppSelector(selectUserRole);
+	console.log(`Authentication section: UserRole is: ${userRole}`);
 	const dispatch = useAppDispatch();
 	/**
 	 * Auth Providers
@@ -116,7 +117,7 @@ function Authentication(props) {
 								displayName: userAttributes?.name,
 								email: userAttributes?.email
 							},
-							role: ['admin']
+							role: ['ADMIN']
 						})
 					);
 				})
@@ -135,7 +136,7 @@ function Authentication(props) {
 				UserModel({
 					uid: firebaseUser.uid,
 					data: firebaseUser.data,
-					role: ['admin']
+					role: ['ADMIN']
 				})
 			);
 		}

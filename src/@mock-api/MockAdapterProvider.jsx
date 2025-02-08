@@ -5,7 +5,7 @@ import { useAppDispatch } from 'app/store/hooks';
 import apiService from 'app/store/apiService';
 import ExtendedMockAdapter from './ExtendedMockAdapter';
 import { authApiMocks } from './api/auth-api';
-import { notificationsApiMocks } from './api/notifications-api';
+// import { notificationsApiMocks } from './api/notifications-api';
 import { messengerApiMocks } from './api/messenger-api';
 import { financeDashboardApiMocks } from './api/dashboards/finance-api';
 import { contactsApiMocks } from './api/contacts-api';
@@ -56,7 +56,7 @@ function MockAdapterProvider(props) {
 				mailBoxApiMocks,
 				messengerApiMocks,
 				notesApiMocks,
-				notificationsApiMocks,
+				// notificationsApiMocks,
 				profileApiMocks,
 				scrumboardApiMocks,
 				tasksApiMocks,

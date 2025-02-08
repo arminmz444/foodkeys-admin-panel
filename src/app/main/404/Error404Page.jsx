@@ -243,13 +243,19 @@ function Error404Page() {
 						color="text.secondary"
 						className="mt-8 text-center text-lg font-medium tracking-tight md:text-xl"
 					>
-						The page you requested could not be found.
+						صفحه درخواستی شما پیدا نشد
 					</Typography>
 				</motion.div>
-				<Link
-					className="mt-48 block font-normal"
+
+				<Typography
+					component={Link}
 					to="/"
-				/>
+					className="underline mt-32 mb-8 block font-normal hover:font-bold"
+					color="secondary"
+					role="button"
+				>
+					بازگشت به صفحه اصلی
+				</Typography>
 			</div>
 		</div>
 	);

@@ -1,99 +1,76 @@
 import { apiService as api } from 'app/store/apiService';
-import ProductModel from './product/models/ProductModel';
 
-export const addTagTypes = ['eCommerce_products', 'eCommerce_product', 'eCommerce_orders', 'eCommerce_order'];
-const CategoriesApi = api
-	.enhanceEndpoints({
-		addTagTypes
-	})
+// Tag types for category
+const addTagTypes = ['categoryList', 'category'];
+
+const CategoryApi = api
+	.enhanceEndpoints({ addTagTypes })
 	.injectEndpoints({
-		endpoints: (build) => ({
-			getECommerceProducts: build.query({
-				query: () => ({ url: `/mock-api/ecommerce/products` }),
-				providesTags: ['eCommerce_products']
-			}),
-			deleteECommerceProducts: build.mutation({
-				query: (productIds) => ({
-					url: `/mock-api/ecommerce/products`,
-					method: 'DELETE',
-					data: productIds
+		endpoints: (builder) => ({
+			// GET /category => fetch all categories
+			getCategories: builder.query({
+				query: () => ({
+					url: '/category',
+					method: 'GET'
 				}),
-				invalidatesTags: ['eCommerce_products']
+				transformResponse: (response) => response?.data,
+				providesTags: ['categoryList']
 			}),
-			getECommerceProduct: build.query({
-				query: (productId) => ({
-					url: `/mock-api/ecommerce/products/${productId}`
+
+			// GET /category/{id} => fetch single category
+			getCategory: builder.query({
+				query: (id) => ({
+					url: `/category/${id}`,
+					method: 'GET'
 				}),
-				providesTags: ['eCommerce_product', 'eCommerce_products']
+				transformResponse: (response) => response?.data,
+				providesTags: (result, error, id) => [{ type: 'category', id }]
 			}),
-			createECommerceProduct: build.mutation({
-				query: (newProduct) => ({
-					url: `/mock-api/ecommerce/products`,
+
+			// POST /category => create new category
+			createCategory: builder.mutation({
+				query: (newCat) => ({
+					url: '/category',
 					method: 'POST',
-					data: ProductModel(newProduct)
+					data: newCat
 				}),
-				invalidatesTags: ['eCommerce_products', 'eCommerce_product']
+				transformResponse: (response) => response?.data,
+				invalidatesTags: ['categoryList']
 			}),
-			updateECommerceProduct: build.mutation({
-				query: (product) => ({
-					url: `/mock-api/ecommerce/products/${product.id}`,
+
+			// PUT /category/{id} => update existing category
+			updateCategory: builder.mutation({
+				query: ({ id, ...rest }) => ({
+					url: `/category/${id}`,
 					method: 'PUT',
-					data: product
+					data: rest
 				}),
-				invalidatesTags: ['eCommerce_product', 'eCommerce_products']
+				transformResponse: (response) => response?.data,
+				invalidatesTags: (result, error, { id }) => [
+					{ type: 'category', id },
+					'categoryList'
+				]
 			}),
-			deleteECommerceProduct: build.mutation({
-				query: (productId) => ({
-					url: `/mock-api/ecommerce/products/${productId}`,
+
+			// DELETE /category/{id} => delete existing category
+			deleteCategory: builder.mutation({
+				query: (id) => ({
+					url: `/category/${id}`,
 					method: 'DELETE'
 				}),
-				invalidatesTags: ['eCommerce_product', 'eCommerce_products']
-			}),
-			getECommerceOrders: build.query({
-				query: () => ({ url: `/mock-api/ecommerce/orders` }),
-				providesTags: ['eCommerce_orders']
-			}),
-			getECommerceOrder: build.query({
-				query: (orderId) => ({ url: `/mock-api/ecommerce/orders/${orderId}` }),
-				providesTags: ['eCommerce_order']
-			}),
-			updateECommerceOrder: build.mutation({
-				query: (order) => ({
-					url: `/mock-api/ecommerce/orders/${order.id}`,
-					method: 'PUT',
-					data: order
-				}),
-				invalidatesTags: ['eCommerce_order', 'eCommerce_orders']
-			}),
-			deleteECommerceOrder: build.mutation({
-				query: (orderId) => ({
-					url: `/mock-api/ecommerce/orders/${orderId}`,
-					method: 'DELETE'
-				}),
-				invalidatesTags: ['eCommerce_order', 'eCommerce_orders']
-			}),
-			deleteECommerceOrders: build.mutation({
-				query: (ordersId) => ({
-					url: `/mock-api/ecommerce/orders`,
-					method: 'DELETE',
-					data: ordersId
-				}),
-				invalidatesTags: ['eCommerce_order', 'eCommerce_orders']
+				transformResponse: (response) => response?.data,
+				invalidatesTags: ['categoryList']
 			})
 		}),
 		overrideExisting: false
 	});
-export default CategoriesApi;
+
+export default CategoryApi;
+
 export const {
-	useGetECommerceProductsQuery,
-	useDeleteECommerceProductsMutation,
-	useGetECommerceProductQuery,
-	useUpdateECommerceProductMutation,
-	useDeleteECommerceProductMutation,
-	useGetECommerceOrdersQuery,
-	useGetECommerceOrderQuery,
-	useUpdateECommerceOrderMutation,
-	useDeleteECommerceOrderMutation,
-	useDeleteECommerceOrdersMutation,
-	useCreateECommerceProductMutation
-} = CategoriesApi;
+	useGetCategoriesQuery,
+	useGetCategoryQuery,
+	useCreateCategoryMutation,
+	useUpdateCategoryMutation,
+	useDeleteCategoryMutation
+} = CategoryApi;

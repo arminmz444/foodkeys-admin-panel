@@ -1,133 +1,133 @@
-/* eslint-disable react/no-unstable-nested-components */
-import { useMemo } from 'react';
-import DataTable from 'app/shared-components/data-table/DataTable';
-import { ListItemIcon, MenuItem, Paper } from '@mui/material';
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import { Link } from 'react-router-dom';
-import FuseLoading from '@fuse/core/FuseLoading';
-import { useDeleteECommerceOrdersMutation, useGetECommerceOrdersQuery } from '../CategoriesApi.js';
-import OrdersStatus from '../order/OrdersStatus';
+import GenericCrudTable from 'app/shared-components/data-table/GenericCrudTable.jsx';
+import FusePageCarded from '@fuse/core/FusePageCarded/index.js';
+import { styled } from '@mui/material/styles';
+import { useEffect, useState } from 'react';
+import {
+	useGetSubCategoriesQuery,
+	useCreateSubCategoryMutation,
+	useUpdateSubCategoryMutation,
+	useDeleteSubCategoryMutation
+} from './SubCategoriesApi.js';
+import useThemeMediaQuery from '../../../../@fuse/hooks/useThemeMediaQuery.js';
 
 function SubCategoriesTable() {
-	const { data: orders, isLoading } = useGetECommerceOrdersQuery();
-	const [removeOrders] = useDeleteECommerceOrdersMutation();
-	const columns = useMemo(
-		() => [
-			{
-				accessorKey: 'id',
-				header: 'Id',
-				size: 64
-			},
-			{
-				accessorKey: 'reference',
-				header: 'Reference',
-				size: 64,
-				Cell: ({ row }) => (
-					<Typography
-						component={Link}
-						to={`/apps/e-commerce/orders/${row.original.id}`}
-						className="underline"
-						color="secondary"
-						role="button"
-					>
-						{row.original.reference}
-					</Typography>
-				)
-			},
-			{
-				id: 'customer',
-				accessorFn: (row) => `${row.customer.firstName} ${row.customer.lastName}`,
-				header: 'Customer'
-			},
-			{
-				id: 'total',
-				accessorFn: (row) => `$${row.total}`,
-				header: 'Total',
-				size: 64
-			},
-			{ id: 'payment', accessorFn: (row) => row.payment.method, header: 'Payment', size: 128 },
-			{
-				id: 'status',
-				accessorFn: (row) => <OrdersStatus name={row.status[0].name} />,
-				accessorKey: 'status',
-				header: 'Status'
-			},
-			{
-				accessorKey: 'date',
-				header: 'Date'
-			}
-		],
-		[]
-	);
+	const columns = [
+		{
+			header: 'شناسه',
+			accessorKey: 'id',
+			size: 10
+		},
+		{
+			header: 'نام',
+			accessorKey: 'name',
+			size: 400
+		},
+		{
+			header: 'نام انگلیسی',
+			accessorKey: 'nameEn',
+			size: 100
+		},
+		{
+			header: 'ترتیب صفحه',
+			accessorKey: 'pageOrder',
+			size: 10
+		},
+		{
+			header: 'شناسه دسته‌بندی',
+			accessorKey: 'categoryId',
+			size: 10
+		},
+		{
+			header: 'دسته‌بندی',
+			accessorKey: 'category',
+			size: 100
+		},
+		{
+			header: 'تاریخ ایجاد',
+			accessorKey: 'createdAtStr',
+			size: 80
+		},
+		{
+			header: 'آخرین بروزرسانی',
+			accessorKey: 'updatedAtStr',
+			size: 80
+		},
+		{
+			header: 'شرکت‌های در انتظار تایید',
+			accessorKey: 'pendingCompanies',
+			size: 250
+		},
+		{
+			header: 'شرکت‌های تایید شده',
+			accessorKey: 'verifiedCompanies',
+			size: 50
+		},
+		{
+			header: 'شرکت‌های رد شده',
+			accessorKey: 'deniedCompanies',
+			size: 50
+		},
+		{
+			header: 'شرکت‌های جدید',
+			accessorKey: 'newCompanies',
+			size: 50
+		},
+		{
+			header: 'شرکت‌های آرشیوشده',
+			accessorKey: 'archivedCompanies',
+			size: 50
+		},
+		{
+			header: 'شرکت‌های حذف شده',
+			accessorKey: 'deletedCompanies',
+			size: 50
+		},
+		{
+			header: 'شرکت‌های بروزرسانی شده',
+			accessorKey: 'updatedCompanies',
+			size: 250
+		},
+		{
+			header: 'شرکت‌های منتشر شده',
+			accessorKey: 'publishedCompanies',
+			size: 50
+		},
+		{
+			header: 'صفحه جزئیات',
+			accessorKey: 'hasDetailsPage',
+			size: 30,
+			accessorFn: (row) => (row.hasDetailsPage ? 'دارد' : 'ندارد')
+		}
+	];
 
-	if (isLoading) {
-		return <FuseLoading />;
-	}
+	const Root = styled(FusePageCarded)({
+		'& .FusePageCarded-header': {},
+		'& .FusePageCarded-toolbar': {},
+		'& .FusePageCarded-content': {},
+		'& .FusePageCarded-sidebarHeader': {},
+		'& .FusePageCarded-sidebarContent': {}
+	});
 
+	// return (
+	const isMobile = useThemeMediaQuery((theme) => theme.breakpoints.down('lg'));
+	const [leftSidebarOpen, setLeftSidebarOpen] = useState(!isMobile);
+	const [rightSidebarOpen, setRightSidebarOpen] = useState(!isMobile);
+	useEffect(() => {
+		setLeftSidebarOpen(!isMobile);
+		setRightSidebarOpen(!isMobile);
+	}, [isMobile]);
 	return (
-		<Paper
-			className="flex flex-col flex-auto shadow-3 rounded-t-16 overflow-hidden rounded-b-0 w-full h-full"
-			elevation={0}
-		>
-			<DataTable
-				initialState={{
-					density: 'spacious',
-					showColumnFilters: false,
-					showGlobalFilter: true,
-					columnPinning: {
-						left: ['mrt-row-expand', 'mrt-row-select'],
-						right: ['mrt-row-actions']
-					},
-					pagination: {
-						pageIndex: 0,
-						pageSize: 20
-					}
-				}}
-				data={orders}
-				columns={columns}
-				renderRowActionMenuItems={({ closeMenu, row, table }) => [
-					<MenuItem
-						key={0}
-						onClick={() => {
-							removeOrders([row.original.id]);
-							closeMenu();
-							table.resetRowSelection();
-						}}
-					>
-						<ListItemIcon>
-							<FuseSvgIcon>heroicons-outline:trash</FuseSvgIcon>
-						</ListItemIcon>
-						Delete
-					</MenuItem>
-				]}
-				renderTopToolbarCustomActions={({ table }) => {
-					const { rowSelection } = table.getState();
-
-					if (Object.keys(rowSelection).length === 0) {
-						return null;
-					}
-
-					return (
-						<Button
-							variant="contained"
-							size="small"
-							onClick={() => {
-								const selectedRows = table.getSelectedRowModel().rows;
-								removeOrders(selectedRows.map((row) => row.original.id));
-								table.resetRowSelection();
-							}}
-							className="flex shrink min-w-40 ltr:mr-8 rtl:ml-8"
-							color="secondary"
-						>
-							<FuseSvgIcon size={16}>heroicons-outline:trash</FuseSvgIcon>
-							<span className="hidden sm:flex mx-8">Delete selected items</span>
-						</Button>
-					);
-				}}
-			/>
-		</Paper>
+		<GenericCrudTable
+			columns={columns}
+			// Provide the RTK Query hooks for listing and mutations
+			useListQueryHook={useGetSubCategoriesQuery}
+			useCreateMutationHook={useCreateSubCategoryMutation}
+			useUpdateMutationHook={useUpdateSubCategoryMutation}
+			useDeleteMutationHook={useDeleteSubCategoryMutation}
+			saveToStore={false}
+			enablePagination
+			pagination={{ pageIndex: 1, pageSize: 10 }}
+		/>
 	);
 }
 

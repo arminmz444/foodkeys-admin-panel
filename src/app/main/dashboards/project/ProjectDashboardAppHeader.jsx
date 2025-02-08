@@ -11,12 +11,15 @@ import { darken } from '@mui/material/styles';
 import { selectUser } from 'src/app/auth/user/store/userSlice';
 import { useAppSelector } from 'app/store/hooks';
 import { useGetProjectDashboardProjectsQuery } from './ProjectDashboardApi';
+import { getSafeString } from '@/utils/string-utils.js';
+import { selectUnreadCount } from '../../apps/notifications/models/notificationSlice.js';
 
 /**
  * The ProjectDashboardAppHeader page.
  */
 function ProjectDashboardAppHeader() {
 	const { data: projects, isLoading } = useGetProjectDashboardProjectsQuery();
+	const newNotificationsCount = useAppSelector(selectUnreadCount);
 	const user = useAppSelector(selectUser);
 	const [selectedProject, setSelectedProject] = useState({
 		id: 1,
@@ -58,14 +61,14 @@ function ProjectDashboardAppHeader() {
 							color: (theme) => theme.palette.text.secondary
 						}}
 						className="flex-0 w-64 h-64"
-						alt="user photo"
-						src={user?.data?.photoURL}
+						alt="آواتار کاربر"
+						src={getSafeString(user?.avatar?.filePath)}
 					>
-						{user?.data?.displayName?.[0]}
+						{`${getSafeString(user?.firstName)} ${getSafeString(user?.lastName)}`}
 					</Avatar>
 					<div className="flex flex-col min-w-0 mx-16">
 						<Typography className="text-2xl md:text-5xl font-semibold tracking-tight leading-7 md:leading-snug truncate">
-							{`${user.data.displayName} عزیز ، خوش آمدی !`}
+							{`${getSafeString(user?.firstName)} عزیز ، خوش آمدی !`}
 						</Typography>
 
 						<div className="flex items-center">
@@ -79,7 +82,7 @@ function ProjectDashboardAppHeader() {
 								className="mx-6 leading-6 truncate"
 								color="text.secondary"
 							>
-								You have 2 new messages and 15 new tasks
+								شما {newNotificationsCount} پیام و {15} تسک جدید دارید
 							</Typography>
 						</div>
 					</div>

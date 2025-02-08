@@ -2,7 +2,6 @@ import FuseLoading from '@fuse/core/FuseLoading';
 import FusePageSimple from '@fuse/core/FusePageSimple/FusePageSimple';
 import Typography from '@mui/material/Typography';
 import Masonry from 'react-masonry-css';
-import _ from '@lodash';
 import { useDeleteNotificationMutation, useGetAllNotificationsQuery } from './NotificationApi';
 import NotificationCard from './NotificationCard';
 import NotificationsAppHeader from './NotificationsAppHeader';
@@ -10,6 +9,8 @@ import NotificationsAppHeader from './NotificationsAppHeader';
 function NotificationsApp() {
 	const [deleteNotification] = useDeleteNotificationMutation();
 	const { data: notifications, isLoading } = useGetAllNotificationsQuery();
+
+	const finalNotifications = notifications?.data;
 
 	function handleDismiss(id) {
 		deleteNotification(id);
@@ -34,16 +35,18 @@ function NotificationsApp() {
 						className="my-masonry-grid flex w-full"
 						columnClassName="my-masonry-grid_column flex flex-col p-8"
 					>
-						{_.orderBy(notifications, ['time'], ['desc']).map((notification) => (
-							<NotificationCard
-								key={notification.id}
-								className="mb-16"
-								item={notification}
-								onClose={handleDismiss}
-							/>
-						))}
+						{finalNotifications &&
+							finalNotifications.length &&
+							finalNotifications.map((notification) => (
+								<NotificationCard
+									key={notification?.id}
+									className="mb-16"
+									item={notification}
+									onClose={handleDismiss}
+								/>
+							))}
 					</Masonry>
-					{notifications.length === 0 && (
+					{(!finalNotifications || finalNotifications?.length === 0) && (
 						<div className="flex flex-1 items-center justify-center p-16">
 							<Typography
 								className="text-center text-24"

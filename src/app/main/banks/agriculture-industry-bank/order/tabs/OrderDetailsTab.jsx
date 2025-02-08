@@ -14,7 +14,7 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Table from '@mui/material/Table';
 import TableHead from '@mui/material/TableHead';
-import { useGetECommerceOrderQuery } from '../../AgricultureIndustryApi.js';
+import { useGetECommerceOrderQuery } from '../../ECommerceApi';
 import OrdersStatus from '../OrdersStatus';
 
 const mapKey = import.meta.env.VITE_MAP_KEY;
