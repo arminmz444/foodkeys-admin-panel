@@ -1,11 +1,12 @@
 import { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
+import CreateServiceSchemaForm from '@/app/main/banks/services/service-schemas/CreateServiceSchemaForm.jsx';
 
 const ServiceBank = lazy(() => import('./ServicesBank'));
-const Product = lazy(() => import('./product/Product'));
+// const Product = lazy(() => import('./product/Product'));
 const Services = lazy(() => import('./services/Services'));
-const Order = lazy(() => import('./order/Order'));
-const Orders = lazy(() => import('./orders/Orders'));
+// const Order = lazy(() => import('./order/Order'));
+// const Orders = lazy(() => import('./orders/Orders'));
 /**
  * The Services Industry Bank configuration.
  */
@@ -27,16 +28,8 @@ const ServicesBankConfig = {
 					element: <Services />
 				},
 				{
-					path: 'companies/:productId/*',
-					element: <Product />
-				},
-				{
-					path: 'list',
-					element: <Orders />
-				},
-				{
-					path: 'payments/:orderId',
-					element: <Order />
+					path: 'schema',
+					element: <CreateServiceSchemaForm />
 				}
 			]
 		}

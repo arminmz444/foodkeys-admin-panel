@@ -9,6 +9,9 @@ import MRTTransferList from 'app/shared-components/data-table/mrt-transfer-list/
 import DynamicFieldGenerator from 'app/shared-components/dynamic-field-generator/DynamicFieldGenerator.jsx';
 import DynamicFormGenerator from 'app/shared-components/dynamic-field-generator/DynamicFormGenerator.jsx';
 import FlowGenerator from 'app/shared-components/flow-generator/FlowGenerator.jsx';
+// import NodeEditor from 'app/shared-components/rete-editor/rete-editor.jsx';
+import CustomSpreadsheet from 'app/shared-components/custom-spreadsheet/CustomSpreadsheet.jsx';
+import axios from 'axios';
 import { useGetAnalyticsDashboardWidgetsQuery } from './AnalyticsDashboardApi';
 
 const container = {
@@ -36,6 +39,29 @@ function AnalyticsDashboardApp() {
 	const userLatitude = 40.7128;
 	const userLongitude = -74.006;
 
+	async function loadOptions(search, loadedOptions, { page }) {
+		let url = `/employees/?pageNumber=${page}&pid=${search}`;
+		url = `/employees/?pageNumber=${page}&flname=${search}`;
+		const response = await axios.get(url).catch((error) => {
+			console.log(error);
+		});
+		const responseJSON = await response?.data;
+		const tmp = responseJSON.data.map((e) => {
+			return {
+				employeeId: e.id,
+				value: e.personnelId,
+				label: `${e.personnelId} : ${e.firstName} ${e.lastName}`
+			};
+		});
+		return {
+			options: tmp,
+			hasMore: responseJSON.pagination.pageNumber < responseJSON.pagination.totalPages,
+			additional: {
+				page: page + 1
+			}
+		};
+	}
+
 	return (
 		// <GrapesEditor />
 		<>
@@ -50,6 +76,43 @@ function AnalyticsDashboardApp() {
 			<FlowGenerator />
 			{/* <MRTEditModalDataTable /> */}
 			<MRTTransferList />
+			{/* <CustomSelect */}
+			{/*	name="employeePersonnelId" */}
+			{/*	id="employeePersonnelId" */}
+			{/*	isDisabled={false} */}
+			{/*	errors={false} */}
+			{/*	touched={false} */}
+			{/*	// setFieldValue={setFieldValue} */}
+			{/*	// setFieldTouched={setFieldTouched} */}
+			{/*	// value={selectInputValue} */}
+			{/*	// onChange={setSelectInputValue} */}
+			{/*	// searchByPersonnelId */}
+			{/*	loadOptions={loadOptions} */}
+			{/*	// searchOption={employeeSearchOption} */}
+			{/*	// setSearchOption={setEmployeeSearchOption} */}
+			{/*	noOptionsMessage="کارمندی پیدا نشد" */}
+			{/*	loadingMessage="در حال جستجو ..." */}
+			{/*	// checkBoxes={[ */}
+			{/*	// 	{ label: 'کد پرسنلی', value: 1 }, */}
+			{/*	// 	{ label: 'نام', value: 2 } */}
+			{/*	// ]} */}
+			{/* /> */}
+			<CustomSpreadsheet
+				toolbarButtons={[
+					{
+						label: 'Custom Action',
+						onClick: () => alert('Custom Action Triggered')
+					}
+				]}
+				fetchData={null}
+			/>
+			{/*	const fetchSpreadsheetData = async () => { */}
+			{/*	const response = await fetch('/api/data-endpoint'); */}
+			{/*	const jsonData = await response.json(); */}
+			{/*	// Transform jsonData to the format required by react-spreadsheet */}
+			{/*	return jsonData.map((row) => row.map((cell) => ({ value: cell }))); */}
+			{/* }; */}
+			{/* <NodeEditor /> */}
 			{/* <Map /> */}
 			{/* <DataTable /> */}
 			{/* <MonacoJsonEditor /> */}

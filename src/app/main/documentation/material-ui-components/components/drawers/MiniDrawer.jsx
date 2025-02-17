@@ -109,7 +109,7 @@ export default function MiniDrawer() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (<ListItem key={text} disablePadding sx={{ display: 'block' }}>
+          {['صندوق ورودی', 'ستاره‌دار‌ها', 'ارسال ایمیل', 'پیش‌نویس‌ها'].map((text, index) => (<ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton sx={{
                 minHeight: 48,
                 justifyContent: open ? 'initial' : 'center',

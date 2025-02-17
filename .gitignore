@@ -17,7 +17,7 @@
 .env.test.local
 .env.production.local
 .eslintcache
-
+/mock-uploads
 /.idea
 /.vscode
 
@@ -57,3 +57,4 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+/Fuse-React-10.5.0-js-demo.zip

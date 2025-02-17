@@ -19,7 +19,7 @@ function NotificationsAppHeader() {
 	}
 
 	function demoNotification() {
-		const item = NotificationModel({ title: 'Great Job! this is awesome.' });
+		const item = NotificationModel({ title: 'این یک پیام دمو است' });
 		enqueueSnackbar(item.title, {
 			key: item.id,
 			// autoHideDuration: 3000,
@@ -52,7 +52,7 @@ function NotificationsAppHeader() {
 						className="whitespace-nowrap"
 						onClick={demoNotification}
 					>
-						Example notification
+						پیام دمو
 					</Button>
 
 					<Button

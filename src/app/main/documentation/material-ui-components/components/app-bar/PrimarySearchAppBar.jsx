@@ -125,7 +125,7 @@ export default function PrimarySearchAppBar() {
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
-            <StyledInputBase placeholder="Search…" inputProps={{ 'aria-label': 'search' }}/>
+            <StyledInputBase placeholder="جستجو…" inputProps={{ 'aria-label': 'search' }}/>
           </Search>
           <Box sx={{ flexGrow: 1 }}/>
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>

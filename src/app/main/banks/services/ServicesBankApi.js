@@ -4,6 +4,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import BoardModel from './models/BoardModel.js';
 import CardModel from './models/CardModel.js';
 import reorder, { reorderQuoteMap } from './reorder.js';
+import ProductModel from '@/app/main/banks/food-industry-bank/product/models/ProductModel.js';
 
 export const addTagTypes = [
 	'scrumboard_members',
@@ -219,7 +220,30 @@ const ServiceBankApi = api
 					};
 				},
 				invalidatesTags: ['scrumboard_board_list', 'scrumboard_board']
-			})
+			}),
+			createECommerceProduct: build.mutation({
+				query: (newProduct) => ({
+					url: `/mock-api/ecommerce/products`,
+					method: 'POST',
+					data: ProductModel(newProduct)
+				}),
+				invalidatesTags: ['eCommerce_products', 'eCommerce_product']
+			}),
+			updateECommerceProduct: build.mutation({
+				query: (product) => ({
+					url: `/mock-api/ecommerce/products/${product.id}`,
+					method: 'PUT',
+					data: product
+				}),
+				invalidatesTags: ['eCommerce_product', 'eCommerce_products']
+			}),
+			deleteECommerceProduct: build.mutation({
+				query: (productId) => ({
+					url: `/mock-api/ecommerce/products/${productId}`,
+					method: 'DELETE'
+				}),
+				invalidatesTags: ['eCommerce_product', 'eCommerce_products']
+			}),
 		}),
 		overrideExisting: false
 	});
@@ -250,7 +274,10 @@ export const {
 	useUpdateScrumboardBoardMutation,
 	useDeleteScrumboardBoardMutation,
 	useUpdateScrumboardBoardListOrderMutation,
-	useUpdateScrumboardBoardCardOrderMutation
+	useUpdateScrumboardBoardCardOrderMutation,
+	useCreateECommerceProductMutation,
+	useDeleteECommerceProductMutation,
+	useUpdateECommerceProductMutation
 } = ServiceBankApi;
 export const selectLabelById = (boardId, id) =>
 	createSelector(

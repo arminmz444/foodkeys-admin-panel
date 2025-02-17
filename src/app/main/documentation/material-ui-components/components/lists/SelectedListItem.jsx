@@ -18,22 +18,22 @@ export default function SelectedListItem() {
           <ListItemIcon>
             <InboxIcon />
           </ListItemIcon>
-          <ListItemText primary="Inbox"/>
+          <ListItemText primary="صندوق پیام‌ها"/>
         </ListItemButton>
         <ListItemButton selected={selectedIndex === 1} onClick={(event) => handleListItemClick(event, 1)}>
           <ListItemIcon>
             <DraftsIcon />
           </ListItemIcon>
-          <ListItemText primary="Drafts"/>
+          <ListItemText primary="پیش‌نویس‌ها"/>
         </ListItemButton>
       </List>
       <Divider />
       <List component="nav" aria-label="secondary mailbox folder">
         <ListItemButton selected={selectedIndex === 2} onClick={(event) => handleListItemClick(event, 2)}>
-          <ListItemText primary="Trash"/>
+          <ListItemText primary="صندوق"/>
         </ListItemButton>
         <ListItemButton selected={selectedIndex === 3} onClick={(event) => handleListItemClick(event, 3)}>
-          <ListItemText primary="Spam"/>
+          <ListItemText primary="اسپم"/>
         </ListItemButton>
       </List>
     </Box>);

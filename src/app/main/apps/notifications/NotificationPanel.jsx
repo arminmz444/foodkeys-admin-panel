@@ -52,6 +52,7 @@ function NotificationPanel() {
 		dispatch(addNotification(notifications))
 		const item = NotificationModel({
 			title: 'ثبت شرکت جدید',
+			message: 'شرکت جدیدی با شناسه ۶۵۳۷ ثبت شده است',
 			description: 'شرکت جدیدی با شناسه ۶۵۳۷ ثبت شده است',
 			link: '/documentation/changelog',
 			icon: 'heroicons-solid:fire',

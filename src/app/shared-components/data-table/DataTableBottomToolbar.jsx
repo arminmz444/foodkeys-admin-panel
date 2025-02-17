@@ -2,17 +2,8 @@
 
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import {
-	MRT_LinearProgressBar,
-	MRT_TablePagination,
-	MRT_ToolbarAlertBanner,
-	MRT_ToolbarDropZone
-} from 'material-react-table';
+import { MRT_LinearProgressBar, MRT_TablePagination, MRT_ToolbarDropZone } from 'material-react-table';
 
-/**
- * Custom Bottom Toolbar for material-react-table
- * to ensure the pagination is fully visible and the layout is stable.
- */
 function DataTableBottomToolbar({ table }) {
 	const {
 		getState,
@@ -27,17 +18,13 @@ function DataTableBottomToolbar({ table }) {
 		refs: { bottomToolbarRef }
 	} = table;
 
-	// if you need to detect screen sizes
 	const isMobile = useMediaQuery('(max-width:720px)');
 	const isTablet = useMediaQuery('(max-width:1024px)');
 
-	// your table state
 	const { isFullScreen } = getState();
 
-	// parse props if you allow function/values (like you did for top toolbar)
 	const toolbarProps = parseFromValuesOrFunc(muiBottomToolbarProps, { table });
 
-	// If you want to stack the alert banner for smaller screens
 	const stackAlertBanner = isMobile || !!renderBottomToolbarCustomActions;
 
 	return (
@@ -53,13 +40,11 @@ function DataTableBottomToolbar({ table }) {
 					}
 				}}
 				sx={(theme) => ({
-					// NOTE: This background color might need to match your MRT theme or the container
 					backgroundColor: table.options.mrtTheme?.baseBackgroundColor,
 					transition: 'all 150ms ease-in-out',
 					zIndex: 1,
 					position: isFullScreen ? 'sticky' : 'relative',
 					bottom: isFullScreen ? '0' : undefined,
-					// merge any custom sx from muiBottomToolbarProps
 					...parseFromValuesOrFunc(toolbarProps?.sx, theme)
 				})}
 			>
@@ -67,7 +52,6 @@ function DataTableBottomToolbar({ table }) {
 
 				<div className="flex w-full items-center justify-end">
 					{/* <div className="flex items-center space-x-4 ml-8"> */}
-					{/*	/!* Custom actions on the bottom toolbar *!/ */}
 					{/*	{renderBottomToolbarCustomActions?.({ table }) ?? null} */}
 					{/* </div> */}
 					<div className="flex items-center space-x-4">
@@ -98,20 +82,19 @@ function DataTableBottomToolbar({ table }) {
 				</div>
 			</Box>
 
-			{/* Show an alert banner below if needed */}
-			<MRT_ToolbarAlertBanner
-				className="mt-4 rounded-md flex justify-center"
-				stackAlertBanner={stackAlertBanner}
-				table={table}
-				sx={{
-					'& .MuiStack-root': {
-						display: 'flex',
-						justifyContent: 'center',
-						width: '100%',
-						fontSize: 13
-					}
-				}}
-			/>
+			{/* <MRT_ToolbarAlertBanner */}
+			{/*	className="mt-4 rounded-md flex justify-center" */}
+			{/*	stackAlertBanner={stackAlertBanner} */}
+			{/*	table={table} */}
+			{/*	sx={{ */}
+			{/*		'& .MuiStack-root': { */}
+			{/*			display: 'flex', */}
+			{/*			justifyContent: 'center', */}
+			{/*			width: '100%', */}
+			{/*			fontSize: 13 */}
+			{/*		} */}
+			{/*	}} */}
+			{/* /> */}
 		</div>
 	);
 }

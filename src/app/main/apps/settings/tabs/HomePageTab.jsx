@@ -1,73 +1,72 @@
-import FuseSvgIcon from "@fuse/core/FuseSvgIcon";
-import FuseUtils from "@fuse/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import _ from "@lodash";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import { orange } from "@mui/material/colors";
-import Divider from "@mui/material/Divider";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormHelperText from "@mui/material/FormHelperText";
-import InputAdornment from "@mui/material/InputAdornment";
-import { lighten, styled } from "@mui/material/styles";
-import Switch from "@mui/material/Switch";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import clsx from "clsx";
-import { useState } from "react";
-import { Controller, useForm, useFormContext } from "react-hook-form";
-import { AiOutlineBgColors } from "react-icons/ai";
-import { BsTextLeft } from "react-icons/bs";
-import { LuHeading1 } from "react-icons/lu";
-import { MdAddLink, MdDriveFileRenameOutline } from "react-icons/md";
-import { z } from "zod";
-import { useUpdateAccountSettingsMutation } from "../SettingsApi";
+import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
+import FuseUtils from '@fuse/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+import _ from '@lodash';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormHelperText from '@mui/material/FormHelperText';
+import InputAdornment from '@mui/material/InputAdornment';
+import { lighten } from '@mui/material/styles';
+import Switch from '@mui/material/Switch';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import clsx from 'clsx';
+import { useState } from 'react';
+import { Controller, useForm, useFormContext } from 'react-hook-form';
+import { AiOutlineBgColors } from 'react-icons/ai';
+import { BsTextLeft } from 'react-icons/bs';
+import { LuHeading1 } from 'react-icons/lu';
+import { MdAddLink, MdDriveFileRenameOutline } from 'react-icons/md';
+import { z } from 'zod';
+import { useUpdateAccountSettingsMutation } from '../SettingsApi';
 
 const defaultValues = {
-	title: "",
-	name: "",
-	username: "",
-	company: "",
-	about: "",
-	email: "",
-	phone: "",
-	country: "",
-	language: "",
-	description: "",
-	color: "",
-	isButtonRequired: "",
-	buttonName: "",
-	buttonLink: "",
-	images: [],
+	title: '',
+	name: '',
+	username: '',
+	company: '',
+	about: '',
+	email: '',
+	phone: '',
+	country: '',
+	language: '',
+	description: '',
+	color: '',
+	isButtonRequired: '',
+	buttonName: '',
+	buttonLink: '',
+	images: []
 };
 const schema = z.object({
-	name: z.string().nonempty("Name is required"),
-	description: z.string().nonempty("توضیحات الزامی می‌باشد."),
-	title: z.string().nonempty("عنوان الزامی می‌باشد."),
-	color: z.string().nonempty("انتخاب رنگ پس زمینه الزامی می‌باشد."),
+	name: z.string().nonempty('Name is required'),
+	description: z.string().nonempty('توضیحات الزامی می‌باشد.'),
+	title: z.string().nonempty('عنوان الزامی می‌باشد.'),
+	color: z.string().nonempty('انتخاب رنگ پس زمینه الزامی می‌باشد.'),
 
-	username: z.string().nonempty("Username is required"),
-	company: z.string().nonempty("Company is required"),
-	about: z.string().nonempty("About is required"),
-	email: z.string().email("Invalid email").nonempty("Email is required"),
-	phone: z.string().nonempty("Phone is required"),
-	country: z.string().nonempty("Country is required"),
-	language: z.string().nonempty("Language is required"),
+	username: z.string().nonempty('Username is required'),
+	company: z.string().nonempty('Company is required'),
+	about: z.string().nonempty('About is required'),
+	email: z.string().email('Invalid email').nonempty('Email is required'),
+	phone: z.string().nonempty('Phone is required'),
+	country: z.string().nonempty('Country is required'),
+	language: z.string().nonempty('Language is required')
 });
 
 function HomePageTab() {
 	const methods = useFormContext();
 
-	const [colorValue, setColorValue] = useState("");
+	const [colorValue, setColorValue] = useState('');
 
 	// const { data: accountSettings, isError } = useGetAccountSettingsQuery();
 	const [updateAccountSettings] = useUpdateAccountSettingsMutation();
 	const { control, watch, reset, handleSubmit, formState } = useForm({
 		defaultValues,
-		mode: "all",
-		resolver: zodResolver(schema),
+		mode: 'all',
+		resolver: zodResolver(schema)
 	});
-	const images = watch("images");
+	const images = watch('images');
 	const { isValid, dirtyFields, errors } = formState;
 	// useEffect(() => {
 	// 	reset(accountSettings);
@@ -85,7 +84,10 @@ function HomePageTab() {
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className="w-full">
 					<Typography className="text-xl">اسلایدر</Typography>
-					<Typography color="text.secondary" className="font-300">
+					<Typography
+						color="text.secondary"
+						className="font-300"
+					>
 						تنظیمات اسلاید را انجام دهید.
 					</Typography>
 				</div>
@@ -110,7 +112,7 @@ function HomePageTab() {
 											<InputAdornment position="start">
 												<LuHeading1 size={20} />
 											</InputAdornment>
-										),
+										)
 									}}
 								/>
 							)}
@@ -134,12 +136,15 @@ function HomePageTab() {
 									multiline
 									fullWidth
 									InputProps={{
-										className: "max-h-min h-min items-start",
+										className: 'max-h-min h-min items-start',
 										startAdornment: (
-											<InputAdornment position="start" className="mt-16">
+											<InputAdornment
+												position="start"
+												className="mt-16"
+											>
 												<BsTextLeft size={20} />
 											</InputAdornment>
-										),
+										)
 									}}
 								/>
 							)}
@@ -148,8 +153,11 @@ function HomePageTab() {
 					<div className="sm:col-span-4">
 						<div className="flex flex-col w-full mb-10">
 							<Typography className="text-base">اسلایدر</Typography>
-							<Typography color="text.secondary" className="font-300">
-								تصویر مورد نظر را انتخاب نمایید.{" "}
+							<Typography
+								color="text.secondary"
+								className="font-300"
+							>
+								تصویر مورد نظر را انتخاب نمایید.{' '}
 							</Typography>
 						</div>
 						<div className="flex justify-center sm:justify-start flex-wrap -mx-16">
@@ -160,9 +168,9 @@ function HomePageTab() {
 									<Box
 										sx={{
 											backgroundColor: (theme) =>
-												theme.palette.mode === "light"
+												theme.palette.mode === 'light'
 													? lighten(theme.palette.background.default, 0.4)
-													: lighten(theme.palette.background.default, 0.02),
+													: lighten(theme.palette.background.default, 0.02)
 										}}
 										component="label"
 										htmlFor="button-file"
@@ -187,7 +195,7 @@ function HomePageTab() {
 															resolve({
 																id: FuseUtils.generateGUID(),
 																url: `data:${file.type};base64,${btoa(reader.result)}`,
-																type: "image",
+																type: 'image'
 															});
 														};
 														reader.onerror = reject;
@@ -200,7 +208,10 @@ function HomePageTab() {
 											}}
 										/>
 
-										<FuseSvgIcon size={32} color="action">
+										<FuseSvgIcon
+											size={32}
+											color="action"
+										>
 											heroicons-outline:upload
 										</FuseSvgIcon>
 									</Box>
@@ -221,8 +232,8 @@ function HomePageTab() {
 														role="button"
 														tabIndex={0}
 														className={clsx(
-															"productImageItem flex items-center justify-center relative w-full sm:w-1/2 h-128 rounded-16 mx-12 mb-24 overflow-hidden cursor-pointer outline-none shadow hover:shadow-lg",
-															media.id === value && "featured"
+															'productImageItem flex items-center justify-center relative w-full sm:w-1/2 h-128 rounded-16 mx-12 mb-24 overflow-hidden cursor-pointer outline-none shadow hover:shadow-lg',
+															media.id === value && 'featured'
 														)}
 														key={media.id}
 													>
@@ -253,7 +264,7 @@ function HomePageTab() {
 																			<InputAdornment position="start">
 																				<BsTextLeft size={20} />
 																			</InputAdornment>
-																		),
+																		)
 																	}}
 																/>
 															)}
@@ -261,7 +272,7 @@ function HomePageTab() {
 														<Button
 															variant="contained"
 															color="error"
-															sx={{ borderRadius: "10px" }}
+															sx={{ borderRadius: '10px' }}
 														>
 															حذف
 														</Button>
@@ -284,12 +295,12 @@ function HomePageTab() {
 									<input
 										className="absolute z-10 border-0 left-0 top-0 translate-x-1/2 translate-y-1/3 w-32 h-32 rounded-xl cursor-pointer"
 										type="color"
-										value={field.value || "#000000"}
+										value={field.value || '#000000'}
 										onChange={(e) => field.onChange(e.target.value)}
 									/>
 									<TextField
 										className=""
-										value={field.value || ""} // Display selected color value
+										value={field.value || ''} // Display selected color value
 										onChange={(e) => field.onChange(e.target.value)} // Update color if typed manually
 										{...field}
 										label="رنگ پس زمینه"
@@ -304,7 +315,7 @@ function HomePageTab() {
 												<InputAdornment position="start">
 													<AiOutlineBgColors size={20} />
 												</InputAdornment>
-											),
+											)
 										}}
 									/>
 								</>
@@ -320,7 +331,7 @@ function HomePageTab() {
 								<div className="flex flex-col gap-y-20">
 									<div className="flex flex-col w-1/2 justify-center ">
 										<FormControlLabel
-											classes={{ root: "m-0", label: "flex flex-1" }}
+											classes={{ root: 'm-0', label: 'flex flex-1' }}
 											labelPlacement="start"
 											label="استفاده از دکمه"
 											control={
@@ -358,7 +369,7 @@ function HomePageTab() {
 																<InputAdornment position="start">
 																	<MdDriveFileRenameOutline size={20} />
 																</InputAdornment>
-															),
+															)
 														}}
 													/>
 												)}
@@ -382,7 +393,7 @@ function HomePageTab() {
 																<InputAdornment position="start">
 																	<MdAddLink size={20} />
 																</InputAdornment>
-															),
+															)
 														}}
 													/>
 												)}

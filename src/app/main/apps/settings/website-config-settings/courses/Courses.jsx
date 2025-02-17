@@ -186,8 +186,8 @@ function Courses() {
 								</Select>
 							</FormControl>
 							<TextField
-								label="Search for a course"
-								placeholder="Enter a keyword..."
+								label="جستجو درس"
+								placeholder="یک کلمه کلیدی وارد کنید"
 								className="flex w-full sm:w-256 mx-8"
 								value={searchText}
 								inputProps={{

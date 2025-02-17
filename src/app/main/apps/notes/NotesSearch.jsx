@@ -19,7 +19,7 @@ function NotesSearch() {
 		>
 			<OutlinedInput
 				className="flex flex-1 items-center px-16 rounded-full h-40 w-full sm:max-w-256"
-				placeholder="Search note"
+				placeholder="جستجو یادداشت"
 				fullWidth
 				startAdornment={
 					<InputAdornment position="start">

@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { changeLanguage, selectCurrentLanguage, selectLanguages } from 'app/store/i18nSlice';
 import { useAppDispatch, useAppSelector } from 'app/store/hooks';
+import Tooltip from '@mui/material/Tooltip';
 
 /**
  * The language switcher.
@@ -31,6 +32,10 @@ function LanguageSwitcher() {
 
 	return (
 		<>
+			<Tooltip
+				title="تغییر زبان (دمو)"
+				placement="bottom"
+			>
 			<Button
 				className="h-40 w-64"
 				onClick={langMenuClick}
@@ -48,6 +53,7 @@ function LanguageSwitcher() {
 					{currentLanguage.id}
 				</Typography>
 			</Button>
+			</Tooltip>
 
 			<Popover
 				open={Boolean(menu)}

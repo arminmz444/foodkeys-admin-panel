@@ -128,7 +128,7 @@ function IconListPage(props) {
 										{...field}
 										id="searchText"
 										label="Search an icon"
-										placeholder="Search.."
+										placeholder="جستجو.."
 										className="flex-auto"
 										InputLabelProps={{
 											shrink: true

@@ -17,7 +17,7 @@ export default function TemporaryDrawer() {
     };
     const DrawerList = (<Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (<ListItem key={text} disablePadding>
+        {['صندوق ورودی', 'ستاره‌دار‌ها', 'ارسال ایمیل', 'پیش‌نویس‌ها'].map((text, index) => (<ListItem key={text} disablePadding>
             <ListItemButton>
               <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}

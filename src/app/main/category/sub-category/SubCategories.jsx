@@ -2,7 +2,7 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 import { styled } from '@mui/material/styles';
 import FusePageCarded from '@fuse/core/FusePageCarded/FusePageCarded.jsx';
 import { useEffect, useState } from 'react';
-import SubCategoriesTable from './SubCategoriesTable.jsx';
+import SubCategoryTable from './SubCategoryTable';
 
 import useThemeMediaQuery from '../../../../@fuse/hooks/useThemeMediaQuery.js';
 import DemoHeader from '../../user-interface/page-layouts/shared-components/DemoHeader.jsx';
@@ -57,7 +57,7 @@ function SubCategories() {
 				content={
 					<div className="w-full h-full container flex flex-col">
 						{/* <SubCategoriesHeader /> */}
-						<SubCategoriesTable />
+						<SubCategoryTable />
 					</div>
 				}
 				// leftSidebarOpen={leftSidebarOpen}

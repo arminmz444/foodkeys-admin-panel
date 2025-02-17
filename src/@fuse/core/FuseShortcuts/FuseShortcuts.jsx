@@ -132,7 +132,7 @@ function FuseShortcuts(props) {
 						inputRef={searchInputRef}
 						value={searchText}
 						onChange={search}
-						placeholder="Search for an app or page"
+						placeholder="یک مینی‌اپ یا صفحه را جستجو کنید"
 						fullWidth
 						inputProps={{
 							'aria-label': 'Search'

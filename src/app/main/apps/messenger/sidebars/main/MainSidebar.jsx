@@ -77,7 +77,7 @@ function MainSidebar() {
 							</FuseSvgIcon>
 
 							<Input
-								placeholder="Search or start new chat"
+								placeholder="جستجو کنید یا چت جدیدی را باز کنید"
 								className="flex flex-1 px-8"
 								disableUnderline
 								fullWidth

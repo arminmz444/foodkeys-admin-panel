@@ -8,12 +8,12 @@ import GenericCrudTable from 'app/shared-components/data-table/GenericCrudTable.
 import { API_STATIC_FILES_BASE_URL } from 'app/store/apiService.js';
 import EntityStatusField from 'app/shared-components/data-table/EntityStatusField.jsx';
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon/index.js';
-import { useGetAllCompaniesQuery } from '../AgricultureIndustryApi';
+import { useGetAllAgricultureIndustryCompaniesQuery } from '../AgricultureIndustryApi';
 import {
 	useCreateCategoryMutation,
 	useDeleteCategoryMutation,
 	useUpdateCategoryMutation
-} from '@/app/main/category/CategoriesApi.js';
+} from '../../../category/CategoriesApi';
 
 function CompaniesTable() {
 	const columns = useMemo(
@@ -126,7 +126,7 @@ function CompaniesTable() {
 				accessorKey: 'companyType',
 				header: 'نوع شرکت',
 				size: 50
-			},
+			}
 		],
 		[]
 	);
@@ -139,12 +139,13 @@ function CompaniesTable() {
 				>
 					<GenericCrudTable
 						columns={columns}
-						useListQueryHook={useGetAllCompaniesQuery}
+						useListQueryHook={useGetAllAgricultureIndustryCompaniesQuery}
 						useCreateMutationHook={useCreateCategoryMutation}
 						useUpdateMutationHook={useUpdateCategoryMutation}
 						useDeleteMutationHook={useDeleteCategoryMutation}
 						saveToStore={false}
 						enableRowAction={false}
+						serviceIdentifier="agricultureCompanyList"
 					/>
 				</Paper>
 			</FuseScrollbars>

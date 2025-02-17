@@ -417,6 +417,7 @@ function UserTable({ props }) {
 						sx={fab.sx}
 						aria-label={fab.label}
 						color={fab.color}
+
 					>
 						{fab.icon}
 					</Fab>

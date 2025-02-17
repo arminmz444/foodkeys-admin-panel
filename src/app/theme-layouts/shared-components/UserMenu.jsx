@@ -105,7 +105,7 @@ function UserMenu() {
 							<ListItemIcon className="min-w-40">
 								<FuseSvgIcon>heroicons-outline:lock-closed</FuseSvgIcon>
 							</ListItemIcon>
-							<ListItemText primary="Sign In" />
+							<ListItemText primary="ورود" />
 						</MenuItem>
 						<MenuItem
 							component={Link}
@@ -115,7 +115,7 @@ function UserMenu() {
 							<ListItemIcon className="min-w-40">
 								<FuseSvgIcon>heroicons-outline:user-add </FuseSvgIcon>
 							</ListItemIcon>
-							<ListItemText primary="Sign up" />
+							<ListItemText primary="ثبت‌نام" />
 						</MenuItem>
 					</>
 				) : (
@@ -129,7 +129,7 @@ function UserMenu() {
 							<ListItemIcon className="min-w-40">
 								<FuseSvgIcon>heroicons-outline:user-circle</FuseSvgIcon>
 							</ListItemIcon>
-							<ListItemText primary="My Profile" />
+							<ListItemText primary="حساب کاربری" />
 						</MenuItem>
 						<MenuItem
 							component={Link}
@@ -140,7 +140,7 @@ function UserMenu() {
 							<ListItemIcon className="min-w-40">
 								<FuseSvgIcon>heroicons-outline:mail-open</FuseSvgIcon>
 							</ListItemIcon>
-							<ListItemText primary="Inbox" />
+							<ListItemText primary="پیام‌ها" />
 						</MenuItem>
 						<MenuItem
 							onClick={() => {
@@ -150,7 +150,7 @@ function UserMenu() {
 							<ListItemIcon className="min-w-40">
 								<FuseSvgIcon>heroicons-outline:logout</FuseSvgIcon>
 							</ListItemIcon>
-							<ListItemText primary="Sign out" />
+							<ListItemText primary="خروج" />
 						</MenuItem>
 					</>
 				)}

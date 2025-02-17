@@ -80,7 +80,7 @@ function CompaniesTable({ categoryId }) {
 			elevation={0}
 		>
 			<TextField
-				label="Search"
+				label="جستجو"
 				variant="outlined"
 				fullWidth
 				sx={{ mb: 2 }}

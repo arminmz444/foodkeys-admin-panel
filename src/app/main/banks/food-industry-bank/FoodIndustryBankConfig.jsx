@@ -1,11 +1,10 @@
 import { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
 
-const FoosIndustryBank = lazy(() => import('./FoodIndustryBank'));
-const Product = lazy(() => import('./product/Product'));
-const Products = lazy(() => import('./products/Products'));
-const Order = lazy(() => import('./order/Order'));
-const Orders = lazy(() => import('./orders/Orders'));
+const Company = lazy(() => import('./company/Company'));
+const RequestsList = lazy(() => import('./requests/RequestsList'));
+const Companies = lazy(() => import('./companies/Companies'));
+const FoodIndustryBank = lazy(() => import('./FoodIndustryBank'));
 /**
  * The Food Industry Bank configuration.
  */
@@ -15,29 +14,38 @@ const FoodIndustryBankConfig = {
 	},
 	routes: [
 		{
-			path: 'banks/food-industry',
-			element: <FoosIndustryBank />,
+			path: 'banks/Food-industry/',
+			element: <FoodIndustryBank />,
 			children: [
 				{
 					path: '',
-					element: <Navigate to="products" />
+					element: <Navigate to="company/list" />
 				},
 				{
-					path: 'products',
-					element: <Products />
+					path: 'company/',
+					element: <Navigate to="company/list" />
 				},
 				{
-					path: 'companies/:productId/*',
-					element: <Product />
+					path: 'company/list',
+					element: <Companies />
 				},
 				{
-					path: 'list',
-					element: <Orders />
+					path: 'company/:companyId/*',
+					element: <Company />
 				},
 				{
-					path: 'payments/:orderId',
-					element: <Order />
+					path: 'request/*',
+					element: <RequestsList />
 				}
+
+				// {
+				// 	path: 'company',
+				// 	element: <CompaniesList />
+				// },
+				// {
+				// 	path: 'company/:id/details',
+				// 	element: <Company />
+				// }
 			]
 		}
 	]

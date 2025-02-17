@@ -32,7 +32,7 @@ export default function ClippedDrawer() {
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
           <List>
-            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (<ListItem key={text} disablePadding>
+            {['صندوق ورودی', 'ستاره‌دار‌ها', 'ارسال ایمیل', 'پیش‌نویس‌ها'].map((text, index) => (<ListItem key={text} disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
                     {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}

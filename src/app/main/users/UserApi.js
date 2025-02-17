@@ -2,11 +2,12 @@ import { apiService as api } from 'app/store/apiService.js';
 import ProductModel from './product/models/ProductModel.js';
 
 export const addTagTypes = [
+	'users_list',
 	'eCommerce_products',
 	'eCommerce_product',
 	'eCommerce_orders',
 	'eCommerce_order',
-	'users_list'
+	'user'
 ];
 const UserApi = api
 	.enhanceEndpoints({
@@ -14,6 +15,48 @@ const UserApi = api
 	})
 	.injectEndpoints({
 		endpoints: (build) => ({
+			// GET /user/ => returns list of users
+			getUsersList: build.query({
+				query: () => ({
+					url: `/user/`,
+					method: 'GET'
+				}),
+				providesTags: ['users_list']
+			}),
+			// GET /user/{id} => returns single user
+			getUser: build.query({
+				query: (id) => ({
+					url: `/user/${id}`,
+					method: 'GET'
+				}),
+				providesTags: (result, error, id) => [{ type: 'user', id }]
+			}),
+			// POST /user/ => create a new user
+			createUser: build.mutation({
+				query: (newUser) => ({
+					url: `/user/`,
+					method: 'POST',
+					data: newUser
+				}),
+				invalidatesTags: ['users_list', 'user']
+			}),
+			// PUT /user/{id} => update an existing user
+			updateUser: build.mutation({
+				query: ({ id, ...rest }) => ({
+					url: `/user/${id}`,
+					method: 'PUT',
+					data: rest
+				}),
+				invalidatesTags: (result, error, { id }) => [{ type: 'user', id }, 'users_list']
+			}),
+			// DELETE /user/{id} => delete a user
+			deleteUser: build.mutation({
+				query: (id) => ({
+					url: `/user/${id}`,
+					method: 'DELETE'
+				}),
+				invalidatesTags: ['users_list']
+			}),
 			getECommerceProducts: build.query({
 				query: () => ({ url: `/mock-api/ecommerce/products` }),
 				providesTags: ['eCommerce_products']
@@ -85,16 +128,18 @@ const UserApi = api
 					data: ordersId
 				}),
 				invalidatesTags: ['eCommerce_order', 'eCommerce_orders']
-			}),
-			getUsersList: build.query({
-				query: () => ({ url: `/user/` }),
-				providesTags: ['users_list']
 			})
 		}),
 		overrideExisting: false
 	});
+
 export default UserApi;
 export const {
+	useGetUsersListQuery,
+	useGetUserQuery,
+	useCreateUserMutation,
+	useUpdateUserMutation,
+	useDeleteUserMutation,
 	useGetECommerceProductsQuery,
 	useDeleteECommerceProductsMutation,
 	useGetECommerceProductQuery,
@@ -105,6 +150,5 @@ export const {
 	useUpdateECommerceOrderMutation,
 	useDeleteECommerceOrderMutation,
 	useDeleteECommerceOrdersMutation,
-	useCreateECommerceProductMutation,
-	useGetUsersListQuery
+	useCreateECommerceProductMutation
 } = UserApi;

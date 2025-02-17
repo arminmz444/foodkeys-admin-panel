@@ -52,7 +52,7 @@ function NotificationsApp() {
 								className="text-center text-24"
 								color="text.secondary"
 							>
-								There are no notifications for now.
+								شما هیچ پیامی ندارید
 							</Typography>
 						</div>
 					)}

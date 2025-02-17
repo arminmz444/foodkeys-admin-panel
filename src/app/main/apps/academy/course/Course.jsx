@@ -146,7 +146,7 @@ function Course() {
 								<Button
 									className="min-h-56 rounded-full"
 									size="large"
-									startIcon={<FuseSvgIcon>heroicons-outline:arrow-narrow-left</FuseSvgIcon>}
+									startIcon={<FuseSvgIcon>heroicons-outline:arrow-narrow-right</FuseSvgIcon>}
 									onClick={handleBack}
 								>
 									Prev
@@ -158,7 +158,7 @@ function Course() {
 								<Button
 									className="min-h-56 rounded-full"
 									size="large"
-									endIcon={<FuseSvgIcon>heroicons-outline:arrow-narrow-right</FuseSvgIcon>}
+									endIcon={<FuseSvgIcon>heroicons-outline:arrow-narrow-left</FuseSvgIcon>}
 									onClick={handleNext}
 								>
 									Next

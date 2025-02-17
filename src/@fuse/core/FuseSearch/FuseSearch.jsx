@@ -234,8 +234,8 @@ function FuseSearch(props) {
 		navigation = [],
 		className,
 		variant = 'full',
-		placeholder = 'Search',
-		noResults = 'No results..',
+		placeholder = 'جستجو',
+		noResults = 'چیزی یافت نشد..',
 		trigger = (
 			<IconButton
 				className="h-40 w-40"
@@ -385,7 +385,7 @@ function FuseSearch(props) {
 			return (
 				<Root className={clsx('flex', className)}>
 					<Tooltip
-						title="Click to search"
+						title="برای جستجو کلیک کنید"
 						placement="bottom"
 					>
 						<div

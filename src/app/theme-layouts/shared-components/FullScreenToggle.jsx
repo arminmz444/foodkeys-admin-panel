@@ -89,7 +89,7 @@ function HeaderFullScreenToggle(props) {
 
 	return (
 		<Tooltip
-			title="Fullscreen toggle"
+			title="نمایش تمام صفحه"
 			placement="bottom"
 		>
 			<IconButton

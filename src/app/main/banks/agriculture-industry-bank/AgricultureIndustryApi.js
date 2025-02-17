@@ -1,27 +1,68 @@
 import { apiService as api } from 'app/store/apiService';
 import CompanyModel from './company/models/CompanyModel.js';
 
-export const addTagTypes = ['eCommerce_products', 'eCommerce_product', 'eCommerce_orders', 'eCommerce_order'];
+export const addTagTypes = [
+	'eCommerce_products',
+	'eCommerce_product',
+	'eCommerce_orders',
+	'eCommerce_order',
+	'agricultureCompanyList',
+	'agricultureCompanyRequestList'
+];
 const AgricultureIndustryApi = api
 	.enhanceEndpoints({
 		addTagTypes
 	})
 	.injectEndpoints({
 		endpoints: (build) => ({
-			getAllCompanies: build.query({
-				query: () => ({
-					url: '/company/?categoryId=2',
-					method: 'GET'
-				}),
-				transformResponse: (response) => response?.data,
+			getAllAgricultureIndustryCompanies: build.query({
+				query: ({ pageNumber, pageSize, search, sort, filter }) => {
+					// let categoryId = 1;
+					//
+					// if (serviceIdentifier === 'agricultureCompanyList') categoryId = 2;
+
+					const url = `/company/?categoryId=2&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}&sort=${(sort && Object.entries(sort)?.length && JSON.stringify(sort)) || ''}&filter=${(filter && Object.entries(filter)?.length && JSON.stringify(filter)) || ''}`;
+					// if (requiredQueryParams && requiredQueryParams.length)
+					return {
+						url,
+						method: 'GET'
+					};
+				},
+				transformResponse: (response) => {
+					const data = { data: response?.data };
+
+					if (response && response.pagination) {
+						data.totalPages = response.pagination.totalPages;
+						data.totalElements = response.pagination.totalElements;
+						data.pageSize = response.pagination.pageSize;
+						data.pageIndex = response.pagination.pageIndex;
+					}
+
+					// console.log(`response: ${JSON.stringify(response)}`);
+					// console.log(`Data: ${JSON.stringify(data)}`);
+					return data;
+				},
 				providesTags: ['agricultureCompanyList']
 			}),
-			getAllCompanyRequests: build.query({
-				query: () => ({
-					url: '/request/company',
+			getAllAgricultureIndustryCompanyRequests: build.query({
+				query: ({ pageNumber, pageSize, search, sort, filter }) => ({
+					url: `/request/company?categoryId=2&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}&sort=${(sort && Object.entries(sort)?.length && JSON.stringify(sort)) || ''}&filter=${(filter && Object.entries(filter)?.length && JSON.stringify(filter)) || ''}`,
 					method: 'GET'
 				}),
-				transformResponse: (response) => response?.data,
+				transformResponse: (response) => {
+					const data = { data: response?.data };
+
+					if (response && response.pagination) {
+						data.totalPages = response.pagination.totalPages;
+						data.totalElements = response.pagination.totalElements;
+						data.pageSize = response.pagination.pageSize;
+						data.pageIndex = response.pagination.pageIndex;
+					}
+
+					// console.log(`response: ${JSON.stringify(response)}`);
+					// console.log(`Data: ${JSON.stringify(data)}`);
+					return data;
+				},
 				providesTags: ['agricultureCompanyRequestList']
 			}),
 			deleteECommerceProducts: build.mutation({
@@ -97,8 +138,8 @@ const AgricultureIndustryApi = api
 	});
 export default AgricultureIndustryApi;
 export const {
-	useGetAllCompaniesQuery,
-	useGetAllCompanyRequestsQuery,
+	useGetAllAgricultureIndustryCompaniesQuery,
+	useGetAllAgricultureIndustryCompanyRequests,
 	useDeleteECommerceProductsMutation,
 	useGetECommerceProductQuery,
 	useUpdateECommerceProductMutation,

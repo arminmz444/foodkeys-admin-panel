@@ -56,7 +56,7 @@ function CompanyHeader() {
 						className="flex items-center sm:mb-12"
 						component={Link}
 						role="button"
-						to="/banks/agriculture-industry-bank/company"
+						to="/banks/agriculture-industry/company/list"
 						color="inherit"
 					>
 						<FuseSvgIcon size={20}>

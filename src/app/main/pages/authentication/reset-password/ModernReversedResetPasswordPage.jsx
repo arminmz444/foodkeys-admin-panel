@@ -138,7 +138,7 @@ function ModernReversedResetPasswordPage() {
 							</AvatarGroup>
 
 							<div className="ml-16 font-medium tracking-tight text-gray-400">
-								More than 17k people joined us, it's your turn
+								با ۱۷ سال تجربه و دانش در حوزه صنایع غذایی و کشاورزی
 							</div>
 						</div>
 					</div>

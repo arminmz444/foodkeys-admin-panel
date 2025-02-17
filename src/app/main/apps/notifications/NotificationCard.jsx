@@ -16,7 +16,6 @@ import FuseTheme from '@fuse/core/FuseTheme';
 import yellow from '@mui/material/colors/yellow';
 import { formatDistanceToNow } from 'date-fns-jalali';
 
-
 const variantBgColors = {
 	success: green[600],
 	info: blue[700],
@@ -32,7 +31,8 @@ function NotificationCard(props) {
 	const { item, className, onClose } = props;
 	const theme = useTheme();
 	const defaultBgColor = theme.palette.background.paper;
-	let bgColor = variantBgColors[item.variant] || defaultBgColor;
+
+	let bgColor = !item.read ? variantBgColors.info : variantBgColors[item.variant] || defaultBgColor;
 
 	if (item.variant === 'primary') {
 		bgColor = theme.palette.primary.main;
@@ -71,7 +71,7 @@ function NotificationCard(props) {
 				{item.icon && !item.image && (
 					<Box
 						sx={{ backgroundColor: darken(bgColor, contrastTheme.palette.mode === 'dark' ? 0.3 : 0.1) }}
-						className="mr-12 flex h-32 w-32 shrink-0 items-center justify-center rounded-full"
+						className="me-12 mr-12 flex h-32 w-32 shrink-0 items-center justify-center rounded-full"
 					>
 						<FuseSvgIcon
 							className="opacity-75"
@@ -101,12 +101,12 @@ function NotificationCard(props) {
 						/>
 					)}
 
-					{item.times && (
+					{item.timestamp && (
 						<Typography
 							className="mt-8 text-sm leading-none "
 							color="text.secondary"
 						>
-							{formatDistanceToNow(new Date(item.time), { addSuffix: true })}
+							{formatDistanceToNow(new Date(item.timestamp), { addSuffix: true })}
 						</Typography>
 					)}
 				</div>

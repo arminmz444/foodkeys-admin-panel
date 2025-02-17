@@ -27,7 +27,7 @@ export default function AnchorTemporaryDrawer() {
     };
     const list = (anchor) => (<Box sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }} role="presentation" onClick={toggleDrawer(anchor, false)} onKeyDown={toggleDrawer(anchor, false)}>
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (<ListItem key={text} disablePadding>
+        {['صندوق ورودی', 'ستاره‌دار‌ها', 'ارسال ایمیل', 'پیش‌نویس‌ها'].map((text, index) => (<ListItem key={text} disablePadding>
             <ListItemButton>
               <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}

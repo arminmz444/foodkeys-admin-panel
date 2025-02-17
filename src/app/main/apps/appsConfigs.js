@@ -12,6 +12,9 @@ import ScrumboardAppConfig from './scrumboard/ScrumboardAppConfig';
 import TasksAppConfig from './tasks/TasksAppConfig';
 import NotificationsAppConfig from './notifications/NotificationsAppConfig';
 import SettingsAppConfig from './settings/SettingsAppConfig';
+import TicketingAppConfig from '@/app/main/apps/ticketing/TicketingAppConfig.jsx';
+import ExcelAppConfig from '@/app/main/apps/excel/ExcelAppConfig.jsx';
+import EPubAppConfig from '@/app/main/apps/epub/EPubAppConfig.jsx';
 /**
  * The payments of application configurations.
  */
@@ -29,6 +32,9 @@ const appsConfigs = [
 	ScrumboardAppConfig,
 	TasksAppConfig,
 	NotificationsAppConfig,
-	SettingsAppConfig
+	SettingsAppConfig,
+	TicketingAppConfig,
+	ExcelAppConfig,
+	EPubAppConfig
 ];
 export default appsConfigs;

@@ -184,7 +184,7 @@ function DataTable(props) {
 					rowsPerPageOptions: [10, 20, 30],
 					shape: 'rounded',
 					variant: 'outlined',
-					showRowsPerPage: false
+					showRowsPerPage: true
 				},
 				muiSearchTextFieldProps: {
 					placeholder: 'جستجو',

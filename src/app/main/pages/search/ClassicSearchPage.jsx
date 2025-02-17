@@ -36,7 +36,7 @@ function ClassicSearchPage() {
 				<div className="flex w-full max-w-md flex-1 items-center p-24 sm:p-32">
 					<Paper className="flex h-44 w-full items-center rounded-16 px-16 shadow">
 						<Input
-							placeholder="Search..."
+							placeholder="جستجو..."
 							disableUnderline
 							fullWidth
 							inputProps={{

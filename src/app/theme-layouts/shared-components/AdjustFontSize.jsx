@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import clsx from 'clsx';
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
+import Tooltip from '@mui/material/Tooltip';
 
 const marks = [
 	{ value: 0.7, label: '70%' },
@@ -37,15 +38,20 @@ function AdjustFontSize(props) {
 	};
 	return (
 		<div>
-			<IconButton
-				className={clsx('h-40 w-40', className)}
-				aria-controls="font-size-menu"
-				aria-haspopup="true"
-				onClick={handleClick}
-				size="large"
+			<Tooltip
+				title="تغییر اندازه فونت"
+				placement="bottom"
 			>
-				<FuseSvgIcon>material-outline:format_size</FuseSvgIcon>
-			</IconButton>
+				<IconButton
+					className={clsx('h-40 w-40', className)}
+					aria-controls="font-size-menu"
+					aria-haspopup="true"
+					onClick={handleClick}
+					size="large"
+				>
+					<FuseSvgIcon>material-outline:format_size</FuseSvgIcon>
+				</IconButton>
+			</Tooltip>
 			<Menu
 				classes={{ paper: 'w-320' }}
 				id="font-size-menu"
@@ -70,7 +76,7 @@ function AdjustFontSize(props) {
 						>
 							material-outline:format_size
 						</FuseSvgIcon>
-						Font Size
+						تغییر اندازه فونت
 					</Typography>
 					<Slider
 						classes={{ markLabel: 'text-12 font-semibold' }}

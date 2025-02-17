@@ -8,6 +8,9 @@ import {
 	MRT_ToolbarDropZone,
 	MRT_ToolbarInternalButtons
 } from 'material-react-table';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import PrintIcon from '@mui/icons-material/Print.js';
 
 function DataTableTopToolbar({ table }) {
 	const {
@@ -80,6 +83,11 @@ function DataTableTopToolbar({ table }) {
 								/>
 							)}
 							<MRT_ToolbarInternalButtons table={table} />
+							<Tooltip title="چاپ اطلاعات">
+								<IconButton onClick={() => window.print()}>
+									<PrintIcon />
+								</IconButton>
+							</Tooltip>
 						</Box>
 					) : (
 						enableGlobalFilter &&

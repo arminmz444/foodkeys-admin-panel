@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router-dom';
 
 /**
- * The E-Commerce app.
+ * The Food Industry Bank
  */
-function f() {
+function FoodIndustryBank() {
 	return <Outlet />;
 }
 
-export default FinanceDashboardApp;
+export default FoodIndustryBank;

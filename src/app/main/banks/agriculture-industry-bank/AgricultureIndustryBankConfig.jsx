@@ -34,7 +34,7 @@ const AgricultureIndustryBankConfig = {
 					element: <Company />
 				},
 				{
-					path: 'requests/*',
+					path: 'request/*',
 					element: <RequestsList />
 				}
 

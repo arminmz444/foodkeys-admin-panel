@@ -1,6 +1,6 @@
 import { connectField } from 'uniforms';
 
-function Image({ onChange, value }) {
+function ImageField({ onChange, value }) {
 	return (
 		<div className="ImageField">
 			<label htmlFor="image-field-file-input">
@@ -26,4 +26,4 @@ function Image({ onChange, value }) {
 	);
 }
 
-export default connectField(Image);
+export default connectField(ImageField);

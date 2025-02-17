@@ -17,7 +17,7 @@ export default function BasicList() {
               <ListItemIcon>
                 <InboxIcon />
               </ListItemIcon>
-              <ListItemText primary="Inbox"/>
+              <ListItemText primary="پیام‌ها"/>
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>

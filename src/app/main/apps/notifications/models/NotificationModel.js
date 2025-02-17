@@ -7,12 +7,15 @@ import FuseUtils from '@fuse/utils';
  */
 function NotificationModel(data) {
 	data = data || {};
+	const currentTime = new Date().toISOString()
 	return _.defaults(data, {
-		id: FuseUtils.generateGUID(),
+		// id: FuseUtils.generateGUID(),
 		icon: 'heroicons-solid:star',
 		title: '',
+		message: '',
 		description: '',
-		time: new Date().toISOString(),
+		// time: currentTime,
+		timestamp: currentTime,
 		read: false,
 		variant: 'default',
 		link: '/apps/file-manager',

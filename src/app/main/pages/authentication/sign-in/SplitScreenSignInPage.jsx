@@ -322,9 +322,24 @@ function SplitScreenSignInPage() {
 
 						</div>
 						<div className="mt-24 text-lg leading-6 tracking-tight text-gray-400">
-							Fuse helps developers to build organized and well coded dashboards full of beautiful and
-							rich
-							modules. Join us and start building your application today.
+							<Typography className="font-medium text-gray-300">به داشبورد مدیریت سایت مرجع صنایع غذایی و کشاورزی ایران (سام) خوش آمدید!</Typography>
+							<br />
+							<br />
+							این پنل ویژه مدیران
+							و کارمندان طراحی شده است تا کنترل کاملی بر روی سامانه‌های مختلف از جمله داشبورد کاربران،
+							وب‌سایت اصلی، وبلاگ خبری و سایر سرویس‌های آینده داشته باشید.
+							<br />
+							🔹 مدیریت کاربران و دسترسی‌ها
+							<br />
+							🔹 نظارت و تنظیمات وب‌سایت و خدمات
+							<br />
+							🔹 مدیریت محتوا، اخبار و اطلاعیه‌ها
+							<br />
+							🔹 بررسی و پردازش درخواست‌های کاربران
+							<br />
+							<br />
+							برای ورود، لطفاً اطلاعات حساب کاربری خود را وارد کنید. دسترسی شما بر اساس نقش تعیین‌شده در
+							سامانه مشخص خواهد شد.
 						</div>
 						<div className="mt-32 flex items-center">
 							<AvatarGroup
@@ -341,7 +356,7 @@ function SplitScreenSignInPage() {
 							</AvatarGroup>
 
 							<div className="ml-16 font-medium tracking-tight text-gray-400">
-								More than 17k people joined us, it's your turn
+								با ۱۷ سال تجربه و دانش در حوزه صنایع غذایی و کشاورزی
 							</div>
 						</div>
 					</div>

@@ -20,7 +20,14 @@ import { apiService as api } from 'app/store/apiService';
  */
 
 // Tag types for subCategories
-const addTagTypes = ['subCategoryList', 'subCategory'];
+const addTagTypes = [
+	'subCategoryList',
+	'eCommerce_products',
+	'eCommerce_product',
+	'eCommerce_orders',
+	'eCommerce_order',
+	'subCategory'
+];
 
 const SubCategoryApi = api
 	.enhanceEndpoints({
@@ -30,12 +37,24 @@ const SubCategoryApi = api
 		endpoints: (builder) => ({
 			// 1) GET subCategories (list)
 			getSubCategories: builder.query({
-				query: () => ({
-					url: '/subcategory',
+				query: ({ pageNumber, pageSize, search, sort, filter }) => ({
+					url: `/subcategory?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}&sort=${(sort && Object.entries(sort)?.length && JSON.stringify(sort)) || ''}&filter=${(filter && Object.entries(filter)?.length && JSON.stringify(filter)) || ''}`,
 					method: 'GET'
 				}),
-				// We only want the "data" field
-				transformResponse: (response) => response?.data,
+				transformResponse: (response) => {
+					const data = { data: response?.data };
+
+					if (response && response.pagination) {
+						data.totalPages = response.pagination.totalPages;
+						data.totalElements = response.pagination.totalElements;
+						data.pageSize = response.pagination.pageSize;
+						data.pageIndex = response.pagination.pageIndex;
+					}
+
+					// console.log(`response: ${JSON.stringify(response)}`);
+					// console.log(`Data: ${JSON.stringify(data)}`);
+					return data;
+				},
 				providesTags: ['subCategoryList']
 			}),
 
@@ -68,10 +87,7 @@ const SubCategoryApi = api
 					data: updatedFields
 				}),
 				transformResponse: (response) => response?.data,
-				invalidatesTags: (result, error, { id }) => [
-					{ type: 'subCategory', id },
-					'subCategoryList'
-				]
+				invalidatesTags: (result, error, { id }) => [{ type: 'subCategory', id }, 'subCategoryList']
 			}),
 
 			// 5) DELETE subCategory

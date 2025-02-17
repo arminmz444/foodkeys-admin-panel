@@ -35,7 +35,7 @@ export default function NestedList() {
         <ListItemIcon>
           <InboxIcon />
         </ListItemIcon>
-        <ListItemText primary="Inbox"/>
+        <ListItemText primary="صندوق ورودی"/>
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
