@@ -1,19 +1,17 @@
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { Controller, useForm } from 'react-hook-form';
-import IconButton from '@mui/material/IconButton';
-import { useEffect } from 'react';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import FuseSvgIcon from "@fuse/core/FuseSvgIcon";
+import { Controller, useForm } from "react-hook-form";
+import IconButton from "@mui/material/IconButton";
+import { useEffect } from "react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const schema = z.object({
-	email: z.string().optional(),
-	label: z.string().optional()
+	email: z.string().min(1, { message: "پست الکترونیک الزامیست." }),
 });
 const defaultValues = {
-	email: '',
-	label: ''
+	email: "",
 };
 
 /**
@@ -22,9 +20,9 @@ const defaultValues = {
 function EmailInput(props) {
 	const { value, hideRemove = false, onChange, onRemove } = props;
 	const { control, formState, handleSubmit, reset } = useForm({
-		mode: 'all',
+		mode: "all",
 		defaultValues,
-		resolver: zodResolver(schema)
+		resolver: zodResolver(schema),
 	});
 	useEffect(() => {
 		reset(value);
@@ -37,7 +35,7 @@ function EmailInput(props) {
 
 	return (
 		<form
-			className="flex space-x-16 mb-16"
+			className="flex gap-x-16 mb-16 justify-between items-center"
 			onChange={handleSubmit(onSubmit)}
 		>
 			<Controller
@@ -46,10 +44,12 @@ function EmailInput(props) {
 				render={({ field }) => (
 					<TextField
 						{...field}
-						label="Email"
-						placeholder="Email"
+						label="پست الکترونیک"
+						placeholder="پست الکترونیک کاربر را وارد کنید."
 						variant="outlined"
 						fullWidth
+						required
+						type="email"
 						error={!!errors.email}
 						helperText={errors?.email?.message}
 						InputProps={{
@@ -57,29 +57,7 @@ function EmailInput(props) {
 								<InputAdornment position="start">
 									<FuseSvgIcon size={20}>heroicons-solid:mail</FuseSvgIcon>
 								</InputAdornment>
-							)
-						}}
-					/>
-				)}
-			/>
-			<Controller
-				control={control}
-				name="label"
-				render={({ field }) => (
-					<TextField
-						{...field}
-						label="Label"
-						placeholder="Label"
-						variant="outlined"
-						fullWidth
-						error={!!errors.label}
-						helperText={errors?.label?.message}
-						InputProps={{
-							startAdornment: (
-								<InputAdornment position="start">
-									<FuseSvgIcon size={20}>heroicons-solid:tag</FuseSvgIcon>
-								</InputAdornment>
-							)
+							),
 						}}
 					/>
 				)}
@@ -89,6 +67,7 @@ function EmailInput(props) {
 					onClick={() => {
 						onRemove(value);
 					}}
+					className="text-red-300 w-auto h-auto hover:scale-125 transition-all duration-300"
 				>
 					<FuseSvgIcon size={20}>heroicons-solid:trash</FuseSvgIcon>
 				</IconButton>

@@ -1,83 +1,93 @@
-import { createSelector } from '@reduxjs/toolkit';
-import { apiService as api } from 'app/store/apiService';
-import FuseUtils from '@fuse/utils';
-import { selectSearchText } from './contactsAppSlice';
+import { createSelector } from "@reduxjs/toolkit";
+import { apiService as api } from "app/store/apiService";
+import FuseUtils from "@fuse/utils";
+import { selectSearchText } from "./contactsAppSlice";
 
-export const addTagTypes = ['contacts_item', 'contacts', 'contacts_tag', 'contacts_tags', 'countries'];
+export const addTagTypes = [
+	"contacts_item",
+	"contacts",
+	"contacts_tag",
+	"contacts_tags",
+	"countries",
+];
 const ContactsApi = api
 	.enhanceEndpoints({
-		addTagTypes
+		addTagTypes,
 	})
 	.injectEndpoints({
 		endpoints: (build) => ({
 			getContactsList: build.query({
 				query: () => ({ url: `/mock-api/contacts` }),
-				providesTags: ['contacts']
+				providesTags: ["contacts"],
 			}),
 			createContactsItem: build.mutation({
 				query: (queryArg) => ({
 					url: `/mock-api/contacts`,
-					method: 'POST',
-					data: queryArg.contact
+					method: "POST",
+					data: queryArg.contact,
 				}),
-				invalidatesTags: ['contacts']
+				invalidatesTags: ["contacts"],
 			}),
 			getContactsItem: build.query({
 				query: (contactId) => ({ url: `/mock-api/contacts/${contactId}` }),
-				providesTags: ['contacts_item']
+				providesTags: ["contacts_item"],
 			}),
 			updateContactsItem: build.mutation({
 				query: (contact) => ({
 					url: `/mock-api/contacts/${contact.id}`,
-					method: 'PUT',
-					data: contact
+					method: "PUT",
+					data: contact,
 				}),
-				invalidatesTags: ['contacts_item', 'contacts']
+				invalidatesTags: ["contacts_item", "contacts"],
 			}),
 			deleteContactsItem: build.mutation({
 				query: (contactId) => ({
 					url: `/mock-api/contacts/${contactId}`,
-					method: 'DELETE'
+					method: "DELETE",
 				}),
-				invalidatesTags: ['contacts']
+				invalidatesTags: ["contacts"],
 			}),
 			getContactsTag: build.query({
 				query: (tagId) => ({ url: `/mock-api/contacts/tags/${tagId}` }),
-				providesTags: ['contacts_tag']
+				providesTags: ["contacts_tag"],
 			}),
 			updateContactsTag: build.mutation({
 				query: (tag) => ({
 					url: `/mock-api/contacts/tags/${tag.id}`,
-					method: 'PUT',
-					body: tag
+					method: "PUT",
+					body: tag,
 				}),
-				invalidatesTags: ['contacts_tags']
+				invalidatesTags: ["contacts_tags"],
 			}),
 			deleteContactsTag: build.mutation({
 				query: (tagId) => ({
 					url: `/mock-api/contacts/tags/${tagId}`,
-					method: 'DELETE'
+					method: "DELETE",
 				}),
-				invalidatesTags: ['contacts_tags']
+				invalidatesTags: ["contacts_tags"],
 			}),
 			getContactsTags: build.query({
 				query: () => ({ url: `/mock-api/contacts/tags` }),
-				providesTags: ['contacts_tags']
+				providesTags: ["contacts_tags"],
+			}),
+			getContactsAccessibility: build.query({
+				query: () => ({ url: `/mock-api/contacts/accessibility` }),
+				providesTags: ["contacts_accessibility"],
 			}),
 			getContactsCountries: build.query({
 				query: () => ({ url: `/mock-api/countries` }),
-				providesTags: ['countries']
+				providesTags: ["countries"],
 			}),
 			createContactsTag: build.mutation({
 				query: (queryArg) => ({
 					url: `/mock-api/contacts/tags`,
-					method: 'POST',
-					body: queryArg.tag
+					method: "POST",
+					body: queryArg.tag,
 				}),
-				invalidatesTags: ['contacts_tags']
-			})
+				invalidatesTags: ["contacts_tags"],
+			}),
 		}),
-		overrideExisting: false
+		overrideExisting: false,
 	});
 export default ContactsApi;
 export const {
@@ -91,7 +101,8 @@ export const {
 	useUpdateContactsTagMutation,
 	useDeleteContactsTagMutation,
 	useGetContactsTagsQuery,
-	useCreateContactsTagMutation
+	useGetContactsAccessibilityQuery,
+	useCreateContactsTagMutation,
 } = ContactsApi;
 /**
  * Select filtered contacts
@@ -118,7 +129,7 @@ export const selectGroupedFilteredContacts = (contacts) =>
 		}
 
 		const sortedContacts = [...contacts]?.sort((a, b) =>
-			a?.name?.localeCompare(b.name, 'es', { sensitivity: 'base' })
+			a?.name?.localeCompare(b.name, "es", { sensitivity: "base" })
 		);
 		const groupedObject = sortedContacts?.reduce((r, e) => {
 			// get first letter of name of current element

@@ -1,18 +1,23 @@
-import Button from '@mui/material/Button';
-import NavLinkAdapter from '@fuse/core/NavLinkAdapter';
-import { useNavigate, useParams } from 'react-router-dom';
-import FuseLoading from '@fuse/core/FuseLoading';
-import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
-import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import Box from '@mui/system/Box';
-import { format } from 'date-fns/format';
-import _ from '@lodash';
-import { showMessage } from '@fuse/core/FuseMessage/fuseMessageSlice';
-import { useAppDispatch } from 'app/store/hooks';
-import { useGetContactsItemQuery, useGetContactsCountriesQuery, useGetContactsTagsQuery } from '../ContactsApi';
+import Button from "@mui/material/Button";
+import NavLinkAdapter from "@fuse/core/NavLinkAdapter";
+import { useNavigate, useParams } from "react-router-dom";
+import FuseLoading from "@fuse/core/FuseLoading";
+import Avatar from "@mui/material/Avatar";
+import Typography from "@mui/material/Typography";
+import Chip from "@mui/material/Chip";
+import Divider from "@mui/material/Divider";
+import FuseSvgIcon from "@fuse/core/FuseSvgIcon";
+import Box from "@mui/system/Box";
+import { format } from "date-fns/format";
+import _ from "@lodash";
+import { showMessage } from "@fuse/core/FuseMessage/fuseMessageSlice";
+import { useAppDispatch } from "app/store/hooks";
+import {
+	useGetContactsItemQuery,
+	useGetContactsCountriesQuery,
+	useGetContactsTagsQuery,
+} from "../ContactsApi";
+import { GoDotFill } from "react-icons/go";
 
 /**
  * The contact view.
@@ -25,9 +30,9 @@ function ContactView() {
 	const {
 		data: contact,
 		isLoading,
-		isError
+		isError,
 	} = useGetContactsItemQuery(contactId, {
-		skip: !contactId
+		skip: !contactId,
 	});
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
@@ -42,8 +47,8 @@ function ContactView() {
 
 	if (isError) {
 		setTimeout(() => {
-			navigate('/apps/contacts');
-			dispatch(showMessage({ message: 'NOT FOUND' }));
+			navigate("/apps/contacts");
+			dispatch(showMessage({ message: "NOT FOUND" }));
 		}, 0);
 		return null;
 	}
@@ -57,7 +62,7 @@ function ContactView() {
 			<Box
 				className="relative w-full h-160 sm:h-192 px-32 sm:px-48"
 				sx={{
-					backgroundColor: 'background.default'
+					backgroundColor: "background.default",
 				}}
 			>
 				{contact.background && (
@@ -74,10 +79,10 @@ function ContactView() {
 						<Avatar
 							sx={{
 								borderWidth: 4,
-								borderStyle: 'solid',
-								borderColor: 'background.paper',
-								backgroundColor: 'background.default',
-								color: 'text.secondary'
+								borderStyle: "solid",
+								borderColor: "background.paper",
+								backgroundColor: "background.default",
+								color: "text.secondary",
 							}}
 							className="w-128 h-128 text-64 font-bold"
 							src={contact.avatar}
@@ -85,22 +90,27 @@ function ContactView() {
 						>
 							{contact?.name?.charAt(0)}
 						</Avatar>
-						<div className="flex items-center ml-auto mb-4">
+						<div className="flex items-center mr-auto mb-4">
 							<Button
 								variant="contained"
 								color="secondary"
 								component={NavLinkAdapter}
 								to="edit"
 							>
-								<FuseSvgIcon size={20}>heroicons-outline:pencil-alt</FuseSvgIcon>
-								<span className="mx-8">Edit</span>
+								<FuseSvgIcon size={20}>
+									heroicons-outline:pencil-alt
+								</FuseSvgIcon>
+
+								<span className="mx-8">ویرایش</span>
 							</Button>
 						</div>
 					</div>
 
-					<Typography className="mt-12 text-4xl font-bold truncate">{contact.name}</Typography>
+					<Typography className="mt-12 text-4xl font-bold truncate">
+						{contact.name}
+					</Typography>
 
-					<div className="flex flex-wrap items-center mt-8">
+					{/* <div className="flex flex-wrap items-center mt-8">
 						{contact?.tags?.map((id) => (
 							<Chip
 								key={id}
@@ -109,7 +119,7 @@ function ContactView() {
 								size="small"
 							/>
 						))}
-					</div>
+					</div> */}
 
 					<Divider className="mt-16 mb-24" />
 
@@ -117,89 +127,44 @@ function ContactView() {
 						{contact.title && (
 							<div className="flex items-center">
 								<FuseSvgIcon>heroicons-outline:briefcase</FuseSvgIcon>
-								<div className="ml-24 leading-6">{contact.title}</div>
+								<div className="mr-10 leading-6">{contact.title}</div>
 							</div>
 						)}
 
 						{contact.company && (
 							<div className="flex items-center">
 								<FuseSvgIcon>heroicons-outline:office-building</FuseSvgIcon>
-								<div className="ml-24 leading-6">{contact.company}</div>
+								<div className="mr-10 leading-6">{contact.company}</div>
 							</div>
 						)}
 
-						{contact?.emails?.length && contact.emails.some((item) => item.email?.length > 0) && (
-							<div className="flex">
-								<FuseSvgIcon>heroicons-outline:mail</FuseSvgIcon>
-								<div className="min-w-0 ml-24 space-y-4">
-									{contact.emails.map(
-										(item) =>
-											item.email !== '' && (
-												<div
-													className="flex items-center leading-6"
-													key={item.email}
-												>
-													<a
-														className="hover:underline text-primary-500"
-														href={`mailto: ${item.email}`}
-														target="_blank"
-														rel="noreferrer"
-													>
-														{item.email}
-													</a>
-													{item.label && (
-														<Typography
-															className="text-md truncate"
-															color="text.secondary"
-														>
-															<span className="mx-8">&bull;</span>
-															<span className="font-medium">{item.label}</span>
-														</Typography>
-													)}
-												</div>
-											)
-									)}
-								</div>
-							</div>
-						)}
-
-						{contact?.phoneNumbers &&
-							contact?.phoneNumbers?.length &&
-							contact.phoneNumbers.some((item) => item.phoneNumber?.length > 0) && (
+						{contact?.emails?.length &&
+							contact.emails.some((item) => item.email?.length > 0) && (
 								<div className="flex">
-									<FuseSvgIcon>heroicons-outline:phone</FuseSvgIcon>
-									<div className="min-w-0 ml-24 space-y-4">
-										{contact.phoneNumbers.map(
-											(item, index) =>
-												item.phoneNumber !== '' && (
+									<FuseSvgIcon>heroicons-outline:mail</FuseSvgIcon>
+									<div className="min-w-0 mr-10 space-y-4">
+										{contact.emails.map(
+											(item) =>
+												item.email !== "" && (
 													<div
 														className="flex items-center leading-6"
-														key={index}
+														key={item.email}
 													>
-														<Box
-															className="hidden sm:flex w-24 h-16 overflow-hidden"
-															sx={{
-																background:
-																	"url('/assets/images/apps/contacts/flags.png') no-repeat 0 0",
-																backgroundSize: '24px 3876px',
-																backgroundPosition: getCountryByIso(item.country)
-																	?.flagImagePos
-															}}
-														/>
-
-														<div className="sm:ml-12 font-mono">
-															{getCountryByIso(item.country)?.code}
-														</div>
-
-														<div className="ml-10 font-mono">{item.phoneNumber}</div>
-
+														<a
+															className="hover:underline text-primary-500 rounded-6 px-8"
+															href={`mailto: ${item.email}`}
+															target="_blank"
+															rel="noreferrer"
+														>
+															{item.email}
+														</a>
 														{item.label && (
 															<Typography
 																className="text-md truncate"
 																color="text.secondary"
 															>
 																<span className="mx-8">&bull;</span>
-																<span className="font-medium">{item.label}</span>
+																<span className="font-400">{item.label}</span>
 															</Typography>
 														)}
 													</div>
@@ -209,28 +174,87 @@ function ContactView() {
 								</div>
 							)}
 
+						{contact?.phoneNumbers &&
+							contact?.phoneNumbers?.length &&
+							contact.phoneNumbers.some(
+								(item) => item.phoneNumber?.length > 0
+							) && (
+								<div className="flex items-center">
+									<FuseSvgIcon>heroicons-outline:phone</FuseSvgIcon>
+									<div className="min-w-0 mr-10 space-y-4">
+										{contact.phoneNumbers.map(
+											(item, index) =>
+												item.phoneNumber !== "" && (
+													<div
+														className="flex items-center leading-6"
+														key={index}
+													>
+														<a
+															href={`tel:${item.phoneNumber}`}
+															className="ml-10 font-600 no-underline text-lg"
+														>
+															<Button variant="text" size="small">
+																{item.phoneNumber}
+															</Button>
+														</a>
+
+														{item.label && (
+															<Typography
+																className="text-md truncate"
+																color="text.secondary"
+															>
+																<span className="mx-8">&bull;</span>
+																<span className="font-medium">
+																	{item.label}
+																</span>
+															</Typography>
+														)}
+													</div>
+												)
+										)}
+									</div>
+								</div>
+							)}
+						{/* 
 						{contact.address && (
 							<div className="flex items-center">
 								<FuseSvgIcon>heroicons-outline:location-marker</FuseSvgIcon>
 								<div className="ml-24 leading-6">{contact.address}</div>
 							</div>
-						)}
+						)} */}
 
-						{contact.birthday && (
+						{/* {contact.birthday && (
 							<div className="flex items-center">
 								<FuseSvgIcon>heroicons-outline:cake</FuseSvgIcon>
-								<div className="ml-24 leading-6">{format(new Date(contact.birthday), 'MMMM d, y')}</div>
+								<div className="ml-24 leading-6">
+									{format(new Date(contact.birthday), "MMMM d, y")}
+								</div>
 							</div>
-						)}
+						)} */}
 
 						{contact.notes && (
 							<div className="flex">
 								<FuseSvgIcon>heroicons-outline:menu-alt-2</FuseSvgIcon>
 								<div
-									className="max-w-none ml-24 prose dark:prose-invert"
+									className="max-w-none mr-10 prose dark:prose-invert"
 									// eslint-disable-next-line react/no-danger
 									dangerouslySetInnerHTML={{ __html: contact.notes }}
 								/>
+							</div>
+						)}
+						{contact.accessibility && (
+							<div className="flex items-center">
+								<Typography>دسترسی‌ها: </Typography>
+								{contact.accessibility.map((acc, index) => (
+									<div
+										key={index}
+										className="max-w-none mr-10 prose dark:prose-invert animate-pulse border-red-100"
+									>
+										<span className="px-10 py-5 bg-red-100 rounded-16 border-red-100 font-normal">
+											{acc}
+										</span>
+									</div>
+								))}
 							</div>
 						)}
 					</div>

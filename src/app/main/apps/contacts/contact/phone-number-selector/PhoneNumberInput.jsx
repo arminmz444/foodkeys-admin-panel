@@ -1,22 +1,18 @@
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { Controller, useForm } from 'react-hook-form';
-import IconButton from '@mui/material/IconButton';
-import { useEffect } from 'react';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import CountryCodeSelector from './CountryCodeSelector';
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import FuseSvgIcon from "@fuse/core/FuseSvgIcon";
+import { Controller, useForm } from "react-hook-form";
+import IconButton from "@mui/material/IconButton";
+import { useEffect } from "react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import CountryCodeSelector from "./CountryCodeSelector";
 // Zod schema for ContactPhoneNumber
 const schema = z.object({
-	country: z.string().optional(),
-	phoneNumber: z.string().optional(),
-	label: z.string().optional()
+	phoneNumber: z.string().min(11, { message: "شماره تلفن کاربر الزامیست" }),
 });
 const defaultValues = {
-	country: '',
-	phoneNumber: '',
-	label: ''
+	phoneNumber: "",
 };
 
 /**
@@ -25,9 +21,9 @@ const defaultValues = {
 function PhoneNumberInput(props) {
 	const { value, hideRemove = false, onChange, onRemove } = props;
 	const { control, formState, handleSubmit, reset } = useForm({
-		mode: 'all',
+		mode: "all",
 		defaultValues,
-		resolver: zodResolver(schema)
+		resolver: zodResolver(schema),
 	});
 	const { errors } = formState;
 	useEffect(() => {
@@ -40,7 +36,7 @@ function PhoneNumberInput(props) {
 
 	return (
 		<form
-			className="flex space-x-16 mb-16"
+			className="flex gap-x-16 mb-16 justify-between items-center"
 			onChange={handleSubmit(onSubmit)}
 		>
 			<Controller
@@ -49,56 +45,32 @@ function PhoneNumberInput(props) {
 				render={({ field }) => (
 					<TextField
 						{...field}
-						label="شماره تلفن"
-						placeholder="شماره تلفن"
+						label="شماره تلفن همراه"
+						placeholder="شماره تلفن همراه کاربر را وارد کنید."
 						variant="outlined"
 						fullWidth
 						error={!!errors.phoneNumber}
 						helperText={errors?.phoneNumber?.message}
-						InputProps={{
-							startAdornment: (
-								<Controller
-									control={control}
-									name="country"
-									render={({ field: _field }) => (
-										<InputAdornment position="start">
-											<CountryCodeSelector {..._field} />
-										</InputAdornment>
-									)}
-								/>
-							)
-						}}
-					/>
-				)}
-			/>
-			<Controller
-				control={control}
-				name="label"
-				render={({ field }) => (
-					<TextField
-						{...field}
-						label="Label"
-						placeholder="Label"
-						variant="outlined"
-						fullWidth
-						error={!!errors.label}
-						helperText={errors?.label?.message}
+						required
+						type="number"
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position="start">
-									<FuseSvgIcon size={20}>heroicons-solid:tag</FuseSvgIcon>
+									<FuseSvgIcon size={20}>heroicons-solid:phone</FuseSvgIcon>
 								</InputAdornment>
-							)
+							),
 						}}
 					/>
 				)}
 			/>
+
 			{!hideRemove && (
 				<IconButton
 					onClick={(ev) => {
 						ev.stopPropagation();
 						onRemove(value);
 					}}
+					className="text-red-300 w-auto h-auto hover:scale-125 transition-all duration-300"
 				>
 					<FuseSvgIcon size={20}>heroicons-solid:trash</FuseSvgIcon>
 				</IconButton>

@@ -10479,37 +10479,36 @@
           },
           {
             "id": "22f18d47-ff8d-440e-888d-a1747c093052",
-            "avatar": "assets/images/avatars/female-12.jpg",
+            "avatar": "assets/images/avatars/male-06.jpg",
             "background": "assets/images/cards/14-640x480.jpg",
-            "name": "Alice Harding",
+            "name": "آرمین مظفری",
             "emails": [
               {
                 "email": "aliceharding@mail.us",
-                "label": "Personal"
+                "label": "شخصی"
               }
+            ],
+            "accessibility": [
+              "مدیر بخش",
+              "مدیر بانک صنایع غذایی"
             ],
             "phoneNumbers": [
               {
                 "country": "sx",
-                "phoneNumber": "881 472 3113",
-                "label": "Mobile"
+                "phoneNumber": "091231615945",
+                "label": "همراه"
               },
               {
                 "country": "sx",
                 "phoneNumber": "974 548 3124",
-                "label": "Work"
-              },
-              {
-                "country": "sx",
-                "phoneNumber": "800 518 3615",
-                "label": "Home"
+                "label": "ثابت"
               }
             ],
-            "title": "Track Service Worker",
-            "company": "Futurity",
+            "title": "مدیرعامل",
+            "company": " صنایع غذایی میهن",
             "birthday": "1985-09-17T12:00:00.000Z",
             "address": "387 Holt Court, Thomasville, Alaska, PO2867",
-            "notes": "<p>Adipisicing exercitation dolor nisi ipsum nostrud anim dolore sint veniam consequat lorem sit ex commodo nostrud occaecat elit magna magna commodo incididunt laborum ad irure pariatur et sit ullamco adipisicing.</p><p>Ullamco in dolore amet est quis consectetur fugiat non nisi incididunt id laborum adipisicing dolor proident velit ut quis aliquip dolore id anim sit adipisicing nisi incididunt enim amet pariatur.</p>",
+            "notes": "<p>کاربر در تاریخ 22 تیر تماس گرفته و برای ثبت شرکت درخواست کمک کرد.</p>",
             "tags": [
               "cbde2486-5033-4e09-838e-e901b108cd41"
             ]
@@ -10522,23 +10521,23 @@
             "emails": [
               {
                 "email": "franciscaperkins@mail.tv",
-                "label": "Personal"
+                "label": "شخصی"
               },
               {
                 "email": "perkins.francisca@overplex.com",
-                "label": "Work"
+                "label": "کاری"
               }
             ],
             "phoneNumbers": [
               {
                 "country": "au",
                 "phoneNumber": "830 430 3437",
-                "label": "Mobile"
+                "label": "همراه"
               },
               {
                 "country": "au",
                 "phoneNumber": "868 538 2886",
-                "label": "Work"
+                "label": "ثابت"
               }
             ],
             "title": "Dental Laboratory Worker",
@@ -13117,6 +13116,26 @@
           {
             "id": "cbde2486-5033-4e09-838e-e901b108cd41",
             "title": "Band"
+          }
+        ]
+      },
+      "accessibility": {
+        "value": [
+          {
+            "id": "c31e9e5d-e0cb-4574-a13f-8a6ee5ff830966",
+            "title": "کارشناس"
+          },
+          {
+            "id": "a8991c76-2fda-4bbd-a718-df13d647884766",
+            "title": "مدیر بخش غذایی"
+          },
+          {
+            "id": "56ddbd47-4078-4ddd-8448-73c5e88d5f5966",
+            "title": "کارمند"
+          },
+          {
+            "id": "2026ce08-d08f-4b4f-9506-b10cdb5b104f66",
+            "title": "مدیر بخش کشاورزی"
           }
         ]
       },
