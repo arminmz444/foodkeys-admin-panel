@@ -184,7 +184,16 @@ function PasswordTab() {
 					</Button>
 				</CardContent>
 			</Card>
-			<MapComponent />
+			<Card
+				component={motion.div}
+				variants={item}
+				dir="ltr"
+				className="flex flex-col w-full px-32 pt-24"
+			>
+				<CardContent className="flex flex-col justify-center items-end px-32 py-24">
+					<MapComponent />
+				</CardContent>
+			</Card>
 		</motion.div>
 	);
 }
