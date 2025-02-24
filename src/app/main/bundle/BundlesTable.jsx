@@ -213,80 +213,89 @@
 //
 // export default CategoriesTable;
 // CategoryTable.jsx (Example usage)
-import React from 'react';
-import { z } from 'zod';
-import EntityStatusField from 'app/shared-components/data-table/EntityStatusField.jsx';
+import React from "react";
+import { z } from "zod";
+import EntityStatusField from "app/shared-components/data-table/EntityStatusField.jsx";
 
-import { WebAssetOffOutlined } from '@mui/icons-material';
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon/index.js';
-import CustomUniformsLongTextField from 'app/shared-components/dynamic-field-generator/CustomUniformsLongTextField.jsx';
+import { WebAssetOffOutlined } from "@mui/icons-material";
+import FuseSvgIcon from "@fuse/core/FuseSvgIcon/index.js";
+import CustomUniformsLongTextField from "app/shared-components/dynamic-field-generator/CustomUniformsLongTextField.jsx";
+// import LeafletMap from "app/shared-components/leafletMap/LeafletMap.jsx";
 import {
 	useGetBundlesQuery,
 	useCreateBundleMutation,
 	useUpdateBundleMutation,
-	useDeleteBundleMutation
-} from './BundlesApi.js';
-import GenericCrudTable from '../../shared-components/data-table/GenericCrudTable';
+	useDeleteBundleMutation,
+} from "./BundlesApi.js";
+import GenericCrudTable from "../../shared-components/data-table/GenericCrudTable";
+// import MapComp from "app/shared-components/leafletMap/MapComp.jsx";
 
 function BundleTable() {
 	const bundleStatusSelectOptions = [
-		{ label: 'فعال', value: 'ACTIVE' },
-		{ label: 'غیرفعال', value: 'INACTIVE' }
+		{ label: "فعال", value: "ACTIVE" },
+		{ label: "غیرفعال", value: "INACTIVE" },
 	];
 
 	const columns = React.useMemo(
 		() => [
-			{ accessorKey: 'id', header: 'شناسه', size: 130, enableEditing: false },
-			{ accessorKey: 'title', header: 'عنوان', size: 300 },
-			{ accessorKey: 'description', header: 'توضیحات', size: 200 },
+			{ accessorKey: "id", header: "شناسه", size: 130, enableEditing: false },
+			{ accessorKey: "title", header: "عنوان", size: 300 },
+			{ accessorKey: "description", header: "توضیحات", size: 200 },
 			{
-				accessorKey: 'timeDuration',
-				header: 'مدت زمان (ماه)',
+				accessorKey: "timeDuration",
+				header: "مدت زمان (ماه)",
 				size: 200,
-				muiTableBodyCellEditTextFieldProps: { type: 'number' }
+				muiTableBodyCellEditTextFieldProps: { type: "number" },
 			},
 			{
-				accessorKey: 'price',
-				header: 'قیمت (تومان)',
+				accessorKey: "price",
+				header: "قیمت (تومان)",
 				size: 200,
-				muiTableBodyCellEditTextFieldProps: { type: 'number' }
+				muiTableBodyCellEditTextFieldProps: { type: "number" },
 			},
 			{
-				header: 'وضعیت',
-				accessorKey: 'status',
-				editVariant: 'select',
+				header: "وضعیت",
+				accessorKey: "status",
+				editVariant: "select",
 				editSelectOptions: bundleStatusSelectOptions,
 				muiEditTextFieldProps: { select: true },
 				accessorFn: (row) =>
-					row?.status === 'ACTIVE' ? (
-						<EntityStatusField
-							name="فعال"
-							colorClsx="bg-green text-white"
-						/>
+					row?.status === "ACTIVE" ? (
+						<EntityStatusField name="فعال" colorClsx="bg-green text-white" />
 					) : (
 						<EntityStatusField
 							name="غیرفعال"
 							colorClsx="bg-red-700 text-white"
 						/>
-					)
-			},
-			{ accessorKey: 'subCategoryName', size: 300, header: 'نام زیر دسته', enableEditing: false },
-			{ accessorKey: 'subCategoryNameEn', size: 280, header: 'نام انگلیسی زیر دسته', enableEditing: false },
-			{ accessorKey: 'features', header: 'ویژگی‌ها', size: 400 },
-			{
-				accessorKey: 'createdAtStr',
-				size: 200,
-				Cell: ({ row }) => <div dir="rtl">{row.original.createdAtStr}</div>,
-				header: 'تاریخ ایجاد',
-				enableEditing: false
+					),
 			},
 			{
-				accessorKey: 'updatedAtStr',
+				accessorKey: "subCategoryName",
+				size: 300,
+				header: "نام زیر دسته",
+				enableEditing: false,
+			},
+			{
+				accessorKey: "subCategoryNameEn",
+				size: 280,
+				header: "نام انگلیسی زیر دسته",
+				enableEditing: false,
+			},
+			{ accessorKey: "features", header: "ویژگی‌ها", size: 400 },
+			{
+				accessorKey: "createdAtStr",
 				size: 200,
 				Cell: ({ row }) => <div dir="rtl">{row.original.createdAtStr}</div>,
-				header: 'آخرین بروزرسانی',
-				enableEditing: false
-			}
+				header: "تاریخ ایجاد",
+				enableEditing: false,
+			},
+			{
+				accessorKey: "updatedAtStr",
+				size: 200,
+				Cell: ({ row }) => <div dir="rtl">{row.original.createdAtStr}</div>,
+				header: "آخرین بروزرسانی",
+				enableEditing: false,
+			},
 		],
 		[]
 	);
@@ -294,206 +303,250 @@ function BundleTable() {
 	const zodSchema = z.object({
 		zodSchema: z.object({
 			title: z
-				.string({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
-				.min(1, { message: 'این فیلد الزامی است' })
+				.string({
+					invalid_type_error: "فرمت داده ورودی اشتباه است",
+					required_error: "این فیلد الزامی است",
+				})
+				.min(1, { message: "این فیلد الزامی است" })
 				.uniforms({
-					displayName: 'عنوان',
-					label: 'عنوان پلن',
-					placeholder: 'عنوان پلن را وارد کنید'
+					displayName: "عنوان",
+					label: "عنوان پلن",
+					placeholder: "عنوان پلن را وارد کنید",
 				}),
 			timeDuration: z
-				.number({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
-				.min(1, { message: 'مدت زمان باید حداقل 1 ماه باشد' })
+				.number({
+					invalid_type_error: "فرمت داده ورودی اشتباه است",
+					required_error: "این فیلد الزامی است",
+				})
+				.min(1, { message: "مدت زمان باید حداقل 1 ماه باشد" })
 				.uniforms({
-					displayName: 'مدت زمان',
-					label: 'مدت زمان پلن (برحسب ماه)',
-					placeholder: 'مدت زمان پلن را وارد کنید'
+					displayName: "مدت زمان",
+					label: "مدت زمان پلن (برحسب ماه)",
+					placeholder: "مدت زمان پلن را وارد کنید",
 				}),
 			price: z
-				.number({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
-				.min(0, { message: 'قیمت نمی‌تواند منفی باشد' })
+				.number({
+					invalid_type_error: "فرمت داده ورودی اشتباه است",
+					required_error: "این فیلد الزامی است",
+				})
+				.min(0, { message: "قیمت نمی‌تواند منفی باشد" })
 				.uniforms({
-					displayName: 'قیمت',
-					label: 'قیمت پلن',
-					placeholder: 'قیمت پلن را وارد کنید'
+					displayName: "قیمت",
+					label: "قیمت پلن",
+					placeholder: "قیمت پلن را وارد کنید",
 				}),
 			status: z
-				.enum(['فعال', 'غیرفعال'], {
-					required_error: 'این فیلد الزامی است',
-					invalid_type_error: 'فرمت داده ورودی اشتباه است',
-					message: 'مقدار انتخاب شده معتبر نیست'
+				.enum(["فعال", "غیرفعال"], {
+					required_error: "این فیلد الزامی است",
+					invalid_type_error: "فرمت داده ورودی اشتباه است",
+					message: "مقدار انتخاب شده معتبر نیست",
 				})
 				.uniforms({
-					displayName: 'وضعیت پلن',
-					label: 'وضعیت پلن',
-					placeholder: 'وضعیت پلن را انتخاب کنید'
+					displayName: "وضعیت پلن",
+					label: "وضعیت پلن",
+					placeholder: "وضعیت پلن را انتخاب کنید",
 				}),
 			features: z
-				.string({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
-				.min(1, { message: 'این فیلد الزامی است' })
+				.string({
+					invalid_type_error: "فرمت داده ورودی اشتباه است",
+					required_error: "این فیلد الزامی است",
+				})
+				.min(1, { message: "این فیلد الزامی است" })
 				.uniforms({
-					displayName: 'متن ویژگی',
-					label: 'متن ویژگی‌های پلن',
-					placeholder: 'متن ویژگی‌های پلن را وارد کنید'
+					displayName: "متن ویژگی",
+					label: "متن ویژگی‌های پلن",
+					placeholder: "متن ویژگی‌های پلن را وارد کنید",
 				})
 				.optional(),
 			description: z
-				.string({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
-				.min(1, { message: 'این فیلد الزامی است' })
-				.uniforms({
-					displayName: 'توضیحات',
-					label: 'توضیحات پلن',
-					placeholder: 'توضیحات پلن را وارد کنید'
+				.string({
+					invalid_type_error: "فرمت داده ورودی اشتباه است",
+					required_error: "این فیلد الزامی است",
 				})
-		})
+				.min(1, { message: "این فیلد الزامی است" })
+				.uniforms({
+					displayName: "توضیحات",
+					label: "توضیحات پلن",
+					placeholder: "توضیحات پلن را وارد کنید",
+				}),
+		}),
 		// description: z.string().min(1, { message: 'توضیحات الزامی است' }).uniforms(CustomUniformsLongTextField)
 	});
 
 	const createItemProps = {
 		zodSchema: z.object({
 			title: z
-				.string({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
-				.min(1, { message: 'این فیلد الزامی است' })
+				.string({
+					invalid_type_error: "فرمت داده ورودی اشتباه است",
+					required_error: "این فیلد الزامی است",
+				})
+				.min(1, { message: "این فیلد الزامی است" })
 				.uniforms({
-					displayName: 'عنوان',
-					label: 'عنوان پلن',
-					placeholder: 'عنوان پلن را وارد کنید'
+					displayName: "عنوان",
+					label: "عنوان پلن",
+					placeholder: "عنوان پلن را وارد کنید",
 				}),
 			timeDuration: z
-				.number({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
-				.min(1, { message: 'مدت زمان باید حداقل 1 ماه باشد' })
+				.number({
+					invalid_type_error: "فرمت داده ورودی اشتباه است",
+					required_error: "این فیلد الزامی است",
+				})
+				.min(1, { message: "مدت زمان باید حداقل 1 ماه باشد" })
 				.uniforms({
-					displayName: 'مدت زمان',
-					label: 'مدت زمان پلن (برحسب ماه)',
-					placeholder: 'مدت زمان پلن را وارد کنید'
+					displayName: "مدت زمان",
+					label: "مدت زمان پلن (برحسب ماه)",
+					placeholder: "مدت زمان پلن را وارد کنید",
 				}),
 			price: z
-				.number({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
-				.min(0, { message: 'قیمت نمی‌تواند منفی باشد' })
+				.number({
+					invalid_type_error: "فرمت داده ورودی اشتباه است",
+					required_error: "این فیلد الزامی است",
+				})
+				.min(0, { message: "قیمت نمی‌تواند منفی باشد" })
 				.uniforms({
-					displayName: 'قیمت',
-					label: 'قیمت پلن',
-					placeholder: 'قیمت پلن را وارد کنید'
+					displayName: "قیمت",
+					label: "قیمت پلن",
+					placeholder: "قیمت پلن را وارد کنید",
 				}),
 			status: z
-				.enum(['فعال', 'غیرفعال'], {
-					required_error: 'این فیلد الزامی است',
-					invalid_type_error: 'فرمت داده ورودی اشتباه است',
-					message: 'مقدار انتخاب شده معتبر نیست'
+				.enum(["فعال", "غیرفعال"], {
+					required_error: "این فیلد الزامی است",
+					invalid_type_error: "فرمت داده ورودی اشتباه است",
+					message: "مقدار انتخاب شده معتبر نیست",
 				})
 				.uniforms({
-					displayName: 'وضعیت پلن',
-					label: 'وضعیت پلن',
-					placeholder: 'وضعیت پلن را انتخاب کنید'
+					displayName: "وضعیت پلن",
+					label: "وضعیت پلن",
+					placeholder: "وضعیت پلن را انتخاب کنید",
 				}),
 			features: z
-				.string({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
+				.string({
+					invalid_type_error: "فرمت داده ورودی اشتباه است",
+					required_error: "این فیلد الزامی است",
+				})
 				.optional()
 				.uniforms({
-					displayName: 'متن ویژگی',
-					label: 'متن ویژگی‌های پلن',
-					placeholder: 'متن ویژگی‌های پلن را وارد کنید',
-					component: CustomUniformsLongTextField
+					displayName: "متن ویژگی",
+					label: "متن ویژگی‌های پلن",
+					placeholder: "متن ویژگی‌های پلن را وارد کنید",
+					component: CustomUniformsLongTextField,
 				}),
 			description: z
-				.string({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
-				.min(1, { message: 'این فیلد الزامی است' })
-				.uniforms({
-					displayName: 'توضیحات',
-					label: 'توضیحات پلن',
-					placeholder: 'توضیحات پلن را وارد کنید',
-					component: CustomUniformsLongTextField
+				.string({
+					invalid_type_error: "فرمت داده ورودی اشتباه است",
+					required_error: "این فیلد الزامی است",
 				})
+				.min(1, { message: "این فیلد الزامی است" })
+				.uniforms({
+					displayName: "توضیحات",
+					label: "توضیحات پلن",
+					placeholder: "توضیحات پلن را وارد کنید",
+					component: CustomUniformsLongTextField,
+				}),
 		}),
 		// description: z.string().min(1, { message: 'توضیحات الزامی است' }).uniforms(CustomUniformsLongTextField)
 		jsonSchema: {
-			title: 'پلن جدید',
-			type: 'object',
+			title: "پلن جدید",
+			type: "object",
 			properties: {
-				title: { type: 'string', title: 'عنوان' },
-				timeDuration: { type: 'number', title: 'مدت زمان (ماه)', minimum: 1 },
-				price: { type: 'number', title: 'قیمت (تومان)', minimum: 0 },
+				title: { type: "string", title: "عنوان" },
+				timeDuration: { type: "number", title: "مدت زمان (ماه)", minimum: 1 },
+				price: { type: "number", title: "قیمت (تومان)", minimum: 0 },
 				status: {
-					type: 'string',
-					title: 'وضعیت',
-					enum: ['ACTIVE', 'INACTIVE']
+					type: "string",
+					title: "وضعیت",
+					enum: ["ACTIVE", "INACTIVE"],
 				},
-				features: { type: 'string', title: 'ویژگی‌ها', description: 'ویژگی‌های پلن را وارد کنید' },
-				description: { type: 'string', title: 'توضیحات' }
+				features: {
+					type: "string",
+					title: "ویژگی‌ها",
+					description: "ویژگی‌های پلن را وارد کنید",
+				},
+				description: { type: "string", title: "توضیحات" },
 			},
-			required: ['title', 'timeDuration', 'price', 'status', 'description']
+			required: ["title", "timeDuration", "price", "status", "description"],
 		},
-		formHeaderTitle: 'افزودن پلن جدید',
-		defaultValues: { title: '', timeDuration: 1, price: 0, status: 'فعال', features: '', description: '' },
+		formHeaderTitle: "افزودن پلن جدید",
+		defaultValues: {
+			title: "",
+			timeDuration: 1,
+			price: 0,
+			status: "فعال",
+			features: "",
+			description: "",
+		},
 		onCreate: async (vals) => {
 			alert(`ایجاد پلن جدید: ${JSON.stringify(vals)}`);
 		},
-		buttonLabel: 'افزودن پلن جدید',
-		dialogTitle: 'ایجاد پلن جدید',
-		formEngine: 'UNIFORMS',
-		formValidationStruct: 'ZOD_SCHEMA',
-		formGenerationType: 'MANUAL',
+		buttonLabel: "افزودن پلن جدید",
+		dialogTitle: "ایجاد پلن جدید",
+		formEngine: "UNIFORMS",
+		formValidationStruct: "ZOD_SCHEMA",
+		formGenerationType: "MANUAL",
 		formFieldsInputTypes: {
 			title: 1,
 			timeDuration: 3,
 			price: 4,
 			status: 5,
 			features: 32,
-			description: 2
+			description: 2,
 		},
-		hideSubmitField: false
+		hideSubmitField: false,
 	};
 	const rowActions = [
 		{
 			icon: <FuseSvgIcon size={20}>heroicons-outline:eye</FuseSvgIcon>,
-			label: 'اشتراک‌ها',
+			label: "اشتراک‌ها",
 			onClick: async (row, table, refetchList) => {
 				alert(`Show sub-items for: ${row.original.name}`);
 				refetchList();
-			}
+			},
 		},
 		{
 			icon: <WebAssetOffOutlined />,
-			label: 'غیرفعال کردن',
+			label: "غیرفعال کردن",
 			onClick: async (row, table, refetchList) => {
 				// call your disable API
 				alert(`Disable: ${row.original.name}`);
 				// e.g. await useDisableCategoryMutation(row.original.id);
 				refetchList();
-			}
-		}
+			},
+		},
 	];
 
 	return (
-		<GenericCrudTable
-			columns={columns}
-			useListQueryHook={useGetBundlesQuery} // listing
-			useCreateMutationHook={useCreateBundleMutation} // create
-			useUpdateMutationHook={useUpdateBundleMutation} // update
-			useDeleteMutationHook={useDeleteBundleMutation} // delete
-			rowActions={rowActions}
-			createItemProps={createItemProps}
-			renderTopToolbarCustomActionsClasses="flex justify-start px-8 py-16"
-			renderTopToolbarCustomActions={() => (
-				// <Button
-				// 	color="primary"
-				// 	className="p-16"
-				// 	variant="contained"
-				// 	onClick={() => {
-				// 		table.setCreatingRow(true); // simplest way to open the create row modal with no default values
-				// 		// or you can pass in a row object to set default values with the `createRow` helper function
-				// 		// table.setCreatingRow(
-				// 		//   createRow(table, {
-				// 		//     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-				// 		//   }),
-				// 		// );
-				// 	}}
-				// >
-				// 	Create New User
-				// </Button>
-				<div />
-			)}
-		/>
+		<>
+			<GenericCrudTable
+				columns={columns}
+				useListQueryHook={useGetBundlesQuery} // listing
+				useCreateMutationHook={useCreateBundleMutation} // create
+				useUpdateMutationHook={useUpdateBundleMutation} // update
+				useDeleteMutationHook={useDeleteBundleMutation} // delete
+				rowActions={rowActions}
+				createItemProps={createItemProps}
+				renderTopToolbarCustomActionsClasses="flex justify-start px-8 py-16"
+				renderTopToolbarCustomActions={() => (
+					// <Button
+					// 	color="primary"
+					// 	className="p-16"
+					// 	variant="contained"
+					// 	onClick={() => {
+					// 		table.setCreatingRow(true); // simplest way to open the create row modal with no default values
+					// 		// or you can pass in a row object to set default values with the `createRow` helper function
+					// 		// table.setCreatingRow(
+					// 		//   createRow(table, {
+					// 		//     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
+					// 		//   }),
+					// 		// );
+					// 	}}
+					// >
+					// 	Create New User
+					// </Button>
+					<div />
+				)}
+			/>
+			{/* <LeafletMap /> */}
+		</>
 	);
 }
 
