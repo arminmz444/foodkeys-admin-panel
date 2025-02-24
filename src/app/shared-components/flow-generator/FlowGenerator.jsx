@@ -3,8 +3,8 @@ import { Stage, Layer, Rect, Arrow, Text } from 'react-konva';
 
 function FlowGenerator() {
 	const [nodes, setNodes] = useState([
-		{ id: 1, x: 50, y: 50, name: 'Service A' },
-		{ id: 2, x: 200, y: 150, name: 'Service B' }
+		{ id: 1, x: 50, y: 50, name: 'سرویس ۱' },
+		{ id: 2, x: 200, y: 150, name: 'سرویس ۲' }
 	]);
 
 	const [connections, setConnections] = useState([{ from: 1, to: 2 }]);

@@ -1,7 +1,7 @@
 import { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
-import ExcelOutlet from '@/app/main/apps/excel/ExcelOutlet.jsx';
 
+const ExcelOutlet = lazy(() => import('./ExcelOutlet.jsx'));
 const ExcelApp = lazy(() => import('./ExcelApp.jsx'));
 /**
  * The Excel app config.

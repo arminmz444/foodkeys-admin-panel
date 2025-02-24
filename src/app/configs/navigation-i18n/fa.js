@@ -1,4 +1,5 @@
 const locale = {
+	PAGE_BUILDER: 'صفحه‌ساز',
 	BUNDLE_LIST: 'لیست پلن‌ها',
 	SUBSCRIPTION_LIST: 'لیست اشتراک‌ها',
 	DISCOUNT_LIST: 'لیست تخفیف‌ها',

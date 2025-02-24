@@ -26,6 +26,7 @@ const CompanyModel = (data) =>
 		price: '',
 		active: true,
 		image: '',
+		registrantUserId: 0,
 		total: ''
 	});
 export default CompanyModel;

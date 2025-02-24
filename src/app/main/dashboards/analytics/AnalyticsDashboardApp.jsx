@@ -13,6 +13,7 @@ import FlowGenerator from 'app/shared-components/flow-generator/FlowGenerator.js
 import CustomSpreadsheet from 'app/shared-components/custom-spreadsheet/CustomSpreadsheet.jsx';
 import axios from 'axios';
 import { useGetAnalyticsDashboardWidgetsQuery } from './AnalyticsDashboardApi';
+import SimpleSelect from 'app/shared-components/custom-select/simple-select/SimpleSelect.jsx';
 
 const container = {
 	show: {
@@ -74,6 +75,7 @@ function AnalyticsDashboardApp() {
 			<DynamicFieldGenerator />
 			<DynamicFormGenerator />
 			<FlowGenerator />
+			<SimpleSelect />
 			{/* <MRTEditModalDataTable /> */}
 			<MRTTransferList />
 			{/* <CustomSelect */}

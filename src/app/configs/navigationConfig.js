@@ -4,7 +4,6 @@ import ar from './navigation-i18n/ar';
 import en from './navigation-i18n/en';
 import tr from './navigation-i18n/tr';
 import SettingsAppNavigation from '../main/apps/settings/SettingsAppNavigation';
-import DocumentationNavigation from '@/app/main/documentation/DocumentationNavigation.js';
 
 i18next.addResourceBundle('fa', 'navigation', fa);
 i18next.addResourceBundle('en', 'navigation', en);
@@ -283,6 +282,14 @@ const navigationConfig = [
 		translate: 'APPLICATIONS',
 		subtitleTranslate: 'SUB_APPLICATIONS',
 		children: [
+			{
+				id: 'apps.page-builder',
+				title: 'PageBuilder',
+				type: 'item',
+				icon: 'heroicons-outline:paper-airplane',
+				url: '/apps/page-builder',
+				translate: 'PAGE_BUILDER'
+			},
 			{
 				id: 'apps.excel',
 				title: 'Excel',

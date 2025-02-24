@@ -16,9 +16,7 @@ import banksConfigs from '../main/banks/banksConfigs';
 import fileManagerConfigs from '../main/file-manager/FileManagerConfig';
 import userAppConfig from '../main/users/UserAppConfig';
 import CategoriesConfig from '../main/category/CategoriesConfig';
-import BundlesConfig from '@/app/main/bundle/BundlesConfig.jsx';
-import ExcelAppConfig from '@/app/main/apps/excel/ExcelAppConfig.jsx';
-import EPubAppConfig from '../main/apps/epub/EPubAppConfig.jsx';
+import BundlesConfig from '../main/bundle/BundlesConfig.jsx';
 
 const routeConfigs = [
 	SignOutConfig,
@@ -34,7 +32,7 @@ const routeConfigs = [
 	...DashboardsConfigs,
 	...AppsConfigs,
 	...authRoleExamplesConfigs,
-	...banksConfigs,
+	...banksConfigs
 ];
 /**
  * The routes of the application.

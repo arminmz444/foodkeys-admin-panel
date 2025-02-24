@@ -145,6 +145,7 @@ function CompaniesTable() {
 						useDeleteMutationHook={useDeleteCategoryMutation}
 						saveToStore={false}
 						enableRowAction={false}
+						enableEditing={false}
 						serviceIdentifier="foodCompanyList"
 					/>
 				</Paper>

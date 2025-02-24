@@ -150,7 +150,6 @@ function GenericCrudTable(props) {
 	const [createDialogOpen, setCreateDialogOpen] = useState(false);
 	const [subCategoriesDialogOpen, setSubCategoriesDialogOpen] = useState(false);
 	const [selectedCategoryForSubs, setSelectedCategoryForSubs] = useState(null);
-	// We'll store subcat data
 	const [subCategoriesData, setSubCategoriesData] = useState([]);
 
 	let finalData = data || [];
@@ -199,7 +198,7 @@ function GenericCrudTable(props) {
 	const handleDisableCategory = async (row) => {
 		try {
 			await disableMutation(row?.original?.id).unwrap();
-			refetchList?.(); // refresh table
+			refetchList?.();
 		} catch (err) {
 			console.error('Disable category error', err);
 		}
