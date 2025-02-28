@@ -158,12 +158,12 @@ function CustomOption(props) {
 		<div
 			ref={innerRef}
 			{...innerProps}
-			className={`p-2 cursor-pointer ${isFocused ? 'bg-gray-100' : ''} ${isSelected ? 'bg-blue-100' : ''}`}
+			className={`p-16 cursor-pointer ${isFocused ? 'bg-gray-100' : ''} ${isSelected ? 'bg-blue-100' : ''}`}
 		>
 			<div className="font-medium">{data.label}</div>
-			{/* {data.phone && ( */}
-			<div className="text-sm text-gray-500">09352388350</div>
-			{/* )} */}
+			 {data.username && (
+			<div className="text-sm text-gray-500">{data.username}</div>
+			 )}
 		</div>
 	);
 }

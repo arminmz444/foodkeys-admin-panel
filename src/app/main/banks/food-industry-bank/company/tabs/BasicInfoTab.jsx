@@ -61,35 +61,35 @@ function BasicInfoTab() {
 			/>
 			<div className="flex sm:flex-row flex-col -mx-4">
 				<Controller
-					name="coName"
+					name="companyName"
 					control={control}
 					render={({ field }) => (
 						<TextField
 							{...field}
 							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.coName}
+							error={!!errors.companyName}
 							required
-							helperText={errors?.coName?.message}
+							helperText={errors?.companyName?.message}
 							label="نام شرکت"
 							autoFocus
-							id="coName"
+							id="companyName"
 							variant="outlined"
 							fullWidth
 						/>
 					)}
 				/>
 				<Controller
-					name="coNameEn"
+					name="companyNameEn"
 					control={control}
 					render={({ field }) => (
 						<TextField
 							{...field}
 							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.coNameEn}
+							error={!!errors.companyNameEn}
 							required
-							helperText={errors?.coNameEn?.message}
+							helperText={errors?.companyNameEn?.message}
 							label="نام شرکت به انگلیسی"
-							id="coNameEn"
+							id="companyNameEn"
 							variant="outlined"
 							fullWidth
 						/>
@@ -98,34 +98,34 @@ function BasicInfoTab() {
 			</div>
 			<div className="flex sm:flex-row flex-col -mx-4">
 				<Controller
-					name="brandName"
+					name="mainBrand"
 					control={control}
 					render={({ field }) => (
 						<TextField
 							{...field}
 							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.brandName}
+							error={!!errors.mainBrand}
 							required
-							helperText={errors?.brandName?.message}
+							helperText={errors?.mainBrand?.message}
 							label="نام تجاری (برند) اصلی"
-							id="brandName"
+							id="mainBrand"
 							variant="outlined"
 							fullWidth
 						/>
 					)}
 				/>
 				<Controller
-					name="brandNameEn"
+					name="mainBrandEn"
 					control={control}
 					render={({ field }) => (
 						<TextField
 							{...field}
 							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.brandNameEn}
+							error={!!errors.mainBrandEn}
 							required
-							helperText={errors?.brandNameEn?.message}
+							helperText={errors?.mainBrandEn?.message}
 							label="نام تجاری (برند) اصلی به انگلیسی"
-							id="brandNameEn"
+							id="mainBrandEn"
 							variant="outlined"
 							fullWidth
 						/>
@@ -306,13 +306,13 @@ function BasicInfoTab() {
 				)}
 			/>
 			<Controller
-				name="productsTitle"
+				name="productTitles"
 				control={control}
 				render={({ field }) => (
 					<TextField
 						{...field}
 						className="mt-8 mb-16"
-						id="productsTitle"
+						id="productTitles"
 						label="عنوان محصولات (یا خدمات)"
 						type="text"
 						multiline

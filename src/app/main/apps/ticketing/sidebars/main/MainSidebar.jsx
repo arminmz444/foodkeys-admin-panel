@@ -77,7 +77,7 @@ function MainSidebar() {
 							</FuseSvgIcon>
 
 							<Input
-								placeholder="شناسه یکتا تیکت را جستجو کنید یا تیکت جدیدی را باز کنید"
+								placeholder="شناسه یکتا تیکت را جستجو کنید"
 								className="flex flex-1 px-8"
 								disableUnderline
 								fullWidth
@@ -141,7 +141,7 @@ function MainSidebar() {
 											className="font-medium text-20 px-32 py-24"
 											color="secondary.main"
 										>
-											Chats
+											تیکت‌های پاسخ داده نشده
 										</Typography>
 									</motion.div>
 								)}

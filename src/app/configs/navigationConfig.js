@@ -553,7 +553,7 @@ const navigationConfig = [
 				translate: 'USERS_LIST',
 				type: 'item',
 				icon: 'heroicons-outline:user-group',
-				url: '/apps/users/list'
+				url: '/apps/users'
 			},
 			{
 				id: 'users.news-letter',
@@ -562,7 +562,7 @@ const navigationConfig = [
 				type: 'item',
 				subtitleTranslate: 'USERS_NEWS_LETTER',
 				icon: 'heroicons-outline:academic-cap',
-				url: '/users/news-letter'
+				url: '/apps/users/news-letter'
 			}
 		]
 	},

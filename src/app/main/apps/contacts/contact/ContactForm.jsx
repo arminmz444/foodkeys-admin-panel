@@ -594,7 +594,7 @@ function ContactForm() {
 			>
 				{contactId !== "new" && (
 					<Button color="error" onClick={handleRemoveContact}>
-						Delete
+						حذف
 					</Button>
 				)}
 				<Button

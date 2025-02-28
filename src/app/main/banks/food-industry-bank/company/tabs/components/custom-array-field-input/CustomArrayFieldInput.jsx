@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import { useEffect } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import CountryCodeSelector from './CountryCodeSelector';
+import CountryCodeSelector from '@/app/main/users/user/phone-number-selector/CountryCodeSelector.jsx';
 // Zod schema for ContactPhoneNumber
 const schema = z.object({
 	country: z.string().optional(),
@@ -23,7 +23,22 @@ const defaultValues = {
  * The phone number input.
  */
 function CustomArrayFieldInput(props) {
-	const { value, hideRemove = false, onChange, onRemove } = props;
+	const {
+		value,
+		hideRemove = false,
+		onChange,
+		onRemove,
+		typeInputName = 'type',
+		typeInputLabel = 'برچسب',
+		typeInputPlaceholder = 'برچسب',
+		inputName,
+		inputLabel,
+		inputPlaceholder,
+		inputType = 'text',
+		haveTypeInput = true,
+		haveTypeSelector = false,
+		startAdornmentIcon = 'heroicons-solid:phone'
+	} = props;
 	const { control, formState, handleSubmit, reset } = useForm({
 		mode: 'all',
 		defaultValues,
@@ -43,43 +58,48 @@ function CustomArrayFieldInput(props) {
 			className="flex space-x-16 mb-16"
 			onChange={handleSubmit(onSubmit)}
 		>
+			{haveTypeInput ? (
+				<Controller
+					control={control}
+					name={typeInputName}
+					render={({ field }) => (
+						<TextField
+							{...field}
+							label={typeInputLabel}
+							placeholder={typeInputPlaceholder}
+							variant="outlined"
+							fullWidth
+							type={inputType}
+							className="me-10"
+							error={!!errors.label}
+							helperText={errors?.label?.message}
+							InputProps={{
+								startAdornment: (
+									<InputAdornment position="start">
+										<FuseSvgIcon size={20}>heroicons-solid:tag</FuseSvgIcon>
+									</InputAdornment>
+								)
+							}}
+						/>
+					)}
+				/>
+			) : (
+				<></>
+			)}
 			<Controller
 				control={control}
-				name="label"
+				name={inputName}
 				render={({ field }) => (
 					<TextField
 						{...field}
-						label="Label"
-						placeholder="Label"
-						variant="outlined"
-						fullWidth
-						className="me-10"
-						error={!!errors.label}
-						helperText={errors?.label?.message}
-						InputProps={{
-							startAdornment: (
-								<InputAdornment position="start">
-									<FuseSvgIcon size={20}>heroicons-solid:tag</FuseSvgIcon>
-								</InputAdornment>
-							)
-						}}
-					/>
-				)}
-			/>
-			<Controller
-				control={control}
-				name="phoneNumber"
-				render={({ field }) => (
-					<TextField
-						{...field}
-						label="شماره تلفن"
-						placeholder="شماره تلفن"
+						label={inputLabel}
+						placeholder={inputPlaceholder}
 						variant="outlined"
 						fullWidth
 						error={!!errors.phoneNumber}
 						helperText={errors?.phoneNumber?.message}
 						InputProps={{
-							startAdornment: (
+							startAdornment: haveTypeSelector ? (
 								<Controller
 									control={control}
 									name="country"
@@ -89,6 +109,10 @@ function CustomArrayFieldInput(props) {
 										</InputAdornment>
 									)}
 								/>
+							) : (
+								<InputAdornment position="start">
+									<FuseSvgIcon size={20}>{startAdornmentIcon}</FuseSvgIcon>
+								</InputAdornment>
 							)
 						}}
 					/>

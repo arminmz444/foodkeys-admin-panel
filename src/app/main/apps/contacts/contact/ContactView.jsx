@@ -92,6 +92,19 @@ function ContactView() {
 						</Avatar>
 						<div className="flex items-center mr-auto mb-4">
 							<Button
+								className={'me-4'}
+								variant="outlined"
+								color="error"
+								component={NavLinkAdapter}
+								to="edit"
+							>
+								<FuseSvgIcon size={20}>
+									heroicons-outline:trash
+								</FuseSvgIcon>
+
+								<span className="mx-8">حذف</span>
+							</Button>
+							<Button
 								variant="contained"
 								color="secondary"
 								component={NavLinkAdapter}

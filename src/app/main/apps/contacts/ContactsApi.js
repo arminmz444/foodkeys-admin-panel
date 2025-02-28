@@ -16,6 +16,10 @@ const ContactsApi = api
 	})
 	.injectEndpoints({
 		endpoints: (build) => ({
+			getUsersList: build.query({
+				query: () => ({ url: `/user` }),
+				providesTags: ["users"],
+			}),
 			getContactsList: build.query({
 				query: () => ({ url: `/mock-api/contacts` }),
 				providesTags: ["contacts"],
@@ -91,6 +95,7 @@ const ContactsApi = api
 	});
 export default ContactsApi;
 export const {
+	useGetUsersListQuery,
 	useGetContactsItemQuery,
 	useUpdateContactsItemMutation,
 	useDeleteContactsItemMutation,

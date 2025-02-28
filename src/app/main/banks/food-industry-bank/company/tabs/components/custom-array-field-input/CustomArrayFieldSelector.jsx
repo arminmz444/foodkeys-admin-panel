@@ -10,7 +10,7 @@ import { ContactPhoneModel } from '@/app/main/apps/contacts/models/ContactModel.
  * The phone number selector.
  */
 const CustomArrayFieldSelector = forwardRef((props, ref) => {
-	const { value, onChange, className, error, helperText } = props;
+	const { value, onChange, className, error, helperText, inputName, inputLabel, inputPlaceholder, haveTypeInput = true, buttonText = 'افزودن' } = props;
 	return (
 		<div
 			className={clsx('w-full', className)}
@@ -29,6 +29,10 @@ const CustomArrayFieldSelector = forwardRef((props, ref) => {
 						onChange(value.filter((_item, _index) => index !== _index));
 					}}
 					hideRemove={value.length === 1}
+					inputName={inputName}
+					inputLabel={inputLabel}
+					inputPlaceholder={inputPlaceholder}
+					haveTypeInput={haveTypeInput}
 				/>
 			))}
 			<Button
@@ -37,7 +41,7 @@ const CustomArrayFieldSelector = forwardRef((props, ref) => {
 			>
 				<FuseSvgIcon size={20}>heroicons-solid:plus-circle</FuseSvgIcon>
 
-				<span className="ml-8 font-medium text-secondary group-hover:underline">افزودن شماره تلفن</span>
+				<span className="ml-8 font-medium text-secondary group-hover:underline">{buttonText}</span>
 			</Button>
 		</div>
 	);

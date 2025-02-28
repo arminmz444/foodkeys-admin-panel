@@ -1,154 +1,166 @@
-import { apiService as api } from 'app/store/apiService.js';
-import ProductModel from './product/models/ProductModel.js';
+import { createSelector } from "@reduxjs/toolkit";
+import { apiService as api } from "app/store/apiService";
+import FuseUtils from "@fuse/utils";
+import { selectSearchText } from "./usersAppSlice.js";
 
-export const addTagTypes = [
-	'users_list',
-	'eCommerce_products',
-	'eCommerce_product',
-	'eCommerce_orders',
-	'eCommerce_order',
-	'user'
-];
-const UserApi = api
+export const addTagTypes = ['contacts_item', 'contacts', 'contacts_tag', 'contacts_tags', 'countries'];
+const ContactsApi = api
 	.enhanceEndpoints({
 		addTagTypes
 	})
 	.injectEndpoints({
 		endpoints: (build) => ({
-			// GET /user/ => returns list of users
 			getUsersList: build.query({
-				query: () => ({
-					url: `/user/`,
-					method: 'GET'
+				query: () => ({ url: `/user` }),
+				providesTags: ["users"],
+				transformResponse: (response) => {
+					const data = { data: response?.data };
+
+					if (response && response.pagination) {
+						data.totalPages = response.pagination.totalPages;
+						data.totalElements = response.pagination.totalElements;
+						data.pageSize = response.pagination.pageSize;
+						data.pageIndex = response.pagination.pageIndex;
+					}
+
+					return data;
+				}
+			}),
+			getUsersItem: build.query({
+				query: (userId) => ({ url: `/user/${userId}` }),
+				transformResponse: (response) => response?.data,
+				providesTags: ["users_item"]
+			}),
+			getContactsList: build.query({
+				query: () => ({ url: `/mock-api/contacts` }),
+				providesTags: ["contacts"]
+			}),
+			createContactsItem: build.mutation({
+				query: (queryArg) => ({
+					url: `/mock-api/contacts`,
+					method: "POST",
+					data: queryArg.contact
 				}),
-				providesTags: ['users_list']
+				invalidatesTags: ["contacts"]
 			}),
-			// GET /user/{id} => returns single user
-			getUser: build.query({
-				query: (id) => ({
-					url: `/user/${id}`,
-					method: 'GET'
+			getContactsItem: build.query({
+				query: (contactId) => ({ url: `/mock-api/contacts/${contactId}` }),
+				providesTags: ["contacts_item"]
+			}),
+			updateContactsItem: build.mutation({
+				query: (contact) => ({
+					url: `/mock-api/contacts/${contact.id}`,
+					method: "PUT",
+					data: contact
 				}),
-				providesTags: (result, error, id) => [{ type: 'user', id }]
+				invalidatesTags: ["contacts_item", "contacts"]
 			}),
-			// POST /user/ => create a new user
-			createUser: build.mutation({
-				query: (newUser) => ({
-					url: `/user/`,
-					method: 'POST',
-					data: newUser
+			deleteContactsItem: build.mutation({
+				query: (contactId) => ({
+					url: `/mock-api/contacts/${contactId}`,
+					method: "DELETE"
 				}),
-				invalidatesTags: ['users_list', 'user']
+				invalidatesTags: ["contacts"]
 			}),
-			// PUT /user/{id} => update an existing user
-			updateUser: build.mutation({
-				query: ({ id, ...rest }) => ({
-					url: `/user/${id}`,
-					method: 'PUT',
-					data: rest
+			getContactsTag: build.query({
+				query: (tagId) => ({ url: `/mock-api/contacts/tags/${tagId}` }),
+				providesTags: ["contacts_tag"]
+			}),
+			updateContactsTag: build.mutation({
+				query: (tag) => ({
+					url: `/mock-api/contacts/tags/${tag.id}`,
+					method: "PUT",
+					body: tag
 				}),
-				invalidatesTags: (result, error, { id }) => [{ type: 'user', id }, 'users_list']
+				invalidatesTags: ["contacts_tags"]
 			}),
-			// DELETE /user/{id} => delete a user
-			deleteUser: build.mutation({
-				query: (id) => ({
-					url: `/user/${id}`,
-					method: 'DELETE'
+			deleteContactsTag: build.mutation({
+				query: (tagId) => ({
+					url: `/mock-api/contacts/tags/${tagId}`,
+					method: "DELETE"
 				}),
-				invalidatesTags: ['users_list']
+				invalidatesTags: ["contacts_tags"]
 			}),
-			getECommerceProducts: build.query({
-				query: () => ({ url: `/mock-api/ecommerce/products` }),
-				providesTags: ['eCommerce_products']
+			getContactsTags: build.query({
+				query: () => ({ url: `/mock-api/contacts/tags` }),
+				providesTags: ["contacts_tags"]
 			}),
-			deleteECommerceProducts: build.mutation({
-				query: (productIds) => ({
-					url: `/mock-api/ecommerce/products`,
-					method: 'DELETE',
-					data: productIds
+			getContactsAccessibility: build.query({
+				query: () => ({ url: `/mock-api/contacts/accessibility` }),
+				providesTags: ["contacts_accessibility"]
+			}),
+			getContactsCountries: build.query({
+				query: () => ({ url: `/mock-api/countries` }),
+				providesTags: ["countries"]
+			}),
+			createContactsTag: build.mutation({
+				query: (queryArg) => ({
+					url: `/mock-api/contacts/tags`,
+					method: "POST",
+					body: queryArg.tag
 				}),
-				invalidatesTags: ['eCommerce_products']
-			}),
-			getECommerceProduct: build.query({
-				query: (productId) => ({
-					url: `/mock-api/ecommerce/products/${productId}`
-				}),
-				providesTags: ['eCommerce_product', 'eCommerce_products']
-			}),
-			createECommerceProduct: build.mutation({
-				query: (newProduct) => ({
-					url: `/mock-api/ecommerce/products`,
-					method: 'POST',
-					data: ProductModel(newProduct)
-				}),
-				invalidatesTags: ['eCommerce_products', 'eCommerce_product']
-			}),
-			updateECommerceProduct: build.mutation({
-				query: (product) => ({
-					url: `/mock-api/ecommerce/products/${product.id}`,
-					method: 'PUT',
-					data: product
-				}),
-				invalidatesTags: ['eCommerce_product', 'eCommerce_products']
-			}),
-			deleteECommerceProduct: build.mutation({
-				query: (productId) => ({
-					url: `/mock-api/ecommerce/products/${productId}`,
-					method: 'DELETE'
-				}),
-				invalidatesTags: ['eCommerce_product', 'eCommerce_products']
-			}),
-			getECommerceOrders: build.query({
-				query: () => ({ url: `/mock-api/ecommerce/orders` }),
-				providesTags: ['eCommerce_orders']
-			}),
-			getECommerceOrder: build.query({
-				query: (orderId) => ({ url: `/mock-api/ecommerce/orders/${orderId}` }),
-				providesTags: ['eCommerce_order']
-			}),
-			updateECommerceOrder: build.mutation({
-				query: (order) => ({
-					url: `/mock-api/ecommerce/orders/${order.id}`,
-					method: 'PUT',
-					data: order
-				}),
-				invalidatesTags: ['eCommerce_order', 'eCommerce_orders']
-			}),
-			deleteECommerceOrder: build.mutation({
-				query: (orderId) => ({
-					url: `/mock-api/ecommerce/orders/${orderId}`,
-					method: 'DELETE'
-				}),
-				invalidatesTags: ['eCommerce_order', 'eCommerce_orders']
-			}),
-			deleteECommerceOrders: build.mutation({
-				query: (ordersId) => ({
-					url: `/mock-api/ecommerce/orders`,
-					method: 'DELETE',
-					data: ordersId
-				}),
-				invalidatesTags: ['eCommerce_order', 'eCommerce_orders']
+				invalidatesTags: ["contacts_tags"]
 			})
 		}),
 		overrideExisting: false
 	});
-
-export default UserApi;
+export default ContactsApi;
 export const {
 	useGetUsersListQuery,
-	useGetUserQuery,
-	useCreateUserMutation,
-	useUpdateUserMutation,
-	useDeleteUserMutation,
-	useGetECommerceProductsQuery,
-	useDeleteECommerceProductsMutation,
-	useGetECommerceProductQuery,
-	useUpdateECommerceProductMutation,
-	useDeleteECommerceProductMutation,
-	useGetECommerceOrdersQuery,
-	useGetECommerceOrderQuery,
-	useUpdateECommerceOrderMutation,
-	useDeleteECommerceOrderMutation,
-	useDeleteECommerceOrdersMutation,
-	useCreateECommerceProductMutation
-} = UserApi;
+	useGetUsersItemQuery,
+	useGetContactsItemQuery,
+	useUpdateContactsItemMutation,
+	useDeleteContactsItemMutation,
+	useGetContactsListQuery,
+	useCreateContactsItemMutation,
+	useGetContactsTagQuery,
+	useGetContactsCountriesQuery,
+	useUpdateContactsTagMutation,
+	useDeleteContactsTagMutation,
+	useGetContactsTagsQuery,
+	useGetContactsAccessibilityQuery,
+	useCreateContactsTagMutation
+} = ContactsApi;
+/**
+ * Select filtered contacts
+ */
+export const selectFilteredContactList = (contacts) =>
+	createSelector([selectSearchText], (searchText) => {
+		if (!contacts) {
+			return [];
+		}
+
+		if (searchText.length === 0) {
+			return contacts;
+		}
+
+		return FuseUtils.filterArrayByString(contacts, searchText);
+	});
+/**
+ * Select grouped contacts
+ */
+export const selectGroupedFilteredContacts = (contacts) =>
+	createSelector([selectFilteredContactList(contacts)], (contacts) => {
+		if (!contacts) {
+			return [];
+		}
+
+		const sortedContacts = [...contacts]?.sort((a, b) =>
+			a?.firstName?.localeCompare(b.firstName, "es", { sensitivity: "base" })
+		);
+		const groupedObject = sortedContacts?.reduce((r, e) => {
+			// get first letter of name of current element
+			const group = e.firstName[0];
+
+			// if there is no property in accumulator with this letter create it
+			if (!r[group]) r[group] = { group, children: [e] };
+			// if there is push current element to children array for that letter
+			else {
+				r[group]?.children?.push(e);
+			}
+
+			// return accumulator
+			return r;
+		}, {});
+		return groupedObject;
+	});

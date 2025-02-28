@@ -5,7 +5,12 @@ import { styled } from '@mui/material/styles';
 import useThemeMediaQuery from '@fuse/hooks/useThemeMediaQuery';
 import ContactsHeader from './ContactsHeader';
 import ContactsList from './ContactsList';
-import { useGetContactsListQuery, useGetContactsCountriesQuery, useGetContactsTagsQuery } from './ContactsApi';
+import {
+	useGetContactsListQuery,
+	useGetContactsCountriesQuery,
+	useGetContactsTagsQuery,
+	useGetUsersListQuery
+} from './ContactsApi';
 import ContactsSidebarContent from './ContactsSidebarContent';
 
 const Root = styled(FusePageSimple)(({ theme }) => ({
@@ -22,6 +27,7 @@ function ContactsApp() {
 	const routeParams = useParams();
 	const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
 	const isMobile = useThemeMediaQuery((theme) => theme.breakpoints.down('lg'));
+	useGetUsersListQuery();
 	useGetContactsListQuery();
 	useGetContactsCountriesQuery();
 	useGetContactsTagsQuery();
