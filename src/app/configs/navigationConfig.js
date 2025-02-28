@@ -1,592 +1,601 @@
-import i18next from 'i18next';
-import fa from './navigation-i18n/fa';
-import ar from './navigation-i18n/ar';
-import en from './navigation-i18n/en';
-import tr from './navigation-i18n/tr';
-import SettingsAppNavigation from '../main/apps/settings/SettingsAppNavigation';
-import DocumentationNavigation from '@/app/main/documentation/DocumentationNavigation.js';
+import i18next from "i18next";
+import fa from "./navigation-i18n/fa";
+import ar from "./navigation-i18n/ar";
+import en from "./navigation-i18n/en";
+import tr from "./navigation-i18n/tr";
+import SettingsAppNavigation from "../main/apps/settings/SettingsAppNavigation";
+import DocumentationNavigation from "@/app/main/documentation/DocumentationNavigation.js";
 
-i18next.addResourceBundle('fa', 'navigation', fa);
-i18next.addResourceBundle('en', 'navigation', en);
-i18next.addResourceBundle('tr', 'navigation', tr);
-i18next.addResourceBundle('ar', 'navigation', ar);
+i18next.addResourceBundle("fa", "navigation", fa);
+i18next.addResourceBundle("en", "navigation", en);
+i18next.addResourceBundle("tr", "navigation", tr);
+i18next.addResourceBundle("ar", "navigation", ar);
 /**
  * The navigationConfig object is an array of navigation items for the Fuse application.
  */
 
 const navigationConfig = [
 	{
-		id: 'dashboards',
-		title: 'Dashboards',
-		subtitle: 'Dashboard section of your app',
-		type: 'group',
-		icon: 'heroicons-outline:home',
-		translate: 'DASHBOARDS',
-		subtitleTranslate: 'SUB_DASHBOARDS',
+		id: "dashboards",
+		title: "Dashboards",
+		subtitle: "Dashboard section of your app",
+		type: "group",
+		icon: "heroicons-outline:home",
+		translate: "DASHBOARDS",
+		subtitleTranslate: "SUB_DASHBOARDS",
 		children: [
 			{
-				id: 'dashboards.project',
-				title: 'Project',
-				type: 'item',
-				icon: 'heroicons-outline:clipboard-check',
-				url: '/dashboards/project',
-				translate: 'PROJECT'
+				id: "dashboards.project",
+				title: "Project",
+				type: "item",
+				icon: "heroicons-outline:clipboard-check",
+				url: "/dashboards/project",
+				translate: "PROJECT",
 			},
 			{
-				id: 'dashboards.analytics',
-				title: 'Analytics',
-				type: 'item',
-				icon: 'heroicons-outline:chart-pie',
-				url: '/dashboards/analytics',
-				translate: 'ANALYTICS'
+				id: "dashboards.analytics",
+				title: "Analytics",
+				type: "item",
+				icon: "heroicons-outline:chart-pie",
+				url: "/dashboards/analytics",
+				translate: "ANALYTICS",
 			},
 			{
-				id: 'dashboards.finance',
-				title: 'Finance',
-				type: 'item',
-				icon: 'heroicons-outline:cash',
-				url: '/dashboards/finance',
-				translate: 'FINANCE'
+				id: "dashboards.finance",
+				title: "Finance",
+				type: "item",
+				icon: "heroicons-outline:cash",
+				url: "/dashboards/finance",
+				translate: "FINANCE",
 			},
 			{
-				id: 'dashboards.crypto',
-				title: 'Crypto',
-				type: 'item',
-				icon: 'heroicons-outline:currency-dollar',
-				url: '/dashboards/crypto',
-				translate: 'CRYPTO'
-			}
-		]
+				id: "dashboards.crypto",
+				title: "Crypto",
+				type: "item",
+				icon: "heroicons-outline:currency-dollar",
+				url: "/dashboards/crypto",
+				translate: "CRYPTO",
+			},
+		],
 	},
 	{
-		id: 'category',
-		title: 'category',
-		subtitle: 'Category section of your app',
-		type: 'group',
-		icon: 'heroicons-outline:home',
-		translate: 'CATEGORY',
-		subtitleTranslate: 'SUB_CATEGORY',
+		id: "category",
+		title: "category",
+		subtitle: "Category section of your app",
+		type: "group",
+		icon: "heroicons-outline:home",
+		translate: "CATEGORY",
+		subtitleTranslate: "SUB_CATEGORY",
 		children: [
 			{
-				id: 'category.list',
-				title: 'List of Categories',
-				type: 'item',
-				icon: 'heroicons-outline:clipboard-check',
-				url: '/category/list',
+				id: "category.list",
+				title: "List of Categories",
+				type: "item",
+				icon: "heroicons-outline:clipboard-check",
+				url: "/category/list",
 				end: true,
-				translate: 'CATEGORY_LIST'
+				translate: "CATEGORY_LIST",
 			},
 			{
-				id: 'category.subcategory.list',
-				title: 'Get all subcategories list',
-				type: 'item',
-				icon: 'heroicons-outline:clipboard-check',
-				url: '/category/subcategory/list',
+				id: "category.subcategory.list",
+				title: "Get all subcategories list",
+				type: "item",
+				icon: "heroicons-outline:clipboard-check",
+				url: "/category/subcategory/list",
 				end: true,
-				translate: 'SUB_SUB_CATEGORY_LIST'
-			}
-		]
+				translate: "SUB_SUB_CATEGORY_LIST",
+			},
+		],
 	},
 	{
-		id: 'banks',
-		title: 'Banks',
-		translate: 'BANKS',
-		subtitle: 'All of the banks',
-		type: 'group',
-		icon: 'heroicons-outline:cube',
+		id: "banks",
+		title: "Banks",
+		translate: "BANKS",
+		subtitle: "All of the banks",
+		type: "group",
+		icon: "heroicons-outline:cube",
 		children: [
 			{
-				id: 'banks.food-industry-bank',
-				title: 'FoodIndustryBank',
-				translate: 'FOOD_INDUSTRY_BANK',
-				type: 'collapse',
-				icon: 'heroicons-outline:shopping-cart',
+				id: "banks.food-industry-bank",
+				title: "FoodIndustryBank",
+				translate: "FOOD_INDUSTRY_BANK",
+				type: "collapse",
+				icon: "heroicons-outline:shopping-cart",
 				children: [
 					{
-						id: 'banks.food-industry-bank.list',
-						title: 'FoodIndustryBankList',
-						translate: 'COMPANY_LIST',
-						type: 'item',
-						url: 'banks/food-industry',
-						end: true
-					},
-					{
-						id: 'banks.food-industry-bank.requests',
-						title: 'USER_REQUESTS',
-						translate: 'USER_REQUESTS',
-						type: 'item',
-						url: 'banks/food-industry/request/list'
-					},
-					{
-						id: 'banks.food-industry-bank.archive',
-						title: 'BANK_ARCHIVE',
-						translate: 'BANK_ARCHIVE',
-						type: 'item',
-						url: 'banks/food-industry/archive'
-					}
-				]
-			},
-			{
-				id: 'banks.agriculture-industry-bank',
-				title: 'AgricultureIndustryBank',
-				translate: 'AGRICULTURE_INDUSTRY_BANK',
-				type: 'collapse',
-				icon: 'heroicons-outline:shopping-cart',
-				children: [
-					{
-						id: 'banks.agriculture-industry-bank.list',
-						title: 'AgricultureIndustryBankList',
-						translate: 'COMPANY_LIST',
-						type: 'item',
-						url: 'banks/agriculture-industry',
-						end: true
-					},
-					{
-						id: 'banks.agriculture-industry-bank.requests',
-						title: 'USER_REQUESTS',
-						translate: 'USER_REQUESTS',
-						type: 'item',
-						url: 'banks/agriculture-industry/request/list'
-					},
-					{
-						id: 'banks.agriculture-industry-bank.archive',
-						title: 'BANK_ARCHIVE',
-						translate: 'BANK_ARCHIVE',
-						type: 'item',
-						url: 'banks/agriculture-industry/archive'
-					}
-				]
-			},
-			{
-				id: 'banks.service-bank',
-				title: 'ServiceBank',
-				translate: 'SERVICE_BANK',
-				type: 'collapse',
-				icon: 'heroicons-outline:shopping-cart',
-				children: [
-					{
-						id: 'banks.service-bank.list',
-						title: 'ServiceBankList',
-						translate: 'SERVICE_LIST',
-						type: 'item',
-						url: 'banks/service',
-						end: true
-					},
-					{
-						id: 'banks.service-bank.schema',
-						title: 'Submit New Service Schema',
-						translate: 'CREATE_SERVICE_SCHEMA',
-						type: 'item',
-						url: 'banks/service/schema'
-					},
-					{
-						id: 'banks.service-bank.list',
-						title: 'ServiceBankCompanyList',
-						translate: 'COMPANY_LIST',
-						type: 'item',
-						url: 'banks/service/company',
-						end: true
-					},
-					{
-						id: 'banks.service-bank.requests',
-						title: 'USER_REQUESTS',
-						translate: 'USER_REQUESTS',
-						type: 'item',
-						url: 'banks/service/request/list'
-					},
-					{
-						id: 'banks.service-bank.archive',
-						title: 'BANK_ARCHIVE',
-						translate: 'BANK_ARCHIVE',
-						type: 'item',
-						url: 'banks/service/archive'
-					}
-				]
-			},
-			{
-				id: 'banks.media',
-				title: 'MediaBank',
-				translate: 'MEDIA_BANK',
-				type: 'collapse',
-				icon: 'heroicons-outline:shopping-cart',
-				children: [
-					{
-						id: 'banks.media.company.list',
-						title: 'MediaBankList',
-						translate: 'COMPANY_LIST',
-						type: 'item',
-						url: 'banks/media',
-						end: true
-					},
-					{
-						id: 'banks.media.requests',
-						title: 'USER_REQUESTS',
-						translate: 'USER_REQUESTS',
-						type: 'item',
-						url: 'banks/media/request/list'
-					},
-					{
-						id: 'banks.media.archive',
-						title: 'BANK_ARCHIVE',
-						translate: 'BANK_ARCHIVE',
-						type: 'item',
-						url: 'banks/media/archive'
-					}
-				]
-			}
-		]
-	},
-	{
-		id: 'bundle',
-		title: 'bundle',
-		subtitle: 'Bundle section of your app',
-		type: 'group',
-		icon: 'heroicons-outline:home',
-		translate: 'BUNDLE',
-		subtitleTranslate: 'SUB_BUNDLE',
-		children: [
-			{
-				id: 'bundle.list',
-				title: 'List of Bundles',
-				type: 'item',
-				icon: 'heroicons-outline:clipboard-check',
-				url: '/bundle/list',
-				end: true,
-				translate: 'BUNDLE_LIST'
-			},
-			{
-				id: 'bundle.subscription.list',
-				title: 'Get all subscriptions list',
-				type: 'item',
-				icon: 'heroicons-outline:clipboard-check',
-				url: '/bundle/subscription/list',
-				end: true,
-				translate: 'SUBSCRIPTION_LIST'
-			},
-			{
-				id: 'bundle.discount.list',
-				title: 'Get all discounts list',
-				type: 'item',
-				icon: 'heroicons-outline:clipboard-check',
-				url: '/bundle/discount/list',
-				end: true,
-				translate: 'DISCOUNT_LIST'
-			}
-		]
-	},
-	{
-		id: 'apps',
-		title: 'Applications',
-		subtitle: 'Panel applications section',
-		type: 'group',
-		icon: 'heroicons-outline:cube',
-		translate: 'APPLICATIONS',
-		subtitleTranslate: 'SUB_APPLICATIONS',
-		children: [
-			{
-				id: 'apps.excel',
-				title: 'Excel',
-				type: 'item',
-				icon: 'heroicons-outline:document',
-				url: '/apps/excel',
-				translate: 'EXCEL'
-			},
-			{
-				id: 'apps.epub',
-				title: 'EPub',
-				type: 'item',
-				icon: 'heroicons-outline:document',
-				url: '/apps/epub',
-				translate: 'EPUB'
-			},
-			{
-				id: 'apps.academy',
-				title: 'Academy',
-				type: 'item',
-				icon: 'heroicons-outline:academic-cap',
-				url: '/apps/academy',
-				translate: 'ACADEMY'
-			},
-			{
-				id: 'apps.calendar',
-				title: 'Calendar',
-				subtitle: '3 upcoming events',
-				type: 'item',
-				icon: 'heroicons-outline:calendar',
-				url: '/apps/calendar',
-				translate: 'CALENDAR',
-				subtitleTranslate: 'SUB_CALENDAR'
-			},
-			{
-				id: 'apps.messenger',
-				title: 'Messenger',
-				type: 'item',
-				icon: 'heroicons-outline:chat-alt',
-				url: '/apps/messenger',
-				translate: 'MESSENGER'
-			},
-			{
-				id: 'apps.ticketing',
-				title: 'Ticketing',
-				type: 'item',
-				icon: 'heroicons-outline:chat-alt',
-				url: '/apps/ticketing',
-				translate: 'TICKETING'
-			},
-			{
-				id: 'apps.whatsapp',
-				title: 'Whatsapp',
-				type: 'item',
-				icon: 'heroicons-outline:chat-alt',
-				url: '/apps/whatsapp',
-				translate: 'WHATSAPP'
-			},
-			{
-				id: 'apps.contacts',
-				title: 'Contacts',
-				type: 'item',
-				icon: 'heroicons-outline:user-group',
-				url: '/apps/contacts',
-				translate: 'CONTACTS'
-			},
-			{
-				id: 'apps.ecommerce',
-				title: 'ECommerce',
-				type: 'collapse',
-				icon: 'heroicons-outline:shopping-cart',
-				translate: 'ECOMMERCE',
-				children: [
-					{
-						id: 'e-commerce-companies',
-						title: 'Products',
-						type: 'item',
-						url: 'apps/e-commerce/products',
+						id: "banks.food-industry-bank.list",
+						title: "FoodIndustryBankList",
+						translate: "COMPANY_LIST",
+						type: "item",
+						url: "banks/food-industry",
 						end: true,
-						translate: 'PRODUCTS'
 					},
 					{
-						id: 'e-commerce-product-detail',
-						title: 'Product Detail',
-						type: 'item',
-						url: 'apps/e-commerce/products/1/a-walk-amongst-friends-canvas-print',
-						translate: 'PRODUCT_DETAIL'
+						id: "banks.food-industry-bank.requests",
+						title: "USER_REQUESTS",
+						translate: "USER_REQUESTS",
+						type: "item",
+						url: "banks/food-industry/request/list",
 					},
 					{
-						id: 'e-commerce-new-product',
-						title: 'New Product',
-						type: 'item',
-						url: 'apps/e-commerce/products/new',
-						translate: 'NEW_PRODUCT'
+						id: "banks.food-industry-bank.archive",
+						title: "BANK_ARCHIVE",
+						translate: "BANK_ARCHIVE",
+						type: "item",
+						url: "banks/food-industry/archive",
 					},
-					{
-						id: 'e-commerce-payments',
-						title: 'Orders',
-						type: 'item',
-						url: 'apps/e-commerce/orders',
-						end: true,
-						translate: 'ORDERS'
-					},
-					{
-						id: 'e-commerce-order-detail',
-						title: 'Order Detail',
-						type: 'item',
-						url: 'apps/e-commerce/orders/1',
-						translate: 'ORDER_DETAIL'
-					}
-				]
+				],
 			},
 			{
-				id: 'apps.file-manager',
-				title: 'File Manager',
-				type: 'item',
-				icon: 'heroicons-outline:cloud',
-				url: '/apps/file-manager',
-				end: true,
-				translate: 'FILE_MANAGER'
-			},
-			{
-				id: 'apps.help-center',
-				title: 'Help Center',
-				type: 'collapse',
-				icon: 'heroicons-outline:support',
-				url: '/apps/help-center',
-				translate: 'HELP_CENTER',
+				id: "banks.agriculture-industry-bank",
+				title: "AgricultureIndustryBank",
+				translate: "AGRICULTURE_INDUSTRY_BANK",
+				type: "collapse",
+				icon: "heroicons-outline:shopping-cart",
 				children: [
 					{
-						id: 'apps.help-center.home',
-						title: 'Home',
-						type: 'item',
-						url: '/apps/help-center',
+						id: "banks.agriculture-industry-bank.list",
+						title: "AgricultureIndustryBankList",
+						translate: "COMPANY_LIST",
+						type: "item",
+						url: "banks/agriculture-industry",
 						end: true,
-						translate: 'HOME'
 					},
 					{
-						id: 'apps.help-center.faqs',
-						title: 'FAQs',
-						type: 'item',
-						url: '/apps/help-center/faqs',
-						translate: 'FAQS'
+						id: "banks.agriculture-industry-bank.requests",
+						title: "USER_REQUESTS",
+						translate: "USER_REQUESTS",
+						type: "item",
+						url: "banks/agriculture-industry/request/list",
 					},
 					{
-						id: 'apps.help-center.guides',
-						title: 'Guides',
-						type: 'item',
-						url: '/apps/help-center/guides',
-						translate: 'GUIDES'
+						id: "banks.agriculture-industry-bank.archive",
+						title: "BANK_ARCHIVE",
+						translate: "BANK_ARCHIVE",
+						type: "item",
+						url: "banks/agriculture-industry/archive",
 					},
-					{
-						id: 'apps.help-center.support',
-						title: 'Support',
-						type: 'item',
-						url: '/apps/help-center/support',
-						translate: 'SUPPORT'
-					}
-				]
+				],
 			},
 			{
-				id: 'apps.mailbox',
-				title: 'Mailbox',
-				type: 'item',
-				icon: 'heroicons-outline:mail',
-				url: '/apps/mailbox',
-				translate: 'MAIL',
+				id: "banks.service-bank",
+				title: "ServiceBank",
+				translate: "SERVICE_BANK",
+				type: "collapse",
+				icon: "heroicons-outline:shopping-cart",
+				children: [
+					{
+						id: "banks.service-bank.list",
+						title: "ServiceBankList",
+						translate: "SERVICE_LIST",
+						type: "item",
+						url: "banks/service",
+						end: true,
+					},
+					{
+						id: "banks.service-bank.schema",
+						title: "Submit New Service Schema",
+						translate: "CREATE_SERVICE_SCHEMA",
+						type: "item",
+						url: "banks/service/schema",
+					},
+					{
+						id: "banks.service-bank.list",
+						title: "ServiceBankCompanyList",
+						translate: "COMPANY_LIST",
+						type: "item",
+						url: "banks/service/company",
+						end: true,
+					},
+					{
+						id: "banks.service-bank.requests",
+						title: "USER_REQUESTS",
+						translate: "USER_REQUESTS",
+						type: "item",
+						url: "banks/service/request/list",
+					},
+					{
+						id: "banks.service-bank.archive",
+						title: "BANK_ARCHIVE",
+						translate: "BANK_ARCHIVE",
+						type: "item",
+						url: "banks/service/archive",
+					},
+				],
+			},
+			{
+				id: "banks.media",
+				title: "MediaBank",
+				translate: "MEDIA_BANK",
+				type: "collapse",
+				icon: "heroicons-outline:shopping-cart",
+				children: [
+					{
+						id: "banks.media.company.list",
+						title: "MediaBankList",
+						translate: "COMPANY_LIST",
+						type: "item",
+						url: "banks/media",
+						end: true,
+					},
+					{
+						id: "banks.media.requests",
+						title: "USER_REQUESTS",
+						translate: "USER_REQUESTS",
+						type: "item",
+						url: "banks/media/request/list",
+					},
+					{
+						id: "banks.media.archive",
+						title: "BANK_ARCHIVE",
+						translate: "BANK_ARCHIVE",
+						type: "item",
+						url: "banks/media/archive",
+					},
+				],
+			},
+		],
+	},
+	{
+		id: "bundle",
+		title: "bundle",
+		subtitle: "Bundle section of your app",
+		type: "group",
+		icon: "heroicons-outline:home",
+		translate: "BUNDLE",
+		subtitleTranslate: "SUB_BUNDLE",
+		children: [
+			{
+				id: "bundle.setting",
+				title: "Bundle Settings",
+				type: "item",
+				icon: "heroicons-outline:cog",
+				url: "/bundle/list",
+				end: true,
+				translate: "BUNDLE_SETTING",
+			},
+			{
+				id: "bundle.list",
+				title: "List of Bundles",
+				type: "item",
+				icon: "heroicons-outline:clipboard-check",
+				url: "/bundle/list",
+				end: true,
+				translate: "BUNDLE_LIST",
+			},
+			{
+				id: "bundle.subscription.list",
+				title: "Get all subscriptions list",
+				type: "item",
+				icon: "heroicons-outline:clipboard-check",
+				url: "/bundle/subscription/list",
+				end: true,
+				translate: "SUBSCRIPTION_LIST",
+			},
+			{
+				id: "bundle.discount.list",
+				title: "Get all discounts list",
+				type: "item",
+				icon: "heroicons-outline:clipboard-check",
+				url: "/bundle/discount/list",
+				end: true,
+				translate: "DISCOUNT_LIST",
+			},
+		],
+	},
+	{
+		id: "apps",
+		title: "Applications",
+		subtitle: "Panel applications section",
+		type: "group",
+		icon: "heroicons-outline:cube",
+		translate: "APPLICATIONS",
+		subtitleTranslate: "SUB_APPLICATIONS",
+		children: [
+			{
+				id: "apps.excel",
+				title: "Excel",
+				type: "item",
+				icon: "heroicons-outline:document",
+				url: "/apps/excel",
+				translate: "EXCEL",
+			},
+			{
+				id: "apps.epub",
+				title: "EPub",
+				type: "item",
+				icon: "heroicons-outline:document",
+				url: "/apps/epub",
+				translate: "EPUB",
+			},
+			{
+				id: "apps.academy",
+				title: "Academy",
+				type: "item",
+				icon: "heroicons-outline:academic-cap",
+				url: "/apps/academy",
+				translate: "ACADEMY",
+			},
+			{
+				id: "apps.calendar",
+				title: "Calendar",
+				subtitle: "3 upcoming events",
+				type: "item",
+				icon: "heroicons-outline:calendar",
+				url: "/apps/calendar",
+				translate: "CALENDAR",
+				subtitleTranslate: "SUB_CALENDAR",
+			},
+			{
+				id: "apps.messenger",
+				title: "Messenger",
+				type: "item",
+				icon: "heroicons-outline:chat-alt",
+				url: "/apps/messenger",
+				translate: "MESSENGER",
+			},
+			{
+				id: "apps.ticketing",
+				title: "Ticketing",
+				type: "item",
+				icon: "heroicons-outline:chat-alt",
+				url: "/apps/ticketing",
+				translate: "TICKETING",
+			},
+			{
+				id: "apps.whatsapp",
+				title: "Whatsapp",
+				type: "item",
+				icon: "heroicons-outline:chat-alt",
+				url: "/apps/whatsapp",
+				translate: "WHATSAPP",
+			},
+			{
+				id: "apps.contacts",
+				title: "Contacts",
+				type: "item",
+				icon: "heroicons-outline:user-group",
+				url: "/apps/contacts",
+				translate: "CONTACTS",
+			},
+			{
+				id: "apps.ecommerce",
+				title: "ECommerce",
+				type: "collapse",
+				icon: "heroicons-outline:shopping-cart",
+				translate: "ECOMMERCE",
+				children: [
+					{
+						id: "e-commerce-companies",
+						title: "Products",
+						type: "item",
+						url: "apps/e-commerce/products",
+						end: true,
+						translate: "PRODUCTS",
+					},
+					{
+						id: "e-commerce-product-detail",
+						title: "Product Detail",
+						type: "item",
+						url: "apps/e-commerce/products/1/a-walk-amongst-friends-canvas-print",
+						translate: "PRODUCT_DETAIL",
+					},
+					{
+						id: "e-commerce-new-product",
+						title: "New Product",
+						type: "item",
+						url: "apps/e-commerce/products/new",
+						translate: "NEW_PRODUCT",
+					},
+					{
+						id: "e-commerce-payments",
+						title: "Orders",
+						type: "item",
+						url: "apps/e-commerce/orders",
+						end: true,
+						translate: "ORDERS",
+					},
+					{
+						id: "e-commerce-order-detail",
+						title: "Order Detail",
+						type: "item",
+						url: "apps/e-commerce/orders/1",
+						translate: "ORDER_DETAIL",
+					},
+				],
+			},
+			{
+				id: "apps.file-manager",
+				title: "File Manager",
+				type: "item",
+				icon: "heroicons-outline:cloud",
+				url: "/apps/file-manager",
+				end: true,
+				translate: "FILE_MANAGER",
+			},
+			{
+				id: "apps.help-center",
+				title: "Help Center",
+				type: "collapse",
+				icon: "heroicons-outline:support",
+				url: "/apps/help-center",
+				translate: "HELP_CENTER",
+				children: [
+					{
+						id: "apps.help-center.home",
+						title: "Home",
+						type: "item",
+						url: "/apps/help-center",
+						end: true,
+						translate: "HOME",
+					},
+					{
+						id: "apps.help-center.faqs",
+						title: "FAQs",
+						type: "item",
+						url: "/apps/help-center/faqs",
+						translate: "FAQS",
+					},
+					{
+						id: "apps.help-center.guides",
+						title: "Guides",
+						type: "item",
+						url: "/apps/help-center/guides",
+						translate: "GUIDES",
+					},
+					{
+						id: "apps.help-center.support",
+						title: "Support",
+						type: "item",
+						url: "/apps/help-center/support",
+						translate: "SUPPORT",
+					},
+				],
+			},
+			{
+				id: "apps.mailbox",
+				title: "Mailbox",
+				type: "item",
+				icon: "heroicons-outline:mail",
+				url: "/apps/mailbox",
+				translate: "MAIL",
 				badge: {
-					title: '27',
-					classes: 'px-8 bg-pink-600 text-white rounded-full'
-				}
+					title: "27",
+					classes: "px-8 bg-pink-600 text-white rounded-full",
+				},
 			},
 			{
-				id: 'apps.notes',
-				title: 'Notes',
-				type: 'item',
-				icon: 'heroicons-outline:pencil-alt',
-				url: '/apps/notes',
-				translate: 'NOTES'
+				id: "apps.notes",
+				title: "Notes",
+				type: "item",
+				icon: "heroicons-outline:pencil-alt",
+				url: "/apps/notes",
+				translate: "NOTES",
 			},
 			{
-				id: 'apps.scrumboard',
-				title: 'Scrumboard',
-				type: 'item',
-				icon: 'heroicons-outline:view-boards',
-				url: '/apps/scrumboard',
-				translate: 'SCRUMBOARD'
+				id: "apps.scrumboard",
+				title: "Scrumboard",
+				type: "item",
+				icon: "heroicons-outline:view-boards",
+				url: "/apps/scrumboard",
+				translate: "SCRUMBOARD",
 			},
 			{
-				id: 'apps.tasks',
-				title: 'Tasks',
-				subtitle: '12 remaining tasks',
-				type: 'item',
-				icon: 'heroicons-outline:check-circle',
-				url: '/apps/tasks',
-				translate: 'TASKS'
+				id: "apps.tasks",
+				title: "Tasks",
+				subtitle: "12 remaining tasks",
+				type: "item",
+				icon: "heroicons-outline:check-circle",
+				url: "/apps/tasks",
+				translate: "TASKS",
 			},
 			{
-				id: 'apps.profile',
-				title: 'Profile',
-				type: 'item',
-				icon: 'heroicons-outline:user-circle',
-				url: '/apps/profile',
-				translate: 'PROFILE'
+				id: "apps.profile",
+				title: "Profile",
+				type: "item",
+				icon: "heroicons-outline:user-circle",
+				url: "/apps/profile",
+				translate: "PROFILE",
 			},
 			{
-				id: 'apps.notifications',
-				title: 'Notifications',
-				type: 'item',
-				icon: 'heroicons-outline:bell',
-				url: '/apps/notifications',
-				translate: 'NOTIFICATIONS'
+				id: "apps.notifications",
+				title: "Notifications",
+				type: "item",
+				icon: "heroicons-outline:bell",
+				url: "/apps/notifications",
+				translate: "NOTIFICATIONS",
 			},
 			{
-				id: 'apps.requests',
-				title: 'Requests',
-				type: 'item',
-				icon: 'heroicons-outline:bell',
-				url: '/apps/requests',
-				translate: 'REQUESTS'
+				id: "apps.requests",
+				title: "Requests",
+				type: "item",
+				icon: "heroicons-outline:bell",
+				url: "/apps/requests",
+				translate: "REQUESTS",
 			},
 			{
 				...SettingsAppNavigation,
-				type: 'item',
+				type: "item",
 				badge: {
-					title: 'NEW'
-				}
-			}
-		]
+					title: "NEW",
+				},
+			},
+		],
 	},
 	{
-		id: 'news_weblog',
-		title: 'NewsWeblog',
-		translate: 'NEWS_WEBLOG',
-		subtitle: 'News weblog settings section',
-		type: 'group',
-		icon: 'heroicons-outline:cube',
+		id: "news_weblog",
+		title: "NewsWeblog",
+		translate: "NEWS_WEBLOG",
+		subtitle: "News weblog settings section",
+		type: "group",
+		icon: "heroicons-outline:cube",
 		children: [
 			{
-				id: 'news_weblog.academy',
-				title: 'Academy',
-				translate: 'آکادمی',
-				type: 'item',
-				icon: 'heroicons-outline:academic-cap',
-				url: '/apps/academy'
-			}
-		]
+				id: "news_weblog.academy",
+				title: "Academy",
+				translate: "آکادمی",
+				type: "item",
+				icon: "heroicons-outline:academic-cap",
+				url: "/apps/academy",
+			},
+		],
 	},
 	{
-		id: 'users',
-		title: 'Users',
-		translate: 'USERS_LIST',
-		subtitle: 'Users List Section',
-		subtitleTranslate: 'SUB_USERS',
-		type: 'group',
-		icon: 'heroicons-outline:cube',
+		id: "users",
+		title: "Users",
+		translate: "USERS_LIST",
+		subtitle: "Users List Section",
+		subtitleTranslate: "SUB_USERS",
+		type: "group",
+		icon: "heroicons-outline:cube",
 		children: [
 			{
-				id: 'users.list',
-				title: 'UserList',
-				translate: 'USERS_LIST',
-				type: 'item',
-				icon: 'heroicons-outline:user-group',
-				url: '/apps/users/list'
+				id: "users.list",
+				title: "UserList",
+				translate: "USERS_LIST",
+				type: "item",
+				icon: "heroicons-outline:user-group",
+				url: "/apps/users/list",
 			},
 			{
-				id: 'users.news-letter',
-				title: 'UsersNewsLetter',
-				translate: 'USERS_NEWS_LETTER',
-				type: 'item',
-				subtitleTranslate: 'USERS_NEWS_LETTER',
-				icon: 'heroicons-outline:academic-cap',
-				url: '/users/news-letter'
-			}
-		]
+				id: "users.news-letter",
+				title: "UsersNewsLetter",
+				translate: "USERS_NEWS_LETTER",
+				type: "item",
+				subtitleTranslate: "USERS_NEWS_LETTER",
+				icon: "heroicons-outline:academic-cap",
+				url: "/users/news-letter",
+			},
+		],
 	},
 	{
-		id: 'file_manager',
-		title: 'File Manager',
-		subtitle: 'File manager section',
-		type: 'group',
-		icon: 'heroicons-outline:document',
-		translate: 'FILE_MANAGER',
-		subtitleTranslate: 'SUB_FILE_MANAGER',
+		id: "file_manager",
+		title: "File Manager",
+		subtitle: "File manager section",
+		type: "group",
+		icon: "heroicons-outline:document",
+		translate: "FILE_MANAGER",
+		subtitleTranslate: "SUB_FILE_MANAGER",
 		children: [
 			{
-				id: 'file_manager.drive',
-				title: 'Drive',
-				translate: 'DRIVE',
-				type: 'item',
-				icon: 'heroicons-outline:folder',
-				url: '/apps/drive',
-				end: true
+				id: "file_manager.drive",
+				title: "Drive",
+				translate: "DRIVE",
+				type: "item",
+				icon: "heroicons-outline:folder",
+				url: "/apps/drive",
+				end: true,
 			},
 			{
-				id: 'file-manager.file-system',
-				title: 'File System Manager',
-				translate: 'FILE_SYSTEM_MANAGER',
-				type: 'item',
-				icon: 'heroicons-outline:document',
-				url: '/apps/file-manager',
-				end: true
-			}
-		]
+				id: "file-manager.file-system",
+				title: "File System Manager",
+				translate: "FILE_SYSTEM_MANAGER",
+				type: "item",
+				icon: "heroicons-outline:document",
+				url: "/apps/file-manager",
+				end: true,
+			},
+		],
 	},
 	// {
 	// 	id: 'pages',
@@ -1426,155 +1435,155 @@ const navigationConfig = [
 	// 	]
 	// },
 	{
-		type: 'divider',
-		id: 'divider-2'
+		type: "divider",
+		id: "divider-2",
 	},
 	{
-		id: 'navigation-features',
-		title: 'Navigation features',
-		subtitle: 'Collapsable levels & badge styles',
-		type: 'group',
-		icon: 'heroicons-outline:menu',
+		id: "navigation-features",
+		title: "Navigation features",
+		subtitle: "Collapsable levels & badge styles",
+		type: "group",
+		icon: "heroicons-outline:menu",
 		children: [
 			{
-				id: 'navigation-features.level.0',
-				title: 'Level 0',
-				icon: 'heroicons-outline:check-circle',
-				type: 'collapse',
+				id: "navigation-features.level.0",
+				title: "Level 0",
+				icon: "heroicons-outline:check-circle",
+				type: "collapse",
 				children: [
 					{
-						id: 'navigation-features.level.0.1',
-						title: 'Level 1',
-						type: 'collapse',
+						id: "navigation-features.level.0.1",
+						title: "Level 1",
+						type: "collapse",
 						children: [
 							{
-								id: 'navigation-features.level.0.1.2',
-								title: 'Level 2',
-								type: 'collapse',
+								id: "navigation-features.level.0.1.2",
+								title: "Level 2",
+								type: "collapse",
 								children: [
 									{
-										id: 'navigation-features.level.0.1.2.3',
-										title: 'Level 3',
-										type: 'collapse',
+										id: "navigation-features.level.0.1.2.3",
+										title: "Level 3",
+										type: "collapse",
 										children: [
 											{
-												id: 'navigation-features.level.0.1.2.3.4',
-												title: 'Level 4',
-												type: 'collapse',
+												id: "navigation-features.level.0.1.2.3.4",
+												title: "Level 4",
+												type: "collapse",
 												children: [
 													{
-														id: 'navigation-features.level.0.1.2.3.4.5',
-														title: 'Level 5',
-														type: 'collapse',
+														id: "navigation-features.level.0.1.2.3.4.5",
+														title: "Level 5",
+														type: "collapse",
 														children: [
 															{
-																id: 'navigation-features.level.0.1.2.3.4.5.6',
-																title: 'Level 6',
-																type: 'item'
-															}
-														]
-													}
-												]
-											}
-										]
-									}
-								]
-							}
-						]
-					}
-				]
+																id: "navigation-features.level.0.1.2.3.4.5.6",
+																title: "Level 6",
+																type: "item",
+															},
+														],
+													},
+												],
+											},
+										],
+									},
+								],
+							},
+						],
+					},
+				],
 			},
 			{
-				id: 'navigation-features2.level.0',
-				title: 'Level 0',
-				subtitle: 'With subtitle',
-				icon: 'heroicons-outline:check-circle',
-				type: 'collapse',
+				id: "navigation-features2.level.0",
+				title: "Level 0",
+				subtitle: "With subtitle",
+				icon: "heroicons-outline:check-circle",
+				type: "collapse",
 				children: [
 					{
-						id: 'navigation-features2.level.0.1-1',
-						title: 'Level 1.1',
-						type: 'item'
+						id: "navigation-features2.level.0.1-1",
+						title: "Level 1.1",
+						type: "item",
 					},
 					{
-						id: 'navigation-features2.level.0.1-2',
-						title: 'Level 1.2',
-						type: 'item'
-					}
-				]
+						id: "navigation-features2.level.0.1-2",
+						title: "Level 1.2",
+						type: "item",
+					},
+				],
 			},
 			{
-				id: 'navigation-features.active',
-				title: 'Active item',
-				subtitle: 'Manually marked as active',
-				icon: 'heroicons-outline:check-circle',
-				type: 'item',
-				active: true
+				id: "navigation-features.active",
+				title: "Active item",
+				subtitle: "Manually marked as active",
+				icon: "heroicons-outline:check-circle",
+				type: "item",
+				active: true,
 			},
 			{
-				id: 'navigation-features.disabled-collapse',
-				title: 'Disabled collapse',
-				subtitle: 'Some subtitle',
-				icon: 'heroicons-outline:check-circle',
-				type: 'collapse',
+				id: "navigation-features.disabled-collapse",
+				title: "Disabled collapse",
+				subtitle: "Some subtitle",
+				icon: "heroicons-outline:check-circle",
+				type: "collapse",
 				disabled: true,
 				children: [
 					{
-						id: 'navigation-features.disabled-collapse.child',
+						id: "navigation-features.disabled-collapse.child",
 						title: "You shouldn't be able to see this child",
-						type: 'item'
-					}
-				]
+						type: "item",
+					},
+				],
 			},
 			{
-				id: 'navigation-features.disabled-item',
-				title: 'Disabled item',
-				subtitle: 'Some subtitle',
-				icon: 'heroicons-outline:check-circle',
-				type: 'item',
-				disabled: true
+				id: "navigation-features.disabled-item",
+				title: "Disabled item",
+				subtitle: "Some subtitle",
+				icon: "heroicons-outline:check-circle",
+				type: "item",
+				disabled: true,
 			},
 			{
-				id: 'navigation-features.badge-style-oval',
-				title: 'Oval badge',
-				icon: 'heroicons-outline:tag',
-				type: 'item',
+				id: "navigation-features.badge-style-oval",
+				title: "Oval badge",
+				icon: "heroicons-outline:tag",
+				type: "item",
 				badge: {
-					title: '8',
-					classes: 'w-20 h-20 bg-teal-400 text-black rounded-full'
-				}
+					title: "8",
+					classes: "w-20 h-20 bg-teal-400 text-black rounded-full",
+				},
 			},
 			{
-				id: 'navigation-features.badge-style-rectangle',
-				title: 'Rectangle badge',
-				icon: 'heroicons-outline:tag',
-				type: 'item',
+				id: "navigation-features.badge-style-rectangle",
+				title: "Rectangle badge",
+				icon: "heroicons-outline:tag",
+				type: "item",
 				badge: {
-					title: 'Updated!',
-					classes: 'px-8 bg-teal-400 text-black rounded'
-				}
+					title: "Updated!",
+					classes: "px-8 bg-teal-400 text-black rounded",
+				},
 			},
 			{
-				id: 'navigation-features.badge-style-rounded',
-				title: 'Rounded badge',
-				icon: 'heroicons-outline:tag',
-				type: 'item',
+				id: "navigation-features.badge-style-rounded",
+				title: "Rounded badge",
+				icon: "heroicons-outline:tag",
+				type: "item",
 				badge: {
-					title: 'NEW',
-					classes: 'px-10 bg-teal-400 text-black rounded-full'
-				}
+					title: "NEW",
+					classes: "px-10 bg-teal-400 text-black rounded-full",
+				},
 			},
 			{
-				id: 'navigation-features.badge-style-simple',
-				title: 'Simple badge',
-				icon: 'heroicons-outline:tag',
-				type: 'item',
+				id: "navigation-features.badge-style-simple",
+				title: "Simple badge",
+				icon: "heroicons-outline:tag",
+				type: "item",
 				badge: {
-					title: '87 Unread',
-					classes: 'bg-transparent text-teal-500'
-				}
-			}
-		]
-	}
+					title: "87 Unread",
+					classes: "bg-transparent text-teal-500",
+				},
+			},
+		],
+	},
 ];
 export default navigationConfig;

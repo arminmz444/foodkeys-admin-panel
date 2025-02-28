@@ -1,71 +1,100 @@
-import { lazy } from 'react';
-import { Navigate } from 'react-router-dom';
+import { lazy } from "react";
+import { Navigate } from "react-router-dom";
+import BundlePageTab from "./tabs/bundles/BundleTab";
+import BundleList from "./tabs/bundles/BundleList";
+import DiscountTab from "./tabs/discount/DiscountTab";
+import SubscriptionTab from "./tabs/subscription/SubscriptionTab";
 
-const WebsiteConfigSettings = lazy(() => import('./website-config-settings/WebsiteConfigSettings'));
-const SettingsApp = lazy(() => import('./SettingsApp'));
-const HomePageTab = lazy(() => import('./tabs/HomePageTab'));
-const AboutUsPageTab = lazy(() => import('./tabs/AboutUsPageTab'));
-const AccountTab = lazy(() => import('./tabs/AccountTab'));
-const SecurityTab = lazy(() => import('./tabs/SecurityTab'));
-const PlanBillingTab = lazy(() => import('./tabs/PlanBillingTab'));
-const NotificationsTab = lazy(() => import('./tabs/NotificationsTab'));
-const TeamTab = lazy(() => import('./tabs/TeamTab'));
+const WebsiteConfigSettings = lazy(
+	() => import("./website-config-settings/WebsiteConfigSettings")
+);
+const SettingsApp = lazy(() => import("./SettingsApp"));
+const CustomSettingsApp = lazy(() => import("./CustomSettingsApp"));
+const HomePageTab = lazy(() => import("./tabs/HomePageTab"));
+const AboutUsPageTab = lazy(() => import("./tabs/AboutUsPageTab"));
+const AccountTab = lazy(() => import("./tabs/AccountTab"));
+const SecurityTab = lazy(() => import("./tabs/SecurityTab"));
+const PlanBillingTab = lazy(() => import("./tabs/PlanBillingTab"));
+const NotificationsTab = lazy(() => import("./tabs/NotificationsTab"));
+const TeamTab = lazy(() => import("./tabs/TeamTab"));
 /**
  * The Settings app config.
  */
 const SettingsAppConfig = {
 	settings: {
 		layout: {
-			config: {}
-		}
+			config: {},
+		},
 	},
 	routes: [
 		{
-			path: 'apps/settings',
+			path: "apps/settings",
 			element: <SettingsApp />,
 			children: [
 				{
-					path: 'about-us-page',
-					element: <AboutUsPageTab />
+					path: "about-us-page",
+					element: <AboutUsPageTab />,
 				},
 				{
-					path: 'homepage',
-					element: <HomePageTab />
+					path: "homepage",
+					element: <HomePageTab />,
 				},
 				{
-					path: 'account',
-					element: <AccountTab />
+					path: "bundle-setting",
+					element: <BundlePageTab />,
 				},
 				{
-					path: 'security',
-					element: <SecurityTab />
+					path: "subscription",
+					element: <SubscriptionTab />,
 				},
 				{
-					path: 'plan-billing',
-					element: <PlanBillingTab />
+					path: "discount",
+					element: <DiscountTab />,
 				},
 				{
-					path: 'security',
-					element: <SecurityTab />
+					path: "account",
+					element: <AccountTab />,
 				},
 				{
-					path: 'notifications',
-					element: <NotificationsTab />
+					path: "security",
+					element: <SecurityTab />,
 				},
 				{
-					path: 'team',
-					element: <TeamTab />
+					path: "plan-billing",
+					element: <PlanBillingTab />,
 				},
 				{
-					path: 'website-config',
-					element: <WebsiteConfigSettings />
+					path: "security",
+					element: <SecurityTab />,
 				},
 				{
-					path: '',
-					element: <Navigate to="account" />
-				}
-			]
-		}
-	]
+					path: "notifications",
+					element: <NotificationsTab />,
+				},
+				{
+					path: "team",
+					element: <TeamTab />,
+				},
+				{
+					path: "website-config",
+					element: <WebsiteConfigSettings />,
+				},
+				{
+					path: "",
+					element: <Navigate to="account" />,
+				},
+			],
+		},
+		{
+			path: "apps/settings/bundle-setting",
+			element: <CustomSettingsApp />,
+			children: [
+				{
+					path: ":bankId/*",
+					element: <BundleList />,
+				},
+			],
+		},
+	],
 };
 export default SettingsAppConfig;

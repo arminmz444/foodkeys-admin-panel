@@ -1,16 +1,16 @@
-import Box from '@mui/material/Box';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import Box from "@mui/material/Box";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import {
 	MRT_GlobalFilterTextField,
 	MRT_LinearProgressBar,
 	MRT_TablePagination,
 	MRT_ToolbarAlertBanner,
 	MRT_ToolbarDropZone,
-	MRT_ToolbarInternalButtons
-} from 'material-react-table';
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
-import PrintIcon from '@mui/icons-material/Print.js';
+	MRT_ToolbarInternalButtons,
+} from "material-react-table";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import PrintIcon from "@mui/icons-material/Print.js";
 
 function DataTableTopToolbar({ table }) {
 	const {
@@ -23,22 +23,25 @@ function DataTableTopToolbar({ table }) {
 			positionGlobalFilter,
 			positionPagination,
 			positionToolbarDropZone,
-			renderTopToolbarCustomActions
+			renderTopToolbarCustomActions,
 		},
-		refs: { topToolbarRef }
+		refs: { topToolbarRef },
 	} = table;
 	const { isFullScreen, showGlobalFilter } = getState();
-	const isMobile = useMediaQuery('(max-width:720px)');
-	const isTablet = useMediaQuery('(max-width:1024px)');
+	const isMobile = useMediaQuery("(max-width:720px)");
+	const isTablet = useMediaQuery("(max-width:1024px)");
 	const toolbarProps = parseFromValuesOrFunc(muiTopToolbarProps, { table });
-	const stackAlertBanner = isMobile || !!renderTopToolbarCustomActions || (showGlobalFilter && isTablet);
+	const stackAlertBanner =
+		isMobile ||
+		!!renderTopToolbarCustomActions ||
+		(showGlobalFilter && isTablet);
 	const globalFilterProps = {
 		sx: !isTablet
 			? {
-					zIndex: 2
+					zIndex: 2,
 				}
 			: undefined,
-		table
+		table,
 	};
 	return (
 		<div className="flex flex-col w-full py-8 px-12 border-b-1">
@@ -50,35 +53,43 @@ function DataTableTopToolbar({ table }) {
 
 					if (toolbarProps?.ref) {
 						// eslint-disable-next-line
-                // @ts-ignore
+						// @ts-ignore
 						toolbarProps.ref.current = ref;
 					}
 				}}
 				sx={(theme) => ({
 					backgroundColor: table.options.mrtTheme.baseBackgroundColor,
-					transition: 'all 150ms ease-in-out',
+					transition: "all 150ms ease-in-out",
 					zIndex: 1,
-					position: isFullScreen ? 'sticky' : 'relative',
-					top: isFullScreen ? '0' : undefined,
-					...parseFromValuesOrFunc(toolbarProps?.sx, theme)
+					position: isFullScreen ? "sticky" : "relative",
+					top: isFullScreen ? "0" : undefined,
+					...parseFromValuesOrFunc(toolbarProps?.sx, theme),
 				})}
 			>
-				{['both', 'top'].includes(positionToolbarDropZone ?? '') && <MRT_ToolbarDropZone table={table} />}
+				{["both", "top"].includes(positionToolbarDropZone ?? "") && (
+					<MRT_ToolbarDropZone table={table} />
+				)}
 
 				<div className="flex w-full items-center">
-					{enableGlobalFilter && positionGlobalFilter === 'left' && (
+					{enableGlobalFilter && positionGlobalFilter === "left" && (
 						<MRT_GlobalFilterTextField {...globalFilterProps} />
 					)}
 
-					<div className="flex flex-1">{renderTopToolbarCustomActions?.({ table }) ?? null}</div>
+					<div className="flex flex-1">
+						{renderTopToolbarCustomActions?.({ table }) ?? null}
+					</div>
 
 					{enableToolbarInternalActions ? (
 						<Box className="flex items-center space-x-8">
-							{enableGlobalFilter && positionGlobalFilter === 'right' && (
+							{enableGlobalFilter && positionGlobalFilter === "right" && (
 								<MRT_GlobalFilterTextField
 									{...globalFilterProps}
 									sx={{
-										'& .MuiOutlinedInput-root': { height: 32, minHeight: 32, paddingX: 1 }
+										"& .MuiOutlinedInput-root": {
+											height: 32,
+											minHeight: 32,
+											paddingX: 1,
+										},
 									}}
 								/>
 							)}
@@ -91,19 +102,16 @@ function DataTableTopToolbar({ table }) {
 						</Box>
 					) : (
 						enableGlobalFilter &&
-						positionGlobalFilter === 'right' && <MRT_GlobalFilterTextField {...globalFilterProps} />
+						positionGlobalFilter === "right" && (
+							<MRT_GlobalFilterTextField {...globalFilterProps} />
+						)
 					)}
 				</div>
-				{enablePagination && ['both', 'top'].includes(positionPagination ?? '') && (
-					<MRT_TablePagination
-						position="top"
-						table={table}
-					/>
-				)}
-				<MRT_LinearProgressBar
-					isTopToolbar
-					table={table}
-				/>
+				{enablePagination &&
+					["both", "top"].includes(positionPagination ?? "") && (
+						<MRT_TablePagination position="top" table={table} />
+					)}
+				<MRT_LinearProgressBar isTopToolbar table={table} />
 			</Box>
 
 			<MRT_ToolbarAlertBanner
@@ -111,25 +119,26 @@ function DataTableTopToolbar({ table }) {
 				stackAlertBanner={stackAlertBanner}
 				table={table}
 				sx={{
-					'& .MuiStack-root': {
-						display: 'flex',
-						justifyContent: 'center',
-						width: '100%',
-						fontSize: 13
-					}
+					"& .MuiStack-root": {
+						display: "flex",
+						justifyContent: "center",
+						width: "100%",
+						fontSize: 13,
+					},
 				}}
 			/>
 		</div>
 	);
 }
 
-export const parseFromValuesOrFunc = (fn, arg) => (fn instanceof Function ? fn(arg) : fn);
+export const parseFromValuesOrFunc = (fn, arg) =>
+	fn instanceof Function ? fn(arg) : fn;
 export const getValueAndLabel = (option) => {
-	let label = '';
-	let value = '';
+	let label = "";
+	let value = "";
 
 	if (option) {
-		if (typeof option !== 'object') {
+		if (typeof option !== "object") {
 			label = option;
 			value = option;
 		} else {

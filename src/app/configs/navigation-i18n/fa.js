@@ -1,6 +1,7 @@
 const locale = {
 	BUNDLE: "مدیریت پلن‌ها",
 	BUNDLE_LIST: "لیست پلن‌ها",
+	BUNDLE_SETTING: "تنظیمات پیشرفته",
 	SUBSCRIPTION_LIST: "لیست اشتراک‌ها",
 	DISCOUNT_LIST: "لیست تخفیف‌ها",
 	SERVICE_LIST: "لیست خدمات ارائه شده",
