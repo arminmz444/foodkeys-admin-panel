@@ -1,21 +1,14 @@
-/* eslint-disable react/no-unstable-nested-components */
-import { useMemo } from "react";
-import { Paper } from "@mui/material";
-import { Link } from "react-router-dom";
-import Typography from "@mui/material/Typography";
 import FuseScrollbars from "@fuse/core/FuseScrollbars/index.js";
+import FuseSvgIcon from "@fuse/core/FuseSvgIcon/index.js";
+import { Paper } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import EntityStatusField from "app/shared-components/data-table/EntityStatusField.jsx";
 import GenericCrudTable from "app/shared-components/data-table/GenericCrudTable.jsx";
 import { API_STATIC_FILES_BASE_URL } from "app/store/apiService.js";
-import EntityStatusField from "app/shared-components/data-table/EntityStatusField.jsx";
-import FuseSvgIcon from "@fuse/core/FuseSvgIcon/index.js";
-import { useGetAllFoodIndustryCompaniesQuery } from "../FoodIndustryBankApi";
-import {
-	useCreateCategoryMutation,
-	useDeleteCategoryMutation,
-	useUpdateCategoryMutation,
-} from "../../../category/CategoriesApi";
+import { useMemo } from "react";
+import { Link } from "react-router-dom";
 
-function CompaniesTable() {
+function SubscriptionTable() {
 	const columns = useMemo(
 		() => [
 			{
@@ -47,12 +40,12 @@ function CompaniesTable() {
 			{
 				accessorKey: "id",
 				header: "شناسه شرکت",
-				size: 200,
+				size: 160,
 			},
 			{
 				accessorKey: "companyName",
 				header: "نام شرکت",
-				size: 250,
+				size: 200,
 				Cell: ({ row }) => (
 					<Typography
 						component={Link}
@@ -65,19 +58,17 @@ function CompaniesTable() {
 					</Typography>
 				),
 			},
-			{
-				accessorKey: "category",
-				header: "دسته‌بندی",
-			},
+
 			{
 				accessorKey: "subCategory",
-				header: "زیرشاخه",
-				size: 300,
+				header: "نام بانک",
+				size: 150,
 			},
 			{
 				header: "وضعیت",
 				accessorKey: "categoryStatus",
 				editVariant: "select",
+				size: 130,
 				// editSelectOptions: categoryStatusSelectOptions,
 				accessorFn: (row) =>
 					row?.companyStatus == "VERIFIED" ? (
@@ -93,53 +84,37 @@ function CompaniesTable() {
 					),
 			},
 			{
-				accessorKey: "visit",
-				header: "بازدید‌ها",
-				Cell: ({ row }) => (
-					<div className="flex items-center">
-						{row?.original?.visit > 0 ? (
-							<span className="flex flex-row">
-								{row?.original?.visit}
-								<FuseSvgIcon className="text-green ms-4" size={20}>
-									heroicons-outline:plus-circle
-								</FuseSvgIcon>
-							</span>
-						) : (
-							<span className="flex flex-row">
-								{row?.original?.visit}
-								<FuseSvgIcon className="text-red ms-4" size={20}>
-									heroicons-outline:minus-circle
-								</FuseSvgIcon>
-							</span>
-						)}
-					</div>
-				),
+				accessorKey: "createdAtStr",
+				size: 150,
+				Cell: ({ row }) => <div dir="rtl">{row.original.createdAtStr}</div>,
+				header: "تاریخ شروع",
+				enableEditing: false,
 			},
 			{
-				accessorFn: (row) => row?.companyType?.name,
-				accessorKey: "companyType",
-				header: "نوع شرکت",
-				size: 180,
+				accessorKey: "endAtStr",
+				size: 150,
+				Cell: ({ row }) => <div dir="rtl">{row.original.createdAtStr}</div>,
+				header: "تاریخ پایان",
+				enableEditing: false,
 			},
 		],
 		[]
 	);
 	return (
-		<div className="w-full flex flex-col">
+		<div className="w-full max-w-screen flex flex-col">
 			<FuseScrollbars className="grow overflow-x-auto">
 				<Paper
-					className="flex flex-col flex-auto shadow-3 rounded-t-16 overflow-hidden rounded-b-0 w-full h-screen p-24"
+					className="flex flex-col flex-auto shadow-3 rounded-t-16 overflow-hidden rounded-b-0 w-full h-screen"
 					elevation={0}
 				>
 					<GenericCrudTable
 						columns={columns}
-						useListQueryHook={useGetAllFoodIndustryCompaniesQuery}
-						useCreateMutationHook={useCreateCategoryMutation}
-						useUpdateMutationHook={useUpdateCategoryMutation}
-						useDeleteMutationHook={useDeleteCategoryMutation}
+						// useListQueryHook={useGetAllFoodIndustryCompaniesQuery}
+						// useCreateMutationHook={useCreateCategoryMutation}
+						// useUpdateMutationHook={useUpdateCategoryMutation}
+						// useDeleteMutationHook={useDeleteCategoryMutation}
 						saveToStore={false}
 						enableRowAction={false}
-						enableEditing={false}
 						serviceIdentifier="foodCompanyList"
 					/>
 				</Paper>
@@ -148,4 +123,4 @@ function CompaniesTable() {
 	);
 }
 
-export default CompaniesTable;
+export default SubscriptionTable;

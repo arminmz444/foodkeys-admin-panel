@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
-import { styled } from '@mui/material/styles';
-import useThemeMediaQuery from '@fuse/hooks/useThemeMediaQuery';
-import { Outlet, useLocation } from 'react-router-dom';
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import SettingsAppSidebarContent from './SettingsAppSidebarContent';
-import SettingsAppHeader from './SettingsAppHeader';
+import { useEffect, useState } from "react";
+import { styled } from "@mui/material/styles";
+import useThemeMediaQuery from "@fuse/hooks/useThemeMediaQuery";
+import { Outlet, useLocation } from "react-router-dom";
+import FusePageSimple from "@fuse/core/FusePageSimple";
+import SettingsAppSidebarContent from "./SettingsAppSidebarContent";
+import SettingsAppHeader from "./SettingsAppHeader";
 
 const Root = styled(FusePageSimple)(() => ({
-	'& .FusePageCarded-header': {},
-	'& .FusePageCarded-sidebar': {},
-	'& .FusePageCarded-leftSidebar': {}
+	"& .FusePageCarded-header": {},
+	"& .FusePageCarded-sidebar": {},
+	"& .FusePageCarded-leftSidebar": {},
 }));
 
 /**
@@ -17,7 +17,7 @@ const Root = styled(FusePageSimple)(() => ({
  */
 function SettingsApp() {
 	const location = useLocation();
-	const isMobile = useThemeMediaQuery((theme) => theme.breakpoints.down('lg'));
+	const isMobile = useThemeMediaQuery((theme) => theme.breakpoints.down("lg"));
 	const [leftSidebarOpen, setLeftSidebarOpen] = useState(!isMobile);
 	useEffect(() => {
 		setLeftSidebarOpen(!isMobile);
@@ -42,9 +42,11 @@ function SettingsApp() {
 			leftSidebarOnClose={() => {
 				setLeftSidebarOpen(false);
 			}}
-			leftSidebarContent={<SettingsAppSidebarContent onSetSidebarOpen={setLeftSidebarOpen} />}
+			leftSidebarContent={
+				<SettingsAppSidebarContent onSetSidebarOpen={setLeftSidebarOpen} />
+			}
 			leftSidebarWidth={380}
-			scroll={isMobile ? 'normal' : 'content'}
+			scroll={isMobile ? "normal" : "content"}
 		/>
 	);
 }

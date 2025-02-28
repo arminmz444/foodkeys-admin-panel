@@ -2,101 +2,122 @@ import {
 	MaterialReactTable,
 	MRT_ActionMenuItem,
 	MRT_EditActionButtons,
-	useMaterialReactTable
-} from 'material-react-table';
-import _ from 'lodash';
-import { useMemo, useEffect, useState, useCallback } from 'react';
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { MRT_Localization_FA } from 'material-react-table/locales/fa';
-import Divider from '@mui/material/Divider';
+	useMaterialReactTable,
+} from "material-react-table";
+import _ from "lodash";
+import { useMemo, useEffect, useState, useCallback } from "react";
+import FuseSvgIcon from "@fuse/core/FuseSvgIcon";
+import { MRT_Localization_FA } from "material-react-table/locales/fa";
+import Divider from "@mui/material/Divider";
 
-import { useDispatch } from 'react-redux';
-import DataTableBottomToolbar from 'app/shared-components/data-table/DataTableBottomToolbar.jsx';
-import FuseScrollbars from '@fuse/core/FuseScrollbars/index.js';
+import { useDispatch } from "react-redux";
+import DataTableBottomToolbar from "app/shared-components/data-table/DataTableBottomToolbar.jsx";
+import FuseScrollbars from "@fuse/core/FuseScrollbars/index.js";
 
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Typography from '@mui/material/Typography';
-import DynamicFormGenerator from 'app/shared-components/dynamic-field-generator/DynamicFormGenerator.jsx';
-import Box from '@mui/system/Box';
-import { closeDialog, openDialog } from '@fuse/core/FuseDialog/fuseDialogSlice.js';
-import DialogContentText from '@mui/material/DialogContentText';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import IconButton from '@mui/material/IconButton';
-import DataTableTopToolbar from './DataTableTopToolbar';
+import {
+	Button,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+	TextField,
+} from "@mui/material";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Typography from "@mui/material/Typography";
+import DynamicFormGenerator from "app/shared-components/dynamic-field-generator/DynamicFormGenerator.jsx";
+import Box from "@mui/system/Box";
+import {
+	closeDialog,
+	openDialog,
+} from "@fuse/core/FuseDialog/fuseDialogSlice.js";
+import DialogContentText from "@mui/material/DialogContentText";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import IconButton from "@mui/material/IconButton";
+import DataTableTopToolbar from "./DataTableTopToolbar";
 
 const tableIcons = {
 	ArrowDownwardIcon: (props) => (
-		<FuseSvgIcon
-			size={20}
-			{...props}
-		>
+		<FuseSvgIcon size={20} {...props}>
 			heroicons-outline:arrow-down
 		</FuseSvgIcon>
 	),
-	ClearAllIcon: () => <FuseSvgIcon size={20}>heroicons-outline:menu-alt-3</FuseSvgIcon>,
-	DensityLargeIcon: () => <FuseSvgIcon size={20}>heroicons-outline:menu-alt-4</FuseSvgIcon>,
-	DensityMediumIcon: () => <FuseSvgIcon size={20}>heroicons-outline:menu</FuseSvgIcon>,
-	DensitySmallIcon: () => <FuseSvgIcon size={20}>heroicons-outline:view-list</FuseSvgIcon>,
+	ClearAllIcon: () => (
+		<FuseSvgIcon size={20}>heroicons-outline:menu-alt-3</FuseSvgIcon>
+	),
+	DensityLargeIcon: () => (
+		<FuseSvgIcon size={20}>heroicons-outline:menu-alt-4</FuseSvgIcon>
+	),
+	DensityMediumIcon: () => (
+		<FuseSvgIcon size={20}>heroicons-outline:menu</FuseSvgIcon>
+	),
+	DensitySmallIcon: () => (
+		<FuseSvgIcon size={20}>heroicons-outline:view-list</FuseSvgIcon>
+	),
 	DragHandleIcon: () => (
-		<FuseSvgIcon
-			className="rotate-45"
-			size={16}
-		>
+		<FuseSvgIcon className="rotate-45 text-white" size={16}>
 			heroicons-outline:arrows-expand
 		</FuseSvgIcon>
 	),
 	FilterListIcon: (props) => (
-		<FuseSvgIcon
-			size={16}
-			{...props}
-		>
+		<FuseSvgIcon size={16} {...props}>
 			heroicons-outline:filter
 		</FuseSvgIcon>
 	),
-	FilterListOffIcon: () => <FuseSvgIcon size={20}>heroicons-outline:filter</FuseSvgIcon>,
-	FullscreenExitIcon: () => <FuseSvgIcon size={20}>heroicons-outline:arrows-expand</FuseSvgIcon>,
-	FullscreenIcon: () => <FuseSvgIcon size={20}>heroicons-outline:arrows-expand</FuseSvgIcon>,
+	FilterListOffIcon: () => (
+		<FuseSvgIcon size={20}>heroicons-outline:filter</FuseSvgIcon>
+	),
+	FullscreenExitIcon: () => (
+		<FuseSvgIcon size={20}>heroicons-outline:arrows-expand</FuseSvgIcon>
+	),
+	FullscreenIcon: () => (
+		<FuseSvgIcon size={20}>heroicons-outline:arrows-expand</FuseSvgIcon>
+	),
 	SearchIcon: (props) => (
-		<FuseSvgIcon
-			color="action"
-			size={20}
-			{...props}
-		>
+		<FuseSvgIcon color="action" size={20} {...props}>
 			heroicons-outline:search
 		</FuseSvgIcon>
 	),
-	SearchOffIcon: () => <FuseSvgIcon size={20}>heroicons-outline:search</FuseSvgIcon>,
-	ViewColumnIcon: () => <FuseSvgIcon size={20}>heroicons-outline:view-boards</FuseSvgIcon>,
-	MoreVertIcon: () => <FuseSvgIcon size={20}>heroicons-outline:dots-vertical</FuseSvgIcon>,
-	MoreHorizIcon: () => <FuseSvgIcon size={20}>heroicons-outline:dots-horizontal</FuseSvgIcon>,
+	SearchOffIcon: () => (
+		<FuseSvgIcon size={20}>heroicons-outline:search</FuseSvgIcon>
+	),
+	ViewColumnIcon: () => (
+		<FuseSvgIcon size={20}>heroicons-outline:view-boards</FuseSvgIcon>
+	),
+	MoreVertIcon: () => (
+		<FuseSvgIcon className="text-white" size={20}>
+			heroicons-outline:dots-vertical
+		</FuseSvgIcon>
+	),
+	MoreHorizIcon: () => (
+		<FuseSvgIcon size={20} className="text-white">
+			heroicons-outline:dots-horizontal
+		</FuseSvgIcon>
+	),
 	SortIcon: (props) => (
-		<FuseSvgIcon
-			size={20}
-			{...props}
-		>
+		<FuseSvgIcon size={20} {...props}>
 			heroicons-outline:sort-ascending
 		</FuseSvgIcon>
 	),
 	PushPinIcon: (props) => (
-		<FuseSvgIcon
-			size={20}
-			{...props}
-		>
+		<FuseSvgIcon size={20} {...props}>
 			heroicons-outline:thumb-tack
 		</FuseSvgIcon>
 	),
-	VisibilityOffIcon: () => <FuseSvgIcon size={20}>heroicons-outline:eye-off</FuseSvgIcon>
+	VisibilityOffIcon: () => (
+		<FuseSvgIcon size={20}>heroicons-outline:eye-off</FuseSvgIcon>
+	),
 };
 
 function GenericCrudTable(props) {
-	const [paginationState, setPaginationState] = useState({ pageIndex: 0, pageSize: 10 });
+	const [paginationState, setPaginationState] = useState({
+		pageIndex: 0,
+		pageSize: 10,
+	});
 
 	const {
 		columns,
 		data,
-
 		useListQueryHook,
 		useCreateMutationHook,
 		useUpdateMutationHook,
@@ -121,10 +142,10 @@ function GenericCrudTable(props) {
 	const dispatch = useDispatch();
 
 	const [columnFilters, setColumnFilters] = useState([]);
-	const [globalFilter, setGlobalFilter] = useState('');
+	const [globalFilter, setGlobalFilter] = useState("");
 	const [sorting, setSorting] = useState([]);
 	const [showGlobalFilter, setShowGlobalFilter] = useState(true);
-	const [searchValue, setSearchValue] = useState('');
+	const [searchValue, setSearchValue] = useState("");
 	// const handleGlobalFilterChange = useCallback(
 	// 	(val) => setGlobalFilter(val),
 	// 	[]
@@ -163,7 +184,7 @@ function GenericCrudTable(props) {
 			pageSize: paginationState.pageSize,
 			search: globalFilter,
 			sort: sorting,
-			filter: columnFilters
+			filter: columnFilters,
 			// serviceIdentifier,
 			// requiredQueryParams,
 			// requiredPathVariables
@@ -175,7 +196,7 @@ function GenericCrudTable(props) {
 		isFetching: rtkIsFetching,
 		isError: rtkIsError,
 		error: rtkError,
-		refetch: refetchList
+		refetch: refetchList,
 	} = rtkQueryResult;
 
 	if (useListQueryHook) {
@@ -200,7 +221,7 @@ function GenericCrudTable(props) {
 			await disableMutation(row?.original?.id).unwrap();
 			refetchList?.();
 		} catch (err) {
-			console.error('Disable category error', err);
+			console.error("Disable category error", err);
 		}
 	};
 	const handleShowSubCategories = async (row) => {
@@ -209,10 +230,12 @@ function GenericCrudTable(props) {
 
 		if (useSubCategoriesQueryHook) {
 			try {
-				const subsResult = await useSubCategoriesQueryHook(row.original.id).unwrap();
+				const subsResult = await useSubCategoriesQueryHook(
+					row.original.id
+				).unwrap();
 				setSubCategoriesData(subsResult || []);
 			} catch (err) {
-				console.error('Load subcategories error', err);
+				console.error("Load subcategories error", err);
 			}
 		}
 	};
@@ -224,7 +247,7 @@ function GenericCrudTable(props) {
 		// create a local form instance
 		createItemForm = useForm({
 			resolver: zodResolver(zodSchema),
-			defaultValues: defaultValues || {}
+			defaultValues: defaultValues || {},
 		});
 	}
 
@@ -249,7 +272,7 @@ function GenericCrudTable(props) {
 			closeCreateDialog();
 			refetchList?.();
 		} catch (err) {
-			console.error('Create item error', err);
+			console.error("Create item error", err);
 		}
 	};
 
@@ -329,7 +352,9 @@ function GenericCrudTable(props) {
 					<>
 						<DialogTitle>حذف</DialogTitle>
 						<DialogContent>
-							<DialogContentText>آیا از حذف این ردیف مطمئن هستید؟</DialogContentText>
+							<DialogContentText>
+								آیا از حذف این ردیف مطمئن هستید؟
+							</DialogContentText>
 						</DialogContent>
 						<DialogActions>
 							<Button onClick={() => dispatch(closeDialog())}>لغو</Button>
@@ -346,7 +371,7 @@ function GenericCrudTable(props) {
 							</Button>
 						</DialogActions>
 					</>
-				)
+				),
 			})
 		);
 	};
@@ -355,32 +380,33 @@ function GenericCrudTable(props) {
 		() =>
 			_.defaults(rest, {
 				initialState: {
-					density: 'spacious',
+					density: "spacious",
 					// showColumnFilters: true,
 					// showGlobalFilter: true,
 					enablePagination: true,
 					columnPinning: {
-						left: ['mrt-row-expand', 'mrt-row-select'],
-						right: ['mrt-row-actions']
+						left: ["mrt-row-expand", "mrt-row-select"],
+						right: ["mrt-row-actions"],
 					},
 					pagination: {
 						pageIndex: 0,
-						pageSize: 10
+						pageSize: 10,
 					},
 					enableFullScreenToggle: true,
-					localization: { MRT_Localization_FA }
+					localization: { MRT_Localization_FA },
 				},
 				enableColumnResizing: true,
 				// columnResizeDirection: 'rtl',
-				textAlign: 'right',
+				textAlign: "right",
 				enableCellActions: true,
-				enableClickToCopy: 'context-menu',
+				enableClickToCopy: "context-menu",
 				enableEditing: true,
 				enableStickyBody: true,
+
 				// editDisplayMode: 'cell',
-				editDisplayMode: 'modal',
-				createDisplayMode: 'modal',
-				positionActionsColumn: 'last',
+				editDisplayMode: "modal",
+				createDisplayMode: "modal",
+				positionActionsColumn: "last",
 				onCreatingRowSave: async ({ values, table }) => {
 					await createMutation(values);
 					table.setCreatingRow(null);
@@ -389,33 +415,37 @@ function GenericCrudTable(props) {
 					await updateMutation(values);
 					table.setEditingRow(null);
 				},
-				renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
+				renderCreateRowDialogContent: ({
+					table,
+					row,
+					internalEditComponents,
+				}) => (
 					<>
-						<DialogTitle>{tableTitle || 'ثبت'}</DialogTitle>
-						<DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+						<DialogTitle>{tableTitle || "ثبت"}</DialogTitle>
+						<DialogContent
+							sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+						>
 							{internalEditComponents}
 						</DialogContent>
 						<DialogActions>
-							<MRT_EditActionButtons
-								variant="text"
-								table={table}
-								row={row}
-							/>
+							<MRT_EditActionButtons variant="text" table={table} row={row} />
 						</DialogActions>
 					</>
 				),
-				renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
+				renderEditRowDialogContent: ({
+					table,
+					row,
+					internalEditComponents,
+				}) => (
 					<>
-						<DialogTitle>{tableTitle || 'ویرایش'}</DialogTitle>
-						<DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+						<DialogTitle>{tableTitle || "ویرایش"}</DialogTitle>
+						<DialogContent
+							sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
+						>
 							{internalEditComponents}
 						</DialogContent>
 						<DialogActions>
-							<MRT_EditActionButtons
-								variant="text"
-								table={table}
-								row={row}
-							/>
+							<MRT_EditActionButtons variant="text" table={table} row={row} />
 						</DialogActions>
 					</>
 				),
@@ -430,32 +460,32 @@ function GenericCrudTable(props) {
 				enableRowActions: true,
 				enableRowSelection: true,
 				muiBottomToolbarProps: {
-					className: 'flex items-center min-h-56 h-56'
+					className: "flex items-center min-h-56 h-56",
 				},
 				muiTablePaperProps: {
 					elevation: 0,
 					square: true,
-					className: 'flex flex-col flex-auto h-full'
+					className: "flex flex-col flex-auto h-full",
 				},
 				muiTableContainerProps: {
-					className: 'flex-auto'
+					className: "flex-auto",
 				},
 				enableStickyHeader: true,
 				localization: { MRT_Localization_FA },
 				enableStickyFooter: true,
 				// paginationDisplayMode: 'pages',
-				positionPagination: 'bottom',
-				positionToolbarAlertBanner: 'top',
+				positionPagination: "bottom",
+				positionToolbarAlertBanner: "top",
 				muiPaginationProps: {
-					color: 'secondary',
+					color: "secondary",
 					rowsPerPageOptions: [5, 10, 20, 30],
-					shape: 'rounded',
-					variant: 'outlined',
-					showRowsPerPage: true
+					shape: "rounded",
+					variant: "outlined",
+					showRowsPerPage: true,
 				},
 				getRowId: (row) => row.id,
 				muiTableBodyCellProps: {
-					sx: { textAlign: 'left', direction: 'rtl' }
+					sx: { textAlign: "left", direction: "rtl" },
 				},
 				// muiSearchTextFieldProps: {
 				// 	placeholder: 'جستجو',
@@ -469,66 +499,76 @@ function GenericCrudTable(props) {
 				// 	// }
 				// },
 				muiFilterTextFieldProps: {
-					variant: 'outlined',
-					size: 'small',
+					variant: "outlined",
+					size: "small",
 					sx: {
-						'& .MuiInputBase-root': {
-							padding: '0px 8px',
-							height: '32px!important',
-							minHeight: '32px!important',
-							direction: 'rtl',
-							textAlign: 'right'
-						}
-					}
+						"& .MuiInputBase-root": {
+							padding: "0px 8px",
+							height: "32px!important",
+							minHeight: "32px!important",
+							direction: "rtl",
+							textAlign: "right",
+						},
+					},
 				},
 				muiSelectAllCheckboxProps: {
-					className: 'w-48'
+					className: "w-48",
 				},
 				muiSelectCheckboxProps: {
-					className: 'w-48'
+					className: "w-48",
 				},
 				muiTableBodyRowProps: ({ row, table }) => {
 					const { density } = table.getState();
 
-					if (density === 'compact') {
+					if (density === "compact") {
 						return {
 							sx: {
-								backgroundColor: 'initial',
+								backgroundColor: "initial",
 								opacity: 1,
-								boxShadow: 'none',
-								height: row.getIsPinned() ? `${37}px` : undefined
-							}
+								boxShadow: "none",
+								height: row.getIsPinned() ? `${37}px` : undefined,
+							},
 						};
 					}
 
 					return {
 						sx: {
-							backgroundColor: 'initial',
+							backgroundColor: "initial",
 							opacity: 1,
-							boxShadow: 'none',
-							height: row.getIsPinned() ? `${density === 'comfortable' ? 53 : 69}px` : undefined
-						}
+							boxShadow: "none",
+							height: row.getIsPinned()
+								? `${density === "comfortable" ? 53 : 69}px`
+								: undefined,
+						},
 					};
 				},
 				muiTableHeadCellProps: ({ column }) => ({
 					sx: {
-						textAlign: 'left',
-						direction: 'ltr',
-						'& .Mui-TableHeadCell-Content-Labels': {
+						textAlign: "left",
+						direction: "ltr",
+						"& .Mui-TableHeadCell-Content-Labels": {
 							flex: 1,
-							// marginTop: '10%',
-							justifyContent: 'space-between'
+							justifyContent: "space-between",
 						},
-						'& .Mui-TableHeadCell-Content-Actions': {},
-						'& .MuiFormHelperText-root': {
-							textAlign: 'center',
+						"& .Mui-TableHeadCell-Content-Actions": {
+							"& .MuiIconButton-root": {
+								color: "#FFF", // Set header icons to white
+							},
+							"& .MuiSvgIcon-root": {
+								color: "#FFF", // Set header icons to white
+							},
+						},
+						"& .MuiFormHelperText-root": {
+							textAlign: "center",
 							marginX: 0,
 							color: (theme) => theme.palette.text.disabled,
-							fontSize: 11
+							fontSize: 11,
 						},
-						backgroundColor: (theme) => (column.getIsPinned() ? theme.palette.background.paper : 'inherit')
-					}
+						backgroundColor: (theme) =>
+							column.getIsPinned() ? theme.palette.background.paper : "inherit",
+					},
 				}),
+
 				manualFiltering: true,
 				manualSorting: true,
 				manualPagination: true,
@@ -541,13 +581,13 @@ function GenericCrudTable(props) {
 				enableFilterMatchHighlighting: true,
 				// globalFilterFn: 'noop',
 				enableGlobalFilterModes: true,
-				globalFilterModeOptions: ['asfd', 'contains', 'fuzzy'],
+				globalFilterModeOptions: ["asfd", "contains", "fuzzy"],
 				rowCount: rtkData?.totalElements || 100,
 				mrtTheme: (theme) => ({
 					baseBackgroundColor: theme.palette.background.paper,
 					menuBackgroundColor: theme.palette.background.paper,
 					pinnedRowBackgroundColor: theme.palette.background.paper,
-					pinnedColumnBackgroundColor: theme.palette.background.paper
+					pinnedColumnBackgroundColor: theme.palette.background.paper,
 				}),
 				renderTopToolbar: (_props) => <DataTableTopToolbar {..._props} />,
 				renderBottomToolbar: (_props) => <DataTableBottomToolbar {..._props} />,
@@ -559,8 +599,8 @@ function GenericCrudTable(props) {
 									<RefreshIcon
 										className={`cursor-pointer transition-transform ${
 											isFetchingData
-												? 'animate-spin text-gray-400'
-												: 'text-gray-500 hover:scale-105 active:scale-95'
+												? "animate-spin text-gray-400"
+												: "text-gray-500 hover:scale-105 active:scale-95"
 										}`}
 									/>
 								</IconButton>
@@ -579,7 +619,7 @@ function GenericCrudTable(props) {
 										color="primary"
 										onClick={() => setCreateDialogOpen(true)}
 									>
-										{createItemProps.buttonLabel || 'ایجاد آیتم جدید'}
+										{createItemProps.buttonLabel || "ایجاد آیتم جدید"}
 									</Button>
 								</div>
 							)}
@@ -597,7 +637,10 @@ function GenericCrudTable(props) {
 							{/* )} */}
 							{RenderTopToolbarCustomActions ? (
 								<div
-									className={renderTopToolbarCustomActionsClasses || 'flex justify-start px-8 py-16'}
+									className={
+										renderTopToolbarCustomActionsClasses ||
+										"flex justify-start px-8 py-16"
+									}
 								>
 									<RenderTopToolbarCustomActions />
 								</div>
@@ -615,14 +658,22 @@ function GenericCrudTable(props) {
 					globalFilter,
 					sorting,
 					showGlobalFilter,
-					pagination: paginationState
+					pagination: paginationState,
 				},
 				icons: tableIcons,
 				localeText: { MRT_Localization_FA },
-				enablePagination: true
+				enablePagination: true,
 				// enableColumnResizing: true
 			}),
-		[rest, isFetchingData, columnFilters, globalFilter, sorting, paginationState, setGlobalFilter] // handleGlobalFilterChange]
+		[
+			rest,
+			isFetchingData,
+			columnFilters,
+			globalFilter,
+			sorting,
+			paginationState,
+			setGlobalFilter,
+		] // handleGlobalFilterChange]
 	);
 
 	const table = useMaterialReactTable({
@@ -630,21 +681,47 @@ function GenericCrudTable(props) {
 		data: finalData,
 		...defaults,
 		...rest,
+		muiTableHeadCellProps: {
+			sx: { backgroundColor: "#0C0C0C", color: "#FFF" },
+		},
+		muiIconButtonProps: {
+			sx: {
+				color: "#FFF", // Set the icon color to white
+				"&:hover": {
+					color: "#FFD700", // Change icon color on hover (e.g., gold)
+				},
+			},
+		},
+		muiFilterTextFieldProps: {
+			sx: {
+				color: "#FFF", // Filter icon color
+				"&:hover": {
+					color: "#FFD700", // Filter icon color on hover
+				},
+			},
+		},
 		manualGlobalFilter: true,
 		enableFilterMatchHighlighting: true,
 		// globalFilterFn: 'noop',
-		localization: MRT_Localization_FA
+		localization: MRT_Localization_FA,
 	});
 
 	if (isErrorFetchingData) {
-		const errorMessage = fetchError?.data?.message || fetchError?.error || 'خطا در دریافت داده‌ها از سرور.';
-		return <p style={{ color: 'red' }}>خطا: {errorMessage}</p>;
+		const errorMessage =
+			fetchError?.data?.message ||
+			fetchError?.error ||
+			"خطا در دریافت داده‌ها از سرور.";
+		return <p style={{ color: "red" }}>خطا: {errorMessage}</p>;
 	}
 
 	return (
 		<div
-			style={{ direction: 'rtl', backgroundColor: '#fff', boxShadow: '0 2px 12px rgba(0,0,0,0.1)' }}
-			className="w-full flex flex-col min-h-full"
+			style={{
+				direction: "rtl",
+				backgroundColor: "#fff",
+				boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
+			}}
+			className="w-full max-w-screen flex flex-col min-h-full"
 		>
 			{/* {createItemProps && ( */}
 			{/*	<div className="flex justify-start p-16"> */}
@@ -663,6 +740,12 @@ function GenericCrudTable(props) {
 					table={table}
 					enablePagination
 					manualFiltering
+					muiTableHeadProps={{
+						sx: {
+							backgroundColor: "#000",
+							color: "#111", // Change the background color of the header cells
+						},
+					}}
 					columnFilterDisplayMode="popover"
 					columnResizeDirection="rtl"
 					onGlobalFilterChange={setGlobalFilter}
@@ -682,15 +765,17 @@ function GenericCrudTable(props) {
 				>
 					{/* <DialogTitle>{createItemProps.dialogTitle || 'ایجاد آیتم جدید'}</DialogTitle> */}
 					{/* <DialogContent className="p-32"> */}
-					<DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+					<DialogContent
+						sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+					>
 						<CreateItemForm
 							schema={
-								createItemProps.formValidationStruct === 'ZOD_SCHEMA'
+								createItemProps.formValidationStruct === "ZOD_SCHEMA"
 									? createItemProps.zodSchema
 									: createItemProps.jsonSchema
 							}
 							defaultValues={createItemProps.defaultValues}
-							formEngine={createItemProps.formEngine || 'DEFAULT'}
+							formEngine={createItemProps.formEngine || "DEFAULT"}
 							formFieldsInputTypes={createItemProps.formFieldsInputTypes || {}}
 							formHeaderTitle={createItemProps.formHeaderTitle}
 							formValidationStruct={createItemProps.formValidationStruct}
@@ -763,16 +848,16 @@ function CreateItemForm({
 	defaultValues,
 	onSubmit,
 	formFieldsInputTypes = {},
-	formEngine = 'DEFAULT',
+	formEngine = "DEFAULT",
 	formValidationStruct,
-	formHeaderTitle = 'ثبت آیتم',
-	formGenerationType = 'AUTO',
+	formHeaderTitle = "ثبت آیتم",
+	formGenerationType = "AUTO",
 	setCreateDialogOpen,
-	hideSubmitField
+	hideSubmitField,
 }) {
 	const form = useForm({
 		resolver: schema ? zodResolver(schema) : undefined,
-		defaultValues: defaultValues || {}
+		defaultValues: defaultValues || {},
 	});
 	const { register, handleSubmit, formState, reset } = form;
 	const handleFormSubmit = async (data) => {
@@ -781,7 +866,7 @@ function CreateItemForm({
 
 	// console.log(`Schema here: ${JSON.stringify(schema())}`);
 
-	if (formEngine === 'UNIFORMS') {
+	if (formEngine === "UNIFORMS") {
 		return (
 			<DynamicFormGenerator
 				initialData={{}}
@@ -789,7 +874,9 @@ function CreateItemForm({
 				formHeaderTitle={formHeaderTitle}
 				schema={schema || {}}
 				formValidationStruct={formValidationStruct}
-				formFieldsInputTypes={(formFieldsInputTypes && Object.keys(formFieldsInputTypes)) || null}
+				formFieldsInputTypes={
+					(formFieldsInputTypes && Object.keys(formFieldsInputTypes)) || null
+				}
 				formGenerationType={formGenerationType}
 				hideSubmitField={hideSubmitField}
 				setCreateDialogOpen={setCreateDialogOpen}
@@ -799,31 +886,30 @@ function CreateItemForm({
 	}
 
 	return (
-		<form
-			className="space-y-16"
-			onSubmit={handleSubmit(handleFormSubmit)}
-		>
+		<form className="space-y-16" onSubmit={handleSubmit(handleFormSubmit)}>
 			{Object.entries(formFieldsInputTypes).map(([key, cfg], idx) => {
 				if (cfg.renderCustomInput) {
 					return (
 						<Box
 							key={key + idx}
-							className={cfg.classes || ''}
+							className={cfg.classes || ""}
 							sx={cfg.styles || {}}
 						>
-							{typeof cfg.renderCustomInput === 'function' ? cfg.renderCustomInput(key, cfg, form) : null}
+							{typeof cfg.renderCustomInput === "function"
+								? cfg.renderCustomInput(key, cfg, form)
+								: null}
 						</Box>
 					);
 				}
 
-				if (cfg.inputType === 'Select') {
+				if (cfg.inputType === "Select") {
 					return (
 						<TextField
 							key={key + idx}
 							select
 							label={cfg?.label || key}
-							variant={cfg?.variant || 'outlined'}
-							className={cfg?.classes || ''}
+							variant={cfg?.variant || "outlined"}
+							className={cfg?.classes || ""}
 							{...register(key)}
 							error={!!formState.errors[key]}
 							helperText={formState.errors[key]?.message}
@@ -832,33 +918,32 @@ function CreateItemForm({
 					);
 				}
 
-				if (cfg.inputType === 'Checkbox') {
+				if (cfg.inputType === "Checkbox") {
 					return (
 						<Box
 							key={key + idx}
-							className={cfg.classes || ''}
+							className={cfg.classes || ""}
 							sx={cfg.styles || {}}
 						>
 							<label>
-								<input
-									type="checkbox"
-									{...register(key)}
-								/>
+								<input type="checkbox" {...register(key)} />
 								{cfg.label || key}
 							</label>
 							{formState.errors[key]?.message && (
-								<Typography style={{ color: 'red' }}>{formState.errors[key]?.message}</Typography>
+								<Typography style={{ color: "red" }}>
+									{formState.errors[key]?.message}
+								</Typography>
 							)}
 						</Box>
 					);
 				}
 
-				if (cfg.inputType === 'Date') {
+				if (cfg.inputType === "Date") {
 					if (cfg?.overrideCustomDatePicker) {
 						return (
 							<Box
 								key={key + idx}
-								className={cfg.classes || ''}
+								className={cfg.classes || ""}
 								sx={cfg.styles || {}}
 							>
 								{cfg.overrideCustomDatePicker(key, cfg, form)}
@@ -871,8 +956,8 @@ function CreateItemForm({
 							key={key + idx}
 							type="date"
 							label={cfg?.label || key}
-							variant={cfg?.variant || 'outlined'}
-							className={cfg?.classes || ''}
+							variant={cfg?.variant || "outlined"}
+							className={cfg?.classes || ""}
 							{...register(key)}
 							error={!!formState.errors[key]}
 							helperText={formState.errors[key]?.message}
@@ -885,8 +970,8 @@ function CreateItemForm({
 					<TextField
 						key={key + idx}
 						label={cfg?.label || key}
-						variant={cfg?.variant || 'outlined'}
-						className={cfg?.classes || ''}
+						variant={cfg?.variant || "outlined"}
+						className={cfg?.classes || ""}
 						{...register(key)}
 						error={!!formState.errors[key]}
 						helperText={formState.errors[key]?.message}

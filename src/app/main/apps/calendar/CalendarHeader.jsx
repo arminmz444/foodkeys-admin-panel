@@ -1,13 +1,13 @@
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
-import { selectMainTheme } from '@fuse/core/FuseSettings/fuseSettingsSlice';
-import { motion } from 'framer-motion';
-import { useAppDispatch } from 'app/store/hooks';
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import { useSelector } from 'react-redux';
-import { openNewEventDialog } from './calendarAppSlice';
-import CalendarViewMenu from './CalendarViewMenu';
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import { selectMainTheme } from "@fuse/core/FuseSettings/fuseSettingsSlice";
+import { motion } from "framer-motion";
+import { useAppDispatch } from "app/store/hooks";
+import FuseSvgIcon from "@fuse/core/FuseSvgIcon";
+import { useSelector } from "react-redux";
+import { openNewEventDialog } from "./calendarAppSlice";
+import CalendarViewMenu from "./CalendarViewMenu";
 
 /**
  * The calendar header.
@@ -46,21 +46,18 @@ function CalendarHeader(props) {
 							onClick={() => calendarApi().prev()}
 						>
 							<FuseSvgIcon size={20}>
-								{mainTheme.direction === 'ltr'
-									? 'heroicons-solid:chevron-left'
-									: 'heroicons-solid:chevron-right'}
+								{mainTheme.direction === "ltr"
+									? "heroicons-solid:chevron-left"
+									: "heroicons-solid:chevron-right"}
 							</FuseSvgIcon>
 						</IconButton>
 					</Tooltip>
 					<Tooltip title="Next">
-						<IconButton
-							aria-label="Next"
-							onClick={() => calendarApi().next()}
-						>
+						<IconButton aria-label="Next" onClick={() => calendarApi().next()}>
 							<FuseSvgIcon size={20}>
-								{mainTheme.direction === 'ltr'
-									? 'heroicons-solid:chevron-right'
-									: 'heroicons-solid:chevron-left'}
+								{mainTheme.direction === "ltr"
+									? "heroicons-solid:chevron-right"
+									: "heroicons-solid:chevron-left"}
 							</FuseSvgIcon>
 						</IconButton>
 					</Tooltip>
@@ -97,7 +94,7 @@ function CalendarHeader(props) {
 							openNewEventDialog({
 								jsEvent: ev.nativeEvent,
 								start: new Date(),
-								end: new Date()
+								end: new Date(),
 							})
 						)
 					}
