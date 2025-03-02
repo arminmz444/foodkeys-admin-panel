@@ -292,6 +292,22 @@ const navigationConfig = [
     subtitleTranslate: "SUB_APPLICATIONS",
     children: [
       {
+        id: "apps.workflows",
+        title: "Workflows",
+        type: "item",
+        icon: "heroicons-outline:paper-airplane",
+        url: "/apps/workflows",
+        translate: "WORKFLOWS",
+      },
+      {
+        id: "apps.workflow-builder",
+        title: "WorkflowBuilder",
+        type: "item",
+        icon: "heroicons-outline:paper-airplane",
+        url: "/apps/workflow-builder",
+        translate: "WORKFLOW_BUILDER",
+      },
+      {
         id: "apps.page-builder",
         title: "PageBuilder",
         type: "item",

@@ -134,7 +134,7 @@ function BasicInfoTab() {
 			</div>
 			<div className="flex sm:flex-row flex-col -mx-4">
 				<Controller
-					name="coType"
+					name="companyType"
 					control={control}
 					render={({ field }) => (
 						<TextField
@@ -150,7 +150,7 @@ function BasicInfoTab() {
 					)}
 				/>
 				<Controller
-					name="establishmentDate"
+					name="establishDate"
 					control={control}
 					render={({ field }) => (
 						<TextField
@@ -160,7 +160,7 @@ function BasicInfoTab() {
 							error={!!errors.establishmentDate}
 							helperText={errors?.establishmentDate?.message || '(مثال: 1389)'}
 							label="تاریخ تأسیس"
-							id="establishmentDate"
+							id="establishDate"
 							variant="outlined"
 							fullWidth
 						/>

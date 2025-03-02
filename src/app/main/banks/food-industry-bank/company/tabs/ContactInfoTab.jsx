@@ -1,21 +1,27 @@
 import { Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { Controller, useFormContext } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CustomDialog from "./components/CustomDialog";
 import CustomForm from "./components/CustomForm";
 import CustomArrayFieldSelector from "./components/custom-array-field-input/CustomArrayFieldSelector";
 import CommunicationMediumArraySelector from "./components/custom-array-field-input/CommunicationMediumSelector";
 
 function ContactInfoTab(props) {
+  const [emailList, setEmailList] = useState()
   const methods = useFormContext();
-  const { control, formState } = methods;
+  const { control, formState, watch } = methods;
   const { errors } = formState;
   const [phoneCount, setPhoneCount] = useState(0);
   const [faxCount, setFaxCount] = useState(0);
   const [phoneCountOffice, setPhoneCountOffice] = useState(0);
   const [faxCountOffice, setFaxCountOffice] = useState(0);
   const [emailCount, setEmailCount] = useState(0);
+  const emails = watch('emails')
+  useEffect(() => {
+ if (emails && emails.length > 0)
+  setEmailList(emails)
+  }, [emails])
 
   return (
     <div>

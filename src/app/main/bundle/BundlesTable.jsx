@@ -221,6 +221,7 @@ import { WebAssetOffOutlined } from "@mui/icons-material";
 import FuseSvgIcon from "@fuse/core/FuseSvgIcon/index.js";
 import CustomUniformsLongTextField from "app/shared-components/dynamic-field-generator/CustomUniformsLongTextField.jsx";
 // import LeafletMap from "app/shared-components/leafletMap/LeafletMap.jsx";
+import CustomUniformsAsyncPaginateSelect from "app/shared-components/dynamic-field-generator/CustomUniformsAsyncPaginateSelect.jsx";
 import {
 	useGetBundlesQuery,
 	useCreateBundleMutation,
@@ -231,6 +232,7 @@ import GenericCrudTable from "../../shared-components/data-table/GenericCrudTabl
 // import MapComp from "app/shared-components/leafletMap/MapComp.jsx";
 
 function BundleTable() {
+	const handleCreate = (data) => alert(`ایجاد پلن جدید: ${JSON.stringify(data)}`); 
 	const bundleStatusSelectOptions = [
 		{ label: "فعال", value: "ACTIVE" },
 		{ label: "غیرفعال", value: "INACTIVE" },
@@ -415,9 +417,10 @@ function BundleTable() {
 					message: "مقدار انتخاب شده معتبر نیست",
 				})
 				.uniforms({
-					displayName: "وضعیت پلن",
-					label: "وضعیت پلن",
-					placeholder: "وضعیت پلن را انتخاب کنید",
+					displayName: "توضیحات",
+					label: "توضیحات پلن",
+					placeholder: "توضیحات پلن را وارد کنید",
+					// component: CustomUniformsAsyncPaginateSelect,
 				}),
 			features: z
 				.string({
@@ -475,9 +478,7 @@ function BundleTable() {
 			features: "",
 			description: "",
 		},
-		onCreate: async (vals) => {
-			alert(`ایجاد پلن جدید: ${JSON.stringify(vals)}`);
-		},
+		onCreate: handleCreate,
 		buttonLabel: "افزودن پلن جدید",
 		dialogTitle: "ایجاد پلن جدید",
 		formEngine: "UNIFORMS",

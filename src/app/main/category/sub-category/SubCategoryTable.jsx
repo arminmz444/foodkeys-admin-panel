@@ -144,6 +144,8 @@ import {
 	useDeleteSubCategoryMutation
 } from './SubCategoriesApi';
 import GenericCrudTable from '../../../shared-components/data-table/GenericCrudTable';
+import CustomUniformsAsyncPaginateSelect from 'app/shared-components/dynamic-field-generator/CustomUniformsAsyncPaginateSelect';
+import CustomUniformsAsyncSelect from 'app/shared-components/dynamic-field-generator/CustomUniformsAsyncSelect';
 
 const citiesList = [
 	'صنایع غذایی',
@@ -391,10 +393,11 @@ function SubCategoryTable() {
 				.uniforms({
 					displayName: 'دسته‌بندی',
 					label: 'دسته‌بندی',
-					placeholder: 'دسته‌بندی را انتخاب کنید'
+					placeholder: 'دسته‌بندی را انتخاب کنید',
+					component: ({onChange, label, placeholder}) => <CustomUniformsAsyncSelect onChange={onChange} label={label} placeholder={placeholder} />
 				}),
 			pageOrder: z
-				.number({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
+				.number({ invalid_type_error: "فرمت داده ورودی اشتباه است", required_error: "این فیلد الزامی است" })
 				.min(1, { message: 'حداقل مقدار برای این فیلد ۱ است' })
 				.uniforms({
 					displayName: 'ترتیب صفحه',

@@ -28,7 +28,7 @@ const FoodIndustryBankApi = api
 						data.totalPages = response.pagination.totalPages;
 						data.totalElements = response.pagination.totalElements;
 						data.pageSize = response.pagination.pageSize;
-						data.pageIndex = response.pagination.pageIndex;
+						data.pageIndex = response.pagination.pageNumber;
 					}
 
 					// console.log(`response: ${JSON.stringify(response)}`);
