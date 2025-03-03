@@ -8,7 +8,6 @@ import CustomPersianDataTable from "app/shared-components/custom-persian-data-ta
 import MRTTransferList from "app/shared-components/data-table/mrt-transfer-list/MRTTransferList.jsx";
 import DynamicFieldGenerator from "app/shared-components/dynamic-field-generator/DynamicFieldGenerator.jsx";
 import DynamicFormGenerator from "app/shared-components/dynamic-field-generator/DynamicFormGenerator.jsx";
-import FlowGenerator from "app/shared-components/flow-generator/FlowGenerator.jsx";
 import CustomSpreadsheet from "app/shared-components/custom-spreadsheet/CustomSpreadsheet.jsx";
 import axios from "axios";
 import { useGetAnalyticsDashboardWidgetsQuery } from "./AnalyticsDashboardApi";
@@ -75,7 +74,6 @@ function AnalyticsDashboardApp() {
       <CustomPersianDataTable />
       <DynamicFieldGenerator />
       <DynamicFormGenerator />
-      <FlowGenerator />
       <SimpleSelect />
       {/* <MRTEditModalDataTable /> */}
       <MRTTransferList />
