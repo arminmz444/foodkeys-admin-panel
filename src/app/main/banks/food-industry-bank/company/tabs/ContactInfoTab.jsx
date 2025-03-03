@@ -38,7 +38,7 @@ function ContactInfoTab(props) {
               className="mt-8 mb-16 sm:mx-4"
               error={!!errors.province}
               helperText={errors?.province?.message}
-              label="استان محل"
+              label="استان دفتر مرکزی"
               id="province"
               variant="outlined"
               fullWidth
@@ -47,7 +47,7 @@ function ContactInfoTab(props) {
         />
 
         <Controller
-          name="city"
+          name="officeCity"
           control={control}
           render={({ field }) => (
             <TextField
@@ -55,7 +55,7 @@ function ContactInfoTab(props) {
               className="mt-8 mb-16 sm:mx-4"
               error={!!errors.city}
               helperText={errors?.city?.message}
-              label="شهر محل"
+              label="شهر دفتر مرکزی"
               id="city"
               variant="outlined"
               fullWidth
@@ -272,16 +272,16 @@ function ContactInfoTab(props) {
       </Typography>
       <div className="flex sm:flex-row flex-col -mx-4">
         <Controller
-          name="officeProvince"
+          name="officeState"
           control={control}
           render={({ field }) => (
             <TextField
               {...field}
               className="mt-8 mb-16 sm:mx-4"
-              error={!!errors.officeProvince}
-              helperText={errors?.officeProvince?.message}
+              error={!!errors.officeState}
+              helperText={errors?.officeState?.message}
               label="استان محل دفتر مرکزی"
-              id="officeProvince"
+              id="officeState"
               variant="outlined"
               fullWidth
               required

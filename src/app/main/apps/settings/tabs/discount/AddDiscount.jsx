@@ -34,8 +34,7 @@ import axios from "axios";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-const defaultValues = ({ id }) => {
-  return {
+const defaultValues = {
     title: "",
     price: "",
     name: "",
@@ -54,7 +53,6 @@ const defaultValues = ({ id }) => {
     buttonName: "",
     buttonLink: "",
     images: [],
-  };
 };
 const schema = z.object({
   name: z.string().nonempty("Name is required"),
@@ -79,17 +77,17 @@ const users = [
   { name: "آرمین مظفری", phone: "09144226139" },
 ];
 
-function AddDiscount({ id, open, setOpen, handleClose, handleClickOpen }) {
+function AddDiscount({ open, setOpen, handleClickOpen, handleClose }) {
   const [loading, setLoading] = React.useState(false);
   const theme = useTheme();
-  React.useEffect(async () => {
-    const fetchDiscount = async () => {
-      setLoading(true);
-      // axios.get('/bundle/')
-      setLoading(false);
-    };
-    if (id) fetchDiscount();
-  }, [id]);
+  // React.useEffect(async () => {
+  //   const fetchDiscount = async () => {
+  //     setLoading(true);
+  //     // axios.get('/bundle/')
+  //     setLoading(false);
+  //   };
+  //   if (id) fetchDiscount();
+  // }, [id]);
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const [value, setValue] = React.useState(null);
   const [duration, setDuration] = React.useState(null);

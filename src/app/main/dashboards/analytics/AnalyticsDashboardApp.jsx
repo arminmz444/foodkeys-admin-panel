@@ -16,6 +16,7 @@ import { useGetAnalyticsDashboardWidgetsQuery } from "./AnalyticsDashboardApi";
 import SimpleSelect from "app/shared-components/custom-select/simple-select/SimpleSelect.jsx";
 import FormBuilder from "app/shared-components/form-builder/FormBuilder.jsx";
 import FormBuilderV2 from "app/shared-components/form-builder-v2";
+import { ReteEditor } from "app/shared-components/rete-editor/reteEditor";
 const container = {
   show: {
     transition: {
@@ -80,6 +81,7 @@ function AnalyticsDashboardApp() {
       <SimpleSelect />
       {/* <MRTEditModalDataTable /> */}
       <MRTTransferList />
+      <ReteEditor />
       {/* <CustomSelect */}
       {/*	name="employeePersonnelId" */}
       {/*	id="employeePersonnelId" */}

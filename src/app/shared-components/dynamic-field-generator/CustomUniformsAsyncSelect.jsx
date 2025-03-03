@@ -1,30 +1,32 @@
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connectField } from 'uniforms';
 
-function sleep(duration) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, duration);
-  });
-}
 
 function CustomUniformsAsyncSelect({ onChange, label, placeholder, loadOptions}) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
+  useEffect(() => {
+	const fetchOptions = async () => {
+		let data = []
+		if (loadOptions && typeof loadOptions === 'function')
+			data = await loadOptions()
+		return data
+	}
+	fetchOptions()
+  }, [])
   const handleOpen = () => {
     setOpen(true);
     (async () => {
       setLoading(true);
-      await loadOptions() // For demo purposes.
+      let res = await loadOptions() // For demo purposes.
       setLoading(false);
 
-      setOptions([...topFilms]);
+      setOptions([...res]);
     })();
   };
 
@@ -35,18 +37,22 @@ function CustomUniformsAsyncSelect({ onChange, label, placeholder, loadOptions})
 
   return (
     <Autocomplete
-      sx={{ width: 300 }}
+      sx={{ width: '100%', marginTop: "8px", marginBottom: "4px" }}
       open={open}
       onOpen={handleOpen}
       onClose={handleClose}
-      isOptionEqualToValue={(option, value) => option.title === value.title}
-      getOptionLabel={(option) => option.title}
+      isOptionEqualToValue={(option, value) => option.value === value.value}
+      getOptionLabel={(option) => option.label}
       options={options}
       loading={loading}
+	  onChange={(e, data) => {
+		onChange(data.value)
+	  }}
+	  loadingText="در حال بارگذاری ..."
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Asynchronous"
+          label={label}
           slotProps={{
             input: {
               ...params.InputProps,

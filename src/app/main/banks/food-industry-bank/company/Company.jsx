@@ -23,6 +23,7 @@ import ContactInfoTab from "@/app/main/banks/food-industry-bank/company/tabs/Con
 import ManagementDescTab from "@/app/main/banks/food-industry-bank/company/tabs/ManagementDescTab";
 import CompanyMainImagesTab from "@/app/main/banks/food-industry-bank/company/tabs/CompanyMainImagesTab";
 import RegistrarTab from "@/app/main/banks/food-industry-bank/company/tabs/RegistrarTab.jsx";
+import MapTab from "./tabs/MapTab";
 // import MapTab from "@/app/main/banks/food-industry-bank/company/tabs/MapTab.jsx";
 /**
  * Form Validation Schema
@@ -141,7 +142,7 @@ function Company() {
               <Tab className="h-64" label="گالری" />
               <Tab className="h-64" label="توضیحات مدیریت" />
               <Tab className="h-64" label="لوگو و عکس پس‌زمینه" />
-              {/* <Tab className="h-64" label="مکان روی نقشه" /> */}
+              <Tab className="h-64" label="مکان روی نقشه" />
               <Tab className="h-64" label="ثبت‌کننده" />
               {/* <Tab */}
               {/*	className="h-64" */}
@@ -193,9 +194,9 @@ function Company() {
               <div className={tabValue !== 6 ? "hidden" : ""}>
                 <CompanyMainImagesTab />
               </div>
-              {/* <div className={tabValue !== 7 ? "hidden" : ""}>
+              <div className={tabValue !== 7 ? "hidden" : ""}>
                 <MapTab tabValue={tabValue} />
-              </div> */}
+              </div>
               <div className={tabValue !== 8 ? "hidden" : ""}>
                 <RegistrarTab />
               </div>

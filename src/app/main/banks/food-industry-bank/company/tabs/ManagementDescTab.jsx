@@ -62,6 +62,44 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import axios from "axios";
 import { motion } from "framer-motion";
 
+const mockRecords = [
+  {
+  user: {
+    firstName: "آرمین",
+    lastName: "مظفری",
+    username: "09352388350",
+    createdAt: "2022-01-01",
+  },
+  text: "امتن رکورد تستی ، بعدا از سرور بیاید"
+},
+{
+  user: {
+    firstName: "کریم",
+    lastName: "مظفری",
+    username: "09352388350",
+    createdAt: "2022-01-01",
+  },
+  text: "۲متن رکورد"
+},
+{
+  user: {
+    firstName: "امیر",
+    lastName: "نورب=ی",
+    username: "09352388350",
+    createdAt: "2022-01-01",
+  },
+  text: "۳متن رکورد"
+},
+{
+  user: {
+    firstName: "ابوالفضل",
+    lastName: "مظفری",
+    username: "09352388350",
+    createdAt: "2022-01-01",
+  },
+  text: "متن رکورد"
+},
+]
 // A small helper to truncate text
 function truncateText(text, length = 100) {
   if (!text) return "";
@@ -88,8 +126,7 @@ function RecordItem({ record, onDelete }) {
       <div className="flex justify-between items-center">
         <div className="flex flex-col">
           <Typography variant="subtitle1" className="font-bold">
-            {record.user?.firstName} {record.user?.lastName} (
-            {record.user?.username})
+            {record.user?.firstName} {record.user?.lastName} ({record.user?.username})
           </Typography>
           <Typography variant="caption" color="textSecondary">
             {record.createdAt || ""}
@@ -141,15 +178,18 @@ function ManagementDescTab() {
 
   // Load records from server with infinite approach
   const loadRecords = async () => {
-    const { data } = await axios.get(
-      `/api/company/123/records?page=${page}&size=10`
-    );
-    if (!data || data.length === 0) {
-      setHasMore(false);
-      return;
-    }
-    setRecords((prev) => [...prev, ...data]);
-    setPage((prev) => prev + 1);
+    // const { data } = await axios.get(
+    //   `/api/company/123/records?page=${page}&size=10`
+    // );
+    // if (!data || data.length === 0) {
+    //   setHasMore(false);
+    //   return;
+    // }
+    // setRecords((prev) => [...prev, ...data]);
+    // setPage((prev) => prev + 1);
+
+    setRecords(mockRecords)
+    setHasMore(false)
   };
 
   useEffect(() => {

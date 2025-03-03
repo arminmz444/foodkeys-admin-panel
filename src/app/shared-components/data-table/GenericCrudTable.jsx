@@ -784,6 +784,7 @@ function GenericCrudTable(props) {
 							setCreateDialogOpen={setCreateDialogOpen}
 							onSubmit={async (vals) => {
 								let result;
+								console.log(`Generic Crud Table's OnSubmit: ${vals}`)
 
 								if (createItemProps.onCreate) {
 									result = await createItemProps.onCreate(vals);

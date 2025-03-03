@@ -75,7 +75,7 @@ const SubCategoryApi = api
 					method: 'POST',
 					data: newSubCategory
 				}),
-				transformResponse: (response) => response?.data,
+				transformResponse: (response) => response,
 				invalidatesTags: ['subCategoryList']
 			}),
 

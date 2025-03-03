@@ -85,20 +85,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function DiscountTab() {
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
   const [isCopied, setCopied] = useState(null);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  const [isOpen, setOpen] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -124,7 +116,7 @@ function DiscountTab() {
             ),
           }}
         />
-        <AddDiscount open={open} setOpen={setOpen} handleClickOpen={handleClickOpen} />
+        <AddDiscount open={open} setOpen={setOpen} handleClickOpen={handleClickOpen} handleClose={handleClose} />
       </div>
       <Divider />
       {discountList?.length === 0 && (
