@@ -9,14 +9,12 @@ import MRTTransferList from "app/shared-components/data-table/mrt-transfer-list/
 import DynamicFieldGenerator from "app/shared-components/dynamic-field-generator/DynamicFieldGenerator.jsx";
 import DynamicFormGenerator from "app/shared-components/dynamic-field-generator/DynamicFormGenerator.jsx";
 import FlowGenerator from "app/shared-components/flow-generator/FlowGenerator.jsx";
-// import NodeEditor from 'app/shared-components/rete-editor/rete-editor.jsx';
 import CustomSpreadsheet from "app/shared-components/custom-spreadsheet/CustomSpreadsheet.jsx";
 import axios from "axios";
 import { useGetAnalyticsDashboardWidgetsQuery } from "./AnalyticsDashboardApi";
 import SimpleSelect from "app/shared-components/custom-select/simple-select/SimpleSelect.jsx";
 import FormBuilder from "app/shared-components/form-builder/FormBuilder.jsx";
 import FormBuilderV2 from "app/shared-components/form-builder-v2";
-import { ReteEditor } from "app/shared-components/rete-editor/reteEditor";
 const container = {
   show: {
     transition: {
@@ -81,7 +79,6 @@ function AnalyticsDashboardApp() {
       <SimpleSelect />
       {/* <MRTEditModalDataTable /> */}
       <MRTTransferList />
-      <ReteEditor />
       {/* <CustomSelect */}
       {/*	name="employeePersonnelId" */}
       {/*	id="employeePersonnelId" */}
