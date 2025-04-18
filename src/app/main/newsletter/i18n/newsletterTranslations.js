@@ -1,0 +1,193 @@
+// src/app/modules/newsletter/i18n/en.js
+const locale = {
+    NEWSLETTER: 'Newsletter',
+    NEWSLETTER_DASHBOARD: 'Dashboard',
+    ALL_NEWSLETTERS: 'All Newsletters',
+    PENDING_NEWSLETTERS: 'Pending Newsletters',
+    CREATE_NEWSLETTER: 'Create Newsletter',
+    SUBSCRIBERS: 'Subscribers',
+    
+    // Dashboard
+    'Newsletter Dashboard': 'Newsletter Dashboard',
+    'Overview of your newsletter statistics': 'Overview of your newsletter statistics',
+    'Total Newsletters': 'Total Newsletters',
+    'Sent Newsletters': 'Sent Newsletters',
+    'Total Subscribers': 'Total Subscribers',
+    'Active Subscribers': 'Active Subscribers',
+    
+    // Newsletter List
+    'Newsletters': 'Newsletters',
+    'Manage your newsletters': 'Manage your newsletters',
+    'Title': 'Title',
+    'Created': 'Created',
+    'Schedule Date': 'Schedule Date',
+    'Status': 'Status',
+    'Created By': 'Created By',
+    'Actions': 'Actions',
+    'Sent': 'Sent',
+    'Pending': 'Pending',
+    'View': 'View',
+    'Edit': 'Edit',
+    'Delete': 'Delete',
+    'Send': 'Send',
+    'Send Now': 'Send Now',
+    'No newsletters found': 'No newsletters found',
+    'Error loading newsletters': 'Error loading newsletters',
+    'Delete Newsletter': 'Delete Newsletter',
+    'Are you sure you want to delete this newsletter?': 'Are you sure you want to delete this newsletter?',
+    'Cancel': 'Cancel',
+    'Deleting...': 'Deleting...',
+    'Send Newsletter': 'Send Newsletter',
+    'Are you sure you want to send this newsletter now?': 'Are you sure you want to send this newsletter now?',
+    'Sending...': 'Sending...',
+    
+    // Newsletter Form
+    'Edit Newsletter': 'Edit Newsletter',
+    'Create Newsletter': 'Create Newsletter',
+    'Save': 'Save',
+    'Saving...': 'Saving...',
+    'Error saving newsletter': 'Error saving newsletter',
+    'Error loading newsletter': 'Error loading newsletter',
+    'Enter newsletter title': 'Enter newsletter title',
+    'Enter newsletter content...': 'Enter newsletter content...',
+    'Content': 'Content',
+    
+    // Newsletter Detail
+    'Newsletter Details': 'Newsletter Details',
+    'Back': 'Back',
+    'Created At': 'Created At',
+    'Scheduled Date': 'Scheduled Date',
+    'Sent At': 'Sent At',
+    'Last Updated By': 'Last Updated By',
+    'Last Updated At': 'Last Updated At',
+    'Newsletter Content': 'Newsletter Content',
+    'Created by': 'Created by',
+    
+    // Pending Newsletters
+    'Newsletters waiting to be sent': 'Newsletters waiting to be sent',
+    'Time Remaining': 'Time Remaining',
+    'Ready to send': 'Ready to send',
+    'days': 'days',
+    'hours': 'hours',
+    'minutes': 'minutes',
+    'No pending newsletters found': 'No pending newsletters found',
+    'Error loading pending newsletters': 'Error loading pending newsletters',
+    
+    // Subscribers
+    'مشترکین خبرنامه': 'مشترکین خبرنامه',
+    'مدیریت مشترکین خبرنامه': 'مدیریت مشترکین خبرنامه',
+    'افزودن مشترک جدید': 'افزودن مشترک جدید',
+    'Email': 'Email',
+    'Name': 'Name',
+    'Enter email': 'Enter email',
+    'Enter name (optional)': 'Enter name (optional)',
+    'Add Subscriber': 'Add Subscriber',
+    'Adding...': 'Adding...',
+    'Subscriber List': 'Subscriber List',
+    'No subscribers found': 'No subscribers found',
+    'خطا در بارگذاری مشترکین': 'خطا در بارگذاری مشترکین',
+    'خطا در افزودن مشترک': 'خطا در افزودن مشترک',
+    'Unsubscribe': 'Unsubscribe',
+    'Unsubscribe Confirmation': 'Unsubscribe Confirmation',
+    'Are you sure you want to unsubscribe this email from the newsletter?': 'Are you sure you want to unsubscribe this email from the newsletter?',
+    'Unsubscribing...': 'Unsubscribing...'
+  };
+  
+  export default locale;
+  
+  // src/app/modules/newsletter/i18n/fa.js
+  const localeFa = {
+    NEWSLETTER: 'خبرنامه',
+    NEWSLETTER_DASHBOARD: 'داشبورد',
+    ALL_NEWSLETTERS: 'همه خبرنامه‌ها',
+    PENDING_NEWSLETTERS: 'خبرنامه‌های در انتظار',
+    CREATE_NEWSLETTER: 'ایجاد خبرنامه',
+    SUBSCRIBERS: 'مشترکین',
+    
+    // Dashboard
+    'Newsletter Dashboard': 'داشبورد خبرنامه',
+    'Overview of your newsletter statistics': 'نمای کلی آمار خبرنامه',
+    'Total Newsletters': 'کل خبرنامه‌ها',
+    'Sent Newsletters': 'خبرنامه‌های ارسال شده',
+    'Total Subscribers': 'کل مشترکین',
+    'Active Subscribers': 'مشترکین فعال',
+    
+    // Newsletter List
+    'Newsletters': 'خبرنامه‌ها',
+    'Manage your newsletters': 'مدیریت خبرنامه‌ها',
+    'Title': 'عنوان',
+    'Created': 'تاریخ ایجاد',
+    'Schedule Date': 'تاریخ زمانبندی',
+    'Status': 'وضعیت',
+    'Created By': 'ایجاد شده توسط',
+    'Actions': 'عملیات',
+    'Sent': 'ارسال شده',
+    'Pending': 'در انتظار',
+    'View': 'مشاهده',
+    'Edit': 'ویرایش',
+    'Delete': 'حذف',
+    'Send': 'ارسال',
+    'Send Now': 'ارسال فوری',
+    'No newsletters found': 'هیچ خبرنامه‌ای یافت نشد',
+    'Error loading newsletters': 'خطا در بارگذاری خبرنامه‌ها',
+    'Delete Newsletter': 'حذف خبرنامه',
+    'Are you sure you want to delete this newsletter?': 'آیا از حذف این خبرنامه اطمینان دارید؟',
+    'Cancel': 'انصراف',
+    'Deleting...': 'در حال حذف...',
+    'Send Newsletter': 'ارسال خبرنامه',
+    'Are you sure you want to send this newsletter now?': 'آیا از ارسال فوری این خبرنامه اطمینان دارید؟',
+    'Sending...': 'در حال ارسال...',
+    
+    // Newsletter Form
+    'Edit Newsletter': 'ویرایش خبرنامه',
+    'Create Newsletter': 'ایجاد خبرنامه',
+    'Save': 'ذخیره',
+    'Saving...': 'در حال ذخیره...',
+    'Error saving newsletter': 'خطا در ذخیره خبرنامه',
+    'Error loading newsletter': 'خطا در بارگذاری خبرنامه',
+    'Enter newsletter title': 'عنوان خبرنامه را وارد کنید',
+    'Enter newsletter content...': 'محتوای خبرنامه را وارد کنید...',
+    'Content': 'محتوا',
+    
+    // Newsletter Detail
+    'Newsletter Details': 'جزئیات خبرنامه',
+    'Back': 'بازگشت',
+    'Created At': 'تاریخ ایجاد',
+    'Scheduled Date': 'تاریخ زمانبندی',
+    'Sent At': 'تاریخ ارسال',
+    'Last Updated By': 'آخرین بروزرسانی توسط',
+    'Last Updated At': 'تاریخ آخرین بروزرسانی',
+    'Newsletter Content': 'محتوای خبرنامه',
+    'Created by': 'ایجاد شده توسط',
+    
+    // Pending Newsletters
+    'Newsletters waiting to be sent': 'خبرنامه‌های در انتظار ارسال',
+    'Time Remaining': 'زمان باقیمانده',
+    'Ready to send': 'آماده ارسال',
+    'days': 'روز',
+    'hours': 'ساعت',
+    'minutes': 'دقیقه',
+    'No pending newsletters found': 'هیچ خبرنامه در انتظاری یافت نشد',
+    'Error loading pending newsletters': 'خطا در بارگذاری خبرنامه‌های در انتظار',
+    
+    // Subscribers
+    'مشترکین خبرنامه': 'مشترکین خبرنامه',
+    'مدیریت مشترکین خبرنامه': 'مدیریت مشترکین خبرنامه',
+    'افزودن مشترک جدید': 'افزودن مشترک جدید',
+    'Email': 'ایمیل',
+    'Name': 'نام',
+    'Enter email': 'ایمیل را وارد کنید',
+    'Enter name (optional)': 'نام را وارد کنید (اختیاری)',
+    'Add Subscriber': 'افزودن مشترک',
+    'Adding...': 'در حال افزودن...',
+    'Subscriber List': 'لیست مشترکین',
+    'No subscribers found': 'هیچ مشترکی یافت نشد',
+    'خطا در بارگذاری مشترکین': 'خطا در بارگذاری مشترکین',
+    'خطا در افزودن مشترک': 'خطا در افزودن مشترک',
+    'Unsubscribe': 'لغو اشتراک',
+    'Unsubscribe Confirmation': 'تایید لغو اشتراک',
+    'Are you sure you want to unsubscribe this email from the newsletter?': 'آیا از لغو اشتراک این ایمیل از خبرنامه اطمینان دارید؟',
+    'Unsubscribing...': 'در حال لغو اشتراک...'
+  };
+  
+  export { locale, localeFa };

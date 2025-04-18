@@ -1,0 +1,7 @@
+plugins: ['gjs-preset-webpage'], // Official plugin for a basic webpage editor
+pluginsOpts: {
+  'gjs-preset-webpage': {},
+},
+fromElement: false,
+components: '<h1>Hello GrapesJS</h1>',
+style: '.my-class { color: red; }',

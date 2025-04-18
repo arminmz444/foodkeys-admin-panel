@@ -1,0 +1,156 @@
+import { apiService as api } from "app/store/apiService";
+
+/**
+ * We'll define endpoints for SubCategory entity, matching your standard:
+ * - GET    /subcategory
+ * - GET    /subcategory/{id}
+ * - POST   /subcategory
+ * - PUT    /subcategory/{id}
+ * - DELETE /subcategory/{id}
+ *
+ * We assume the response has the structure:
+ * {
+ *   "status": "SUCCESS",
+ *   "statusCode": 200,
+ *   "message": "...",
+ *   "data": {...}, // SubCategory data
+ *   "error": null,
+ *   "pagination": {...}
+ * }
+ */
+
+// Tag types for subCategories
+const addTagTypes = [
+  "SubCategory",
+];
+
+const SubCategoryApi = api
+  .enhanceEndpoints({
+    addTagTypes,
+  })
+  .injectEndpoints({
+    endpoints: (builder) => ({
+      // 1) GET subCategories (list)
+      getSubCategories: builder.query({
+        query: ({ pageNumber, pageSize, search, sort, filter }) => ({
+          url: `/subcategory?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}&sort=${(sort && Object.entries(sort)?.length && JSON.stringify(sort)) || ""}&filter=${(filter && Object.entries(filter)?.length && JSON.stringify(filter)) || ""}`,
+          method: "GET",
+        }),
+        transformResponse: (response) => {
+          const data = { data: response?.data };
+
+          if (response && response.pagination) {
+            data.totalPages = response.pagination.totalPages;
+            data.totalElements = response.pagination.totalElements;
+            data.pageSize = response.pagination.pageSize;
+            data.pageIndex = response.pagination.pageIndex;
+          }
+
+          // console.log(`response: ${JSON.stringify(response)}`);
+          // console.log(`Data: ${JSON.stringify(data)}`);
+          return data;
+        },
+        providesTags: (result) =>
+          result && result.data && Array.isArray(result.data)
+            ? [
+                ...result.data.map(({ id }) => ({ type: "Category", id })),
+                { type: "SubCategory", id: "LIST" },
+              ]
+            : [{ type: "SubCategory", id: "LIST" }],
+        keepUnusedDataFor: 3600,
+      }),
+
+      // 2) GET single subCategory by ID
+      getSubCategory: builder.query({
+        query: (id) => ({
+          url: `/subcategory/${id}`,
+          method: "GET",
+        }),
+        transformResponse: (response) => response?.data,
+        providesTags: (result, error, id) => [{ type: "SubCategory", id }],
+      }),
+
+      // 3) CREATE subCategory
+      createSubCategory: builder.mutation({
+        query: (newSubCategory) => ({
+          url: "/subcategory",
+          method: "POST",
+          data: newSubCategory,
+        }),
+        transformResponse: (response) => response,
+        invalidatesTags: [{ type: "SubCategory", id: "LIST" }],
+      }),
+
+      // 4) UPDATE subCategory
+      updateSubCategory: builder.mutation({
+        query: ({ id, ...updatedFields }) => ({
+          url: `/subcategory/${id}`,
+          method: "PUT",
+          data: updatedFields,
+        }),
+        transformResponse: (response) => response?.data,
+        invalidatesTags: (result, error, { id }) => [
+          { type: "SubCategory", id },
+        ],
+      }),
+
+      // 5) DELETE subCategory
+      deleteSubCategory: builder.mutation({
+        query: (id) => ({
+          url: `/subcategory/${id}`,
+          method: "DELETE",
+        }),
+        transformResponse: (response) => response?.data,
+        invalidatesTags: (result, error, { id }) => [
+          { type: "SubCategory", id },
+        ],
+      }),
+	  getServiceBankSubCategories: builder.query({
+        query: ({ pageNumber, pageSize, search, sort, filter }) => ({
+          url: `/subcategory?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}&sort=${(sort && Object.entries(sort)?.length && JSON.stringify(sort)) || ""}&filter=${(filter && Object.entries(filter)?.length && JSON.stringify(filter)) || ""}`,
+          method: "GET",
+        }),
+        transformResponse: (response) => {
+          const data = { data: response?.data };
+
+          if (response && response.pagination) {
+            data.totalPages = response.pagination.totalPages;
+            data.totalElements = response.pagination.totalElements;
+            data.pageSize = response.pagination.pageSize;
+            data.pageIndex = response.pagination.pageIndex;
+          }
+
+          // console.log(`response: ${JSON.stringify(response)}`);
+          // console.log(`Data: ${JSON.stringify(data)}`);
+          return data;
+        },
+        providesTags: (result) =>
+          result && result.data && Array.isArray(result.data)
+            ? [
+                ...result.data.map(({ id }) => ({ type: "Category", id })),
+                { type: "SubCategory", id: "LIST" },
+              ]
+            : [{ type: "SubCategory", id: "LIST" }],
+        keepUnusedDataFor: 3600,
+      }),
+    }),
+	
+    overrideExisting: false,
+  });
+
+export default SubCategoryApi;
+
+/**
+ * Hooks auto-generated by RTK Query for each endpoint.
+ * Usage:
+ * const { data, isLoading, error } = useGetSubCategoriesQuery();
+ * const [createSubCategory, createStatus] = useCreateSubCategoryMutation();
+ * ...
+ */
+export const {
+  useGetSubCategoriesQuery,
+  useGetSubCategoryQuery,
+  useCreateSubCategoryMutation,
+  useUpdateSubCategoryMutation,
+  useDeleteSubCategoryMutation,
+} = SubCategoryApi;

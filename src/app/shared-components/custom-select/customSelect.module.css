@@ -1,0 +1,9 @@
+.has-error > .react-select > div:first-child {
+    border-color: #a94442;
+}
+
+
+.selectDiv {
+    border: 1px solid #f96868;
+    border-radius: 5px;
+}

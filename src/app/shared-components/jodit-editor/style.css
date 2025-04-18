@@ -1,0 +1,34 @@
+.myjo {
+    font-family: sans-serif;
+    text-align: center;
+    height: 800px;
+  }
+  
+  .merge-field-popup {
+    width: 300px;
+  }
+  
+  .merge-field-label {
+    width: 250px;
+  }
+  
+  .merge-field-select {
+    width: 250px;
+  }
+  
+  .merge-field-select-option {
+    font-size: 16px;
+    padding: 3px;
+    background: #333;
+  }
+  
+  .merge-field-select-option-label {
+    font-size: 14px;
+    padding: 3px;
+    background: #666;
+  }
+  
+  .merge-field {
+    font-weight: bold;
+  }
+  

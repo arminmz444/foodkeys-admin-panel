@@ -1,0 +1,16 @@
+{
+  "files": [
+    {
+      "id": 1,
+      "name": "example-image.jpg",
+      "path": "/mock-uploads/example-image.jpg",
+      "type": "image"
+    },
+    {
+      "id": 2,
+      "name": "sample-video.mp4",
+      "path": "/mock-uploads/sample-video.mp4",
+      "type": "video"
+    }
+  ]
+}
