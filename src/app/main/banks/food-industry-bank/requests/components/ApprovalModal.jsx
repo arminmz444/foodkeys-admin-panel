@@ -660,7 +660,7 @@ export default function ApprovalModal({
                     <Grid item xs={12} sm={6}>
                       <Typography variant="subtitle2">نوع شرکت</Typography>
                       <Typography>
-                        {request?.company?.companyType || "-"}
+                        {request?.company?.companyTypeStr || "-"}
                       </Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>

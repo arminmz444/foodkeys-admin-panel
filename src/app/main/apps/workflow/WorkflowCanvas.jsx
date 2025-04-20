@@ -196,7 +196,6 @@ import ReactFlow, {
   Position,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { Button } from '@mui/base';
 import LogicConfigDialog from './dialogs/LogicConfigDialog';
 import FormConfigDialog from './dialogs/FormConfigDialog';
 
@@ -258,9 +257,9 @@ function FormNode({ data }) {
     }}>
       <div style={{ fontWeight: 'bold', marginBottom: 6 }}>{data.label}</div>
       <div style={{ fontSize: '0.8rem' }}>Form details...</div>
-      <Button size="small" onClick={handleEdit} style={{ position: 'absolute', top: 4, right: 4 }}>
+      <button size="small" onClick={handleEdit} style={{ position: 'absolute', top: 4, right: 4 }}>
         Edit
-      </Button>
+      </button>
       <Handle type="source" position={Position.Right} style={{ top: '50%' }} />
       <Handle type="target" position={Position.Left} style={{ top: '50%' }} />
       {/*

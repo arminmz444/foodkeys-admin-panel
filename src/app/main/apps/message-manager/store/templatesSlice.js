@@ -137,7 +137,7 @@ const initialState = {
 };
 
 export const templatesSlice = createSlice({
-  name: "messagingApp/templates",
+  name: "messagingApp.templates",
   initialState,
   reducers: {
     setSelectedEmailTemplate: (state, action) => {

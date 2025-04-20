@@ -14,6 +14,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import LogicConfigDialog from '../workflow/dialogs/LogicConfigDialog';
 import FormConfigDialog from '../workflow/dialogs/FormConfigDialog';
+import { Button } from '@mui/material';
 
 const initialNodes = [
   {

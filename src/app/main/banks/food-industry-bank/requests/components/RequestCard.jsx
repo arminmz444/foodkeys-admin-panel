@@ -315,7 +315,7 @@ export default function RequestCard({ request, onActionComplete }) {
                   {company.companyType && (
                     <>
                       <Typography variant="body2" color="text.secondary">نوع شرکت:</Typography>
-                      <Typography variant="body2">{company.companyType}</Typography>
+                      <Typography variant="body2">{company.companyTypeStr}</Typography>
                     </>
                   )}
                   
