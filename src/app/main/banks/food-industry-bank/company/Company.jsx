@@ -70,9 +70,9 @@ function Company() {
   useEffect(() => {
     if (company) {
       const location = company.location || {}
-      // const registrantId = { username: company.registrant.username, label: company.registrant.firstName + " " + company.registrant.lastName,  value: company.registrant.id, avatar: company.registrant.avatar }
-      const registrantId = { username: "09124631193", label: "علی میهن‌زاده",  value: company.registrantId, avatar: null }
+      const registrantId = company.registrant
       reset({ ...company, 
+        registrantId,
         officeState: location.officeState,
         officeCity: location.officeCity,
         officeLocation: location.officeLocation,
@@ -86,7 +86,8 @@ function Company() {
         longitude: location.longitude,
         fullAddress: location.fullAddress,
         commonName: location.commonName,
-         });
+        status: company.status || 0,
+      });
     }
   }, [company, reset]);
 
@@ -159,8 +160,8 @@ function Company() {
               <Tab className="h-64" label="توضیحات مدیریت" />
               <Tab className="h-64" label="لوگو و عکس پس‌زمینه" />
               <Tab className="h-64" label="مکان روی نقشه" />
-              <Tab className="h-64" label="ثبت‌کننده" />
-              <Tab className="h-64" label="تنظیمات بیشتر" />
+              <Tab className="h-64" label="اطلاعات بیشتر" />
+              <Tab className="h-64" label="تنظیمات" />
               <Tab className="h-64" label="آرشیوها" /> 
               <Tab className="h-64" label="تاریخچه نسخه‌ها" /> 
               {/* <Tab */}

@@ -7,6 +7,14 @@ const SettingsAppNavigation = {
 	translate: "SETTINGS",
 	children: [
 		{
+			id: "apps.settings.file-service-type-entity",
+			icon: "heroicons-outline:folder",
+			title: "تنظیمات انواع فایل ها",
+			type: "item",
+			url: "/apps/settings/file-service-type-entity",
+			subtitle: "تنظیمات انواع فایل ها",
+		},
+		{
 			id: "apps.settings.homepage",
 			icon: "heroicons-outline:home",
 			title: "صفحه اول (خانه)",

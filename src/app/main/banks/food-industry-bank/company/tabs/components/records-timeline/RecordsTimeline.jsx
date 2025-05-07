@@ -1,3 +1,4 @@
+
 // import React, { useState, useEffect } from 'react';
 // import { 
 //   Avatar, 
@@ -31,6 +32,7 @@
 // import { motion } from 'framer-motion';
 // import EditorJSComponent from 'app/shared-components/editor-js/EditorJSComponent';
 // import { getServerFile } from 'src/utils/string-utils';
+// import Output from 'editorjs-react-renderer'; // Import editorjs-react-renderer
 
 // // Styles (RTL and modern design)
 // const useStyles = makeStyles((theme) => ({
@@ -72,101 +74,137 @@
 //     textAlign: 'center',
 //     padding: theme.spacing(4),
 //     color: theme.palette.text.secondary,
+//   },
+//   editorOutput: {
+//     '& img': {
+//       maxWidth: '100%',
+//       height: 'auto',
+//       borderRadius: 4,
+//       marginBottom: theme.spacing(1),
+//     },
+//     '& h1, & h2, & h3, & h4, & h5, & h6': {
+//       marginBottom: theme.spacing(1),
+//       marginTop: theme.spacing(2),
+//       fontWeight: 'bold',
+//       direction: 'rtl',
+//     },
+//     '& ul, & ol': {
+//       paddingRight: theme.spacing(3),
+//       marginBottom: theme.spacing(1),
+//       marginTop: theme.spacing(1),
+//     },
+//     '& p': {
+//       marginBottom: theme.spacing(1),
+//       direction: 'rtl',
+//     },
+//     '& blockquote': {
+//       borderRight: `3px solid ${theme.palette.primary.main}`,
+//       paddingRight: theme.spacing(2),
+//       marginRight: theme.spacing(1),
+//       fontStyle: 'italic',
+//       color: theme.palette.text.secondary,
+//     },
+//     '& a': {
+//       color: theme.palette.primary.main,
+//       textDecoration: 'none',
+//       '&:hover': {
+//         textDecoration: 'underline',
+//       },
+//     },
+//     '& table': {
+//       width: '100%',
+//       borderCollapse: 'collapse',
+//       marginBottom: theme.spacing(2),
+//       '& th, & td': {
+//         border: `1px solid ${theme.palette.divider}`,
+//         padding: theme.spacing(1),
+//         textAlign: 'right',
+//       },
+//       '& th': {
+//         backgroundColor: theme.palette.action.hover,
+//       },
+//     },
+//     direction: 'rtl',
+//     textAlign: 'right',
 //   }
 // }));
 
-// // Helper function to convert EditorJS data to plain text
+// // Helper function to get plain text from EditorJS data for truncation
 // const getPlainTextFromEditorJS = (content) => {
 //   if (typeof content === 'string') {
-//     return content;
+//     try {
+//       // Try to parse it as JSON
+//       const parsed = JSON.parse(content);
+//       if (parsed.blocks && Array.isArray(parsed.blocks)) {
+//         return parsed.blocks
+//           .map((block) => {
+//             switch (block.type) {
+//               case 'paragraph':
+//                 return block.data.text || '';
+//               case 'header':
+//                 return block.data.text || '';
+//               case 'list':
+//                 return (block.data.items || []).join(' ');
+//               default:
+//                 return '';
+//             }
+//           })
+//           .join(' ');
+//       }
+//       return content;
+//     } catch (e) {
+//       // If parsing fails, treat as plain text
+//       return content;
+//     }
 //   }
+  
 //   if (content && content.blocks && Array.isArray(content.blocks)) {
 //     return content.blocks
 //       .map((block) => {
-//         // Strip HTML tags if any
-//         const tmp = document.createElement('div');
-//         tmp.innerHTML = block.data.text || '';
-//         return tmp.textContent || tmp.innerText || '';
+//         switch (block.type) {
+//           case 'paragraph':
+//             return block.data.text || '';
+//           case 'header':
+//             return block.data.text || '';
+//           case 'list':
+//             return (block.data.items || []).join(' ');
+//           default:
+//             return '';
+//         }
 //       })
 //       .join(' ');
 //   }
 //   return '';
 // };
 
-// // Render EditorJS blocks
-// const renderBlock = (block, index) => {
-//   switch (block.type) {
-//     case 'paragraph':
-//       return (
-//         <Typography
-//           key={index}
-//           variant="body1"
-//           component="p"
-//           style={{ marginBottom: 8 }}
-//           dangerouslySetInnerHTML={{ __html: block.data.text }}
-//         />
-//       );
-//     case 'header':
-//       const HeaderTag = `h${block.data.level}`;
-//       return (
-//         <Typography
-//           key={index}
-//           variant={`h${block.data.level}`}
-//           component={HeaderTag}
-//           style={{ marginBottom: 8 }}
-//           dangerouslySetInnerHTML={{ __html: block.data.text }}
-//         />
-//       );
-//     case 'list':
-//       return (
-//         <Box key={index} component="ul" sx={{ pl: 2, mb: 1 }}>
-//           {block.data.items.map((item, i) => (
-//             <li key={i}>
-//               <Typography variant="body1" dangerouslySetInnerHTML={{ __html: item }} />
-//             </li>
-//           ))}
-//         </Box>
-//       );
-//     case 'image':
-//       return (
-//         <Box key={index} sx={{ mb: 2 }}>
-//           <img
-//             src={block.data.file.url}
-//             alt={block.data.caption || 'Image'}
-//             style={{ maxWidth: '100%', borderRadius: 4 }}
-//           />
-//           {block.data.caption && <Typography variant="caption">{block.data.caption}</Typography>}
-//         </Box>
-//       );
-//     case 'attaches':
-//       return (
-//         <Box key={index} sx={{ mb: 2 }}>
-//           <a href={block.data.file.url} target="_blank" rel="noopener noreferrer">
-//             {block.data.title || block.data.file.name}
-//           </a>
-//         </Box>
-//       );
-//     default:
-//       return (
-//         <Typography key={index} variant="body1" component="p">
-//           {JSON.stringify(block.data)}
-//         </Typography>
-//       );
+// // Custom configuration for editorjs-react-renderer
+// const rendererConfig = {
+//   image: {
+//     className: 'editor-img',
+//     actionsClassNames: {
+//       stretched: 'img-fullwidth',
+//       withBorder: 'img-with-border',
+//       withBackground: 'img-with-background',
+//     }
+//   },
+//   paragraph: {
+//     className: 'editor-paragraph',
+//     actionsClassNames: {
+//       alignment: 'text-align-{alignment}'
+//     }
+//   },
+//   header: {
+//     className: 'editor-header',
+//   },
+//   list: {
+//     className: 'editor-list',
+//   },
+//   table: {
+//     className: 'editor-table',
 //   }
 // };
 
-// // Render EditorJS content
-// const renderEditorContent = (content) => {
-//   if (typeof content === 'string') {
-//     return <Typography variant="body1">{content}</Typography>;
-//   }
-//   if (content && content.blocks && Array.isArray(content.blocks)) {
-//     return content.blocks.map((block, index) => renderBlock(block, index));
-//   }
-//   return null;
-// };
-
-// // Component for each record card with "read more" functionality and framer-motion animations
+// // Component for each record card with EditorJS renderer
 // const RecordCard = ({ 
 //   record, 
 //   truncateLength = 200, 
@@ -179,11 +217,29 @@
 //   const [anchorEl, setAnchorEl] = useState(null);
 //   const menuOpen = Boolean(anchorEl);
   
-//   // Convert the comment to EditorJS format if it's a string
-//   const commentData = typeof record.comment === 'string' 
-//     ? { blocks: [{ type: 'paragraph', data: { text: record.comment } }] } 
-//     : record.comment;
+//   // Parse comment data if it's a string
+//   const getCommentData = () => {
+//     if (!record.comment) return null;
+    
+//     if (typeof record.comment === 'string') {
+//       try {
+//         return JSON.parse(record.comment);
+//       } catch (e) {
+//         // If parsing fails, return a simple EditorJS structure with text
+//         return {
+//           blocks: [
+//             {
+//               type: 'paragraph',
+//               data: { text: record.comment }
+//             }
+//           ]
+//         };
+//       }
+//     }
+//     return record.comment;
+//   };
   
+//   const commentData = getCommentData();
 //   const plainText = getPlainTextFromEditorJS(commentData);
 //   const needsTruncate = plainText && plainText.length > truncateLength;
 
@@ -216,13 +272,51 @@
 //     if (onDelete) onDelete(record.id);
 //   };
 
-//   const displayedContent = () => {
-//     if (!needsTruncate || expanded) {
-//       return renderEditorContent(commentData);
-//     } else {
-//       const truncated = plainText.substring(0, truncateLength) + '...';
-//       return <Typography variant="body1">{truncated}</Typography>;
+//   // Create a truncated version of the data for EditorJS renderer
+//   const getTruncatedData = () => {
+//     if (!commentData || !commentData.blocks || !Array.isArray(commentData.blocks)) {
+//       return { blocks: [] };
 //     }
+    
+//     if (!needsTruncate || expanded) {
+//       return commentData;
+//     }
+    
+//     // For truncation, either take just the first block or truncate the text
+//     let truncatedBlocks = [];
+//     let characterCount = 0;
+    
+//     for (const block of commentData.blocks) {
+//       if (characterCount >= truncateLength) break;
+      
+//       if (block.type === 'paragraph') {
+//         const text = block.data.text || '';
+//         if (characterCount + text.length > truncateLength) {
+//           // Truncate this paragraph
+//           truncatedBlocks.push({
+//             ...block,
+//             data: {
+//               ...block.data,
+//               text: text.substring(0, truncateLength - characterCount) + '...'
+//             }
+//           });
+//           break;
+//         } else {
+//           truncatedBlocks.push(block);
+//           characterCount += text.length;
+//         }
+//       } else {
+//         // For non-paragraph blocks, just include them until we hit the limit
+//         truncatedBlocks.push(block);
+//         // Estimate the character count for non-text blocks
+//         characterCount += 50;
+//       }
+//     }
+    
+//     return {
+//       ...commentData,
+//       blocks: truncatedBlocks
+//     };
 //   };
 
 //   return (
@@ -253,7 +347,7 @@
 //               <Box display="flex" flexDirection="column">
 //                 <Box display="flex" alignItems="center" mb={1}>
 //                   <Typography variant="subtitle1" component="h2" style={{ fontWeight: 'bold', marginRight: 8 }}>
-//                     {record.firstName || ''} {record.lastName || ''} {/* Use employee name if available */}
+//                     {record.firstName || ''} {record.lastName || ''} 
 //                     {record.employeeName && `(${record.employeeName})`}
 //                   </Typography>
 //                   {(record.roleStr || record.employeeRole) && (
@@ -297,8 +391,11 @@
 //               )}
 //             </Box>
             
-//             <Box mt={2}>
-//               {displayedContent()}
+//             <Box mt={2} className={classes.editorOutput}>
+//               {commentData && commentData.blocks && (
+//                 <Output data={getTruncatedData()} config={rendererConfig} />
+//               )}
+              
 //               {needsTruncate && !expanded && (
 //                 <motion.span
 //                   whileHover={{ scale: 1.05 }}
@@ -347,7 +444,30 @@
 //   const [commentToDelete, setCommentToDelete] = useState(null);
 //   const [editorLoading, setEditorLoading] = useState(false);
 
+//   // Parse comment data from string if needed
+//   const parseCommentData = (comment) => {
+//     if (typeof comment === 'string') {
+//       try {
+//         return JSON.parse(comment);
+//       } catch (e) {
+//         // If parsing fails, return minimal valid structure
+//         return { 
+//           blocks: [{ 
+//             type: 'paragraph', 
+//             data: { text: comment } 
+//           }] 
+//         };
+//       }
+//     }
+//     return comment;
+//   };
+
 //   const handleEdit = (comment) => {
+//     // Parse the comment data if it's a string
+//     if (comment.comment && typeof comment.comment === 'string') {
+//       comment.comment = parseCommentData(comment.comment);
+//     }
+    
 //     setEditingComment(comment);
 //     setEditDialogOpen(true);
 //   };
@@ -443,10 +563,7 @@
 //         <DialogContent>
 //           {editingComment && (
 //             <EditorJSComponent
-//               initialData={typeof editingComment.comment === 'string' 
-//                 ? { blocks: [{ type: 'paragraph', data: { text: editingComment.comment } }] }
-//                 : editingComment.comment
-//               }
+//               initialData={editingComment.comment}
 //               onSave={handleSaveEdit}
 //               loading={editorLoading}
 //               buttonText="ذخیره تغییرات"
@@ -521,7 +638,7 @@ import EditorJSComponent from 'app/shared-components/editor-js/EditorJSComponent
 import { getServerFile } from 'src/utils/string-utils';
 import Output from 'editorjs-react-renderer'; // Import editorjs-react-renderer
 
-// Styles (RTL and modern design)
+// Enhanced styles for RTL support
 const useStyles = makeStyles((theme) => ({
   container: {
     direction: 'rtl',
@@ -532,12 +649,14 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     background: theme.palette.background.paper,
     borderRadius: theme.shape.borderRadius,
+    direction: 'rtl',
   },
   paper: {
     padding: theme.spacing(2),
     borderRadius: '10px',
     marginBottom: theme.spacing(2),
     maxWidth: '90%',
+    direction: 'rtl',
   },
   timelineContent: {
     padding: theme.spacing(1),
@@ -548,6 +667,7 @@ const useStyles = makeStyles((theme) => ({
     cursor: 'pointer',
     display: 'inline-block',
     marginTop: theme.spacing(1),
+    direction: 'rtl',
   },
   avatar: {
     width: theme.spacing(6),
@@ -561,6 +681,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     padding: theme.spacing(4),
     color: theme.palette.text.secondary,
+    direction: 'rtl',
   },
   editorOutput: {
     '& img': {
@@ -574,22 +695,36 @@ const useStyles = makeStyles((theme) => ({
       marginTop: theme.spacing(2),
       fontWeight: 'bold',
       direction: 'rtl',
+      textAlign: 'right',
     },
     '& ul, & ol': {
       paddingRight: theme.spacing(3),
+      paddingLeft: 0, // Override default left padding
       marginBottom: theme.spacing(1),
       marginTop: theme.spacing(1),
+      direction: 'rtl',
+      textAlign: 'right',
+    },
+    '& li': {
+      textAlign: 'right',
+      direction: 'rtl',
     },
     '& p': {
       marginBottom: theme.spacing(1),
       direction: 'rtl',
+      textAlign: 'right',
     },
     '& blockquote': {
       borderRight: `3px solid ${theme.palette.primary.main}`,
+      borderLeft: 'none', // Remove any left border
       paddingRight: theme.spacing(2),
+      paddingLeft: 0, // Remove any left padding
       marginRight: theme.spacing(1),
+      marginLeft: 0, // Remove any left margin
       fontStyle: 'italic',
       color: theme.palette.text.secondary,
+      direction: 'rtl',
+      textAlign: 'right',
     },
     '& a': {
       color: theme.palette.primary.main,
@@ -602,6 +737,7 @@ const useStyles = makeStyles((theme) => ({
       width: '100%',
       borderCollapse: 'collapse',
       marginBottom: theme.spacing(2),
+      direction: 'rtl',
       '& th, & td': {
         border: `1px solid ${theme.palette.divider}`,
         padding: theme.spacing(1),
@@ -613,6 +749,15 @@ const useStyles = makeStyles((theme) => ({
     },
     direction: 'rtl',
     textAlign: 'right',
+  },
+  // Add specific class for the renderer
+  editorjsRenderer: {
+    direction: 'rtl',
+    textAlign: 'right',
+    '& *': {
+      direction: 'rtl',
+      textAlign: 'right',
+    }
   }
 }));
 
@@ -664,7 +809,7 @@ const getPlainTextFromEditorJS = (content) => {
   return '';
 };
 
-// Custom configuration for editorjs-react-renderer
+// Custom configuration for editorjs-react-renderer with RTL support
 const rendererConfig = {
   image: {
     className: 'editor-img',
@@ -675,23 +820,23 @@ const rendererConfig = {
     }
   },
   paragraph: {
-    className: 'editor-paragraph',
+    className: 'editor-paragraph rtl-paragraph',
     actionsClassNames: {
       alignment: 'text-align-{alignment}'
     }
   },
   header: {
-    className: 'editor-header',
+    className: 'editor-header rtl-header',
   },
   list: {
-    className: 'editor-list',
+    className: 'editor-list rtl-list',
   },
   table: {
-    className: 'editor-table',
+    className: 'editor-table rtl-table',
   }
 };
 
-// Component for each record card with EditorJS renderer
+// Component for each record card with EditorJS renderer and RTL support
 const RecordCard = ({ 
   record, 
   truncateLength = 200, 
@@ -806,6 +951,76 @@ const RecordCard = ({
     };
   };
 
+  // Custom renderers for editorjs-react-renderer with RTL support
+  const customRenderers = {
+    paragraph: ({ data, className }) => (
+      <p 
+        className={className} 
+        style={{ 
+          direction: 'rtl', 
+          textAlign: 'right' 
+        }}
+        dangerouslySetInnerHTML={{ __html: data.text }}
+      />
+    ),
+    header: ({ data, className }) => {
+      const TagName = `h${data.level}`;
+      return (
+        <TagName 
+          className={className}
+          style={{ 
+            direction: 'rtl', 
+            textAlign: 'right' 
+          }}
+          dangerouslySetInnerHTML={{ __html: data.text }}
+        />
+      );
+    },
+    list: ({ data, className }) => {
+      const Tag = data.style === 'ordered' ? 'ol' : 'ul';
+      return (
+        <Tag className={className} style={{ direction: 'rtl', textAlign: 'right' }}>
+          {data.items.map((item, i) => (
+            <li 
+              key={i} 
+              style={{ textAlign: 'right' }}
+              dangerouslySetInnerHTML={{ __html: item }}
+            />
+          ))}
+        </Tag>
+      );
+    },
+    table: ({ data, className }) => (
+      <table className={className} style={{ direction: 'rtl' }}>
+        {data.content.map((row, i) => (
+          <tr key={i}>
+            {row.map((cell, j) => (
+              <td 
+                key={j} 
+                style={{ textAlign: 'right' }}
+                dangerouslySetInnerHTML={{ __html: cell }}
+              />
+            ))}
+          </tr>
+        ))}
+      </table>
+    ),
+    image: ({ data, className }) => (
+      <div className={className} style={{ textAlign: 'right' }}>
+        <img 
+          src={data.file.url} 
+          alt={data.caption || ''} 
+          style={{ maxWidth: '100%' }} 
+        />
+        {data.caption && (
+          <div style={{ direction: 'rtl', textAlign: 'right' }}>
+            {data.caption}
+          </div>
+        )}
+      </div>
+    )
+  };
+
   return (
     <TimelineItem>
       <TimelineOppositeContent>
@@ -830,15 +1045,36 @@ const RecordCard = ({
           transition={{ duration: 0.3 }}
         >
           <Paper elevation={3} className={classes.paper}>
-            <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+            <Box 
+              display="flex" 
+              justifyContent="space-between" 
+              alignItems="flex-start"
+              sx={{ direction: 'ltr' }}
+            >
               <Box display="flex" flexDirection="column">
                 <Box display="flex" alignItems="center" mb={1}>
-                  <Typography variant="subtitle1" component="h2" style={{ fontWeight: 'bold', marginRight: 8 }}>
+                  <Typography 
+                    variant="subtitle1" 
+                    component="h2" 
+                    style={{ 
+                      fontWeight: 'bold', 
+                      marginLeft: 8, // Changed from marginRight to marginLeft for RTL
+                      direction: 'rtl',
+                      textAlign: 'right'
+                    }}
+                  >
                     {record.firstName || ''} {record.lastName || ''} 
-                    {record.employeeName && `(${record.employeeName})`}
+                    {/* {record.employeeName && `(${record.employeeName})`} */}
                   </Typography>
                   {(record.roleStr || record.employeeRole) && (
-                    <Typography variant="caption" color="textSecondary">
+                    <Typography 
+                      variant="caption" 
+                      color="textSecondary"
+                      style={{ 
+                        direction: 'rtl',
+                        textAlign: 'right'
+                      }}
+                    >
                       ({record.roleStr || record.employeeRole})
                     </Typography>
                   )}
@@ -865,12 +1101,12 @@ const RecordCard = ({
                       'aria-labelledby': 'record-menu-button',
                     }}
                   >
-                    <MenuItem onClick={handleEdit}>
-                      <EditIcon fontSize="small" sx={{ mr: 1 }} />
-                      ویرایش
-                    </MenuItem>
+                    {/* <MenuItem onClick={handleEdit}> */}
+                      {/* <EditIcon fontSize="small" sx={{ ml: 1 }} /> {/* Changed from mr to ml for RTL */}
+                      {/* ویرایش */}
+                    {/* </MenuItem> */} 
                     <MenuItem onClick={handleDelete}>
-                      <DeleteIcon fontSize="small" sx={{ mr: 1 }} />
+                      <DeleteIcon fontSize="small" sx={{ ml: 1 }} /> {/* Changed from mr to ml for RTL */}
                       حذف
                     </MenuItem>
                   </Menu>
@@ -878,9 +1114,20 @@ const RecordCard = ({
               )}
             </Box>
             
-            <Box mt={2} className={classes.editorOutput}>
+            <Box 
+              mt={2} 
+              className={classes.editorOutput}
+              sx={{ direction: 'rtl', textAlign: 'right' }}
+            >
               {commentData && commentData.blocks && (
-                <Output data={getTruncatedData()} config={rendererConfig} />
+                <div style={{ direction: 'rtl', textAlign: 'right' }} className={classes.editorjsRenderer}>
+                  <Output 
+                    data={getTruncatedData()} 
+                    config={rendererConfig} 
+                    renderers={customRenderers}
+                    style={{ direction: 'rtl', textAlign: 'right' }}
+                  />
+                </div>
               )}
               
               {needsTruncate && !expanded && (
@@ -888,6 +1135,7 @@ const RecordCard = ({
                   whileHover={{ scale: 1.05 }}
                   className={classes.readMore}
                   onClick={() => setExpanded(true)}
+                  style={{ direction: 'rtl', textAlign: 'right', display: 'block' }}
                 >
                   خواندن بیشتر
                 </motion.span>
@@ -897,6 +1145,7 @@ const RecordCard = ({
                   whileHover={{ scale: 1.05 }}
                   className={classes.readMore}
                   onClick={() => setExpanded(false)}
+                  style={{ direction: 'rtl', textAlign: 'right', display: 'block' }}
                 >
                   نمایش کمتر
                 </motion.span>
@@ -909,7 +1158,7 @@ const RecordCard = ({
   );
 };
 
-// Main RecordsTimeline component
+// Main RecordsTimeline component with RTL support
 const RecordsTimeline = ({ 
   records = [], 
   loading = false,
@@ -1006,7 +1255,11 @@ const RecordsTimeline = ({
       )}
       
       {records.length === 0 && !loading ? (
-        <Typography variant="body1" className={classes.noRecords}>
+        <Typography 
+          variant="body1" 
+          className={classes.noRecords}
+          style={{ direction: 'rtl', textAlign: 'center' }}
+        >
           هیچ رکوردی یافت نشد. با استفاده از ادیتور بالا، اولین نظر را ثبت کنید.
         </Typography>
       ) : (
@@ -1020,7 +1273,12 @@ const RecordsTimeline = ({
             </Box>
           }
           endMessage={
-            <Typography align="center" variant="body2" color="textSecondary">
+            <Typography 
+              align="center" 
+              variant="body2" 
+              color="textSecondary"
+              style={{ direction: 'rtl' }}
+            >
               رکورد دیگری برای نمایش وجود ندارد
             </Typography>
           }
@@ -1039,43 +1297,49 @@ const RecordsTimeline = ({
         </InfiniteScroll>
       )}
 
-      {/* Edit Comment Dialog */}
+      {/* Edit Comment Dialog with RTL support */}
       <Dialog
         open={editDialogOpen}
         onClose={() => setEditDialogOpen(false)}
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>ویرایش نظر</DialogTitle>
+        <DialogTitle style={{ direction: 'rtl', textAlign: 'right' }}>
+          ویرایش نظر
+        </DialogTitle>
         <DialogContent>
           {editingComment && (
-            <EditorJSComponent
-              initialData={editingComment.comment}
-              onSave={handleSaveEdit}
-              loading={editorLoading}
-              buttonText="ذخیره تغییرات"
-            />
+            <div style={{ direction: 'rtl' }}>
+              <EditorJSComponent
+                initialData={editingComment.comment}
+                onSave={handleSaveEdit}
+                loading={editorLoading}
+                buttonText="ذخیره تغییرات"
+              />
+            </div>
           )}
         </DialogContent>
-        <DialogActions>
+        <DialogActions style={{ direction: 'rtl', justifyContent: 'flex-start' }}>
           <Button onClick={() => setEditDialogOpen(false)} color="primary">
             انصراف
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Confirmation Dialog with RTL support */}
       <Dialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
       >
-        <DialogTitle>تایید حذف</DialogTitle>
+        <DialogTitle style={{ direction: 'rtl', textAlign: 'right' }}>
+          تایید حذف
+        </DialogTitle>
         <DialogContent>
-          <Typography variant="body1">
+          <Typography variant="body1" style={{ direction: 'rtl', textAlign: 'right' }}>
             آیا از حذف این نظر اطمینان دارید؟ این عملیات قابل بازگشت نیست.
           </Typography>
         </DialogContent>
-        <DialogActions>
+        <DialogActions style={{ direction: 'rtl', justifyContent: 'flex-start' }}>
           <Button onClick={() => setDeleteDialogOpen(false)} color="primary">
             انصراف
           </Button>

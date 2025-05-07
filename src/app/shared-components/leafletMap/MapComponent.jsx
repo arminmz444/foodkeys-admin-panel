@@ -4,10 +4,8 @@ import "leaflet/dist/leaflet.css";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import "node_modules/leaflet-geosearch/dist/geosearch.css";
 
-// Custom CSS to override the default geosearch styles
 const CustomMapStyles = () => {
   useEffect(() => {
-    // Create a style element
     const styleElement = document.createElement('style');
     styleElement.type = 'text/css';
     styleElement.innerHTML = `
@@ -67,10 +65,8 @@ const CustomMapStyles = () => {
       }
     `;
     
-    // Append to document head
     document.head.appendChild(styleElement);
     
-    // Clean up on unmount
     return () => {
       document.head.removeChild(styleElement);
     };
@@ -80,15 +76,12 @@ const CustomMapStyles = () => {
 };
 
 function MapComponent({ mapRef, onLocationSelect, initialPosition }) {
-  // Use provided initialPosition or default to Tehran coordinates
   const [position, setPosition] = useState(
     initialPosition || [35.6892523, 51.3896004]
   );
-  // Track whether the current marker is from search (needs to be overridden on click)
   const [isFromSearch, setIsFromSearch] = useState(false);
 
   useEffect(() => {
-    // If initialPosition changes, update the marker position
     if (initialPosition) {
       setPosition(initialPosition);
     }
@@ -98,17 +91,14 @@ function MapComponent({ mapRef, onLocationSelect, initialPosition }) {
     const { lat, lng } = e.latlng;
     setPosition([lat, lng]);
     
-    // Mark that this position is from a direct click, not a search
     setIsFromSearch(false);
     
-    // Notify parent component about the location change
-    // Clear the commonName and fullAddress since this is a manual click
     if (onLocationSelect) {
       onLocationSelect({
         latitude: lat,
         longitude: lng,
-        commonName: "", // Clear the name since this is a direct click
-        fullAddress: ""  // Clear the address since this is a direct click
+        commonName: "", 
+        fullAddress: ""  
       });
     }
   };
@@ -138,7 +128,6 @@ function MapComponent({ mapRef, onLocationSelect, initialPosition }) {
   );
 }
 
-// This component handles click events on the map
 function MapClickHandler({ onMapClick }) {
   const map = useMap();
   
@@ -163,43 +152,35 @@ function SearchBar({ onLocationSelect, setPosition }) {
   useEffect(() => {
     const provider = new OpenStreetMapProvider();
     
-    // Configure search control
     const searchControl = new GeoSearchControl({
       provider,
       style: "bar",
       autoComplete: true,
       searchLabel: "آدرس مورد نظر خود را وارد کنید",
-      showMarker: false, // Don't add a separate marker, we'll handle it
-      showPopup: false, // Don't show a popup
+      showMarker: false, 
+      showPopup: false, 
       marker: {
-        draggable: false, // To avoid multiple markers
+        draggable: false, 
       },
-      popupFormat: ({ result }) => result.label, // Format popup content
-      maxMarkers: 1, // Maximum number of markers
-      retainZoomLevel: false, // Zoom to found location
+      popupFormat: ({ result }) => result.label,
+      maxMarkers: 1, 
+      retainZoomLevel: false,
     });
 
     map.addControl(searchControl);
     
-    // Handle search results - fixed event handler
     const handleSearchResult = (event) => {
       try {
-        // Ensure the location data has lat and lng
         const { x, y, label } = event.location;
         
-        // Sometimes data comes as x/y instead of lat/lng
         const lat = event.location.lat !== undefined ? event.location.lat : y;
         const lng = event.location.lng !== undefined ? event.location.lng : x;
         
-        // Verify we have valid coordinates
         if (lat !== undefined && lng !== undefined) {
-          // Update marker position
           setPosition([lat, lng]);
           
-          // Center map on the location
           map.setView([lat, lng], 13);
           
-          // Send location data to parent component
           if (onLocationSelect) {
             onLocationSelect({
               latitude: lat,
@@ -209,7 +190,6 @@ function SearchBar({ onLocationSelect, setPosition }) {
             });
           }
           
-          // Any additional markers from the search will be removed when our main marker is updated
         } else {
           console.error("Invalid location data:", event.location);
         }

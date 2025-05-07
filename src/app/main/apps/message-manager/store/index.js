@@ -1,6 +1,11 @@
-import { combineReducers } from "@reduxjs/toolkit"
-import templates from "./templatesSlice"
+import { combineReducers } from "@reduxjs/toolkit";
+import templates from "./templatesSlice";
+import { templatesApi } from "./templatesApi";
+
+
 const reducer = combineReducers({
   templates,
-})
-export default reducer
+  [templatesApi.reducerPath]: templatesApi.reducer
+});
+
+export default reducer;

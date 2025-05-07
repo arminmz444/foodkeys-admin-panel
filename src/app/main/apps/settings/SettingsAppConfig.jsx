@@ -28,6 +28,7 @@ const AccountTab = lazy(() => import("./tabs/AccountTab"));
 const SecurityTab = lazy(() => import("./tabs/SecurityTab"));
 const PlanBillingTab = lazy(() => import("./tabs/PlanBillingTab"));
 const NotificationsTab = lazy(() => import("./tabs/NotificationsTab"));
+const FileServiceTypeEntityTab = lazy(() => import("./tabs/file-service-type-entity/FileServiceTypeEntityTab"));
 const TeamTab = lazy(() => import("./tabs/TeamTab"));
 /**
  * The Settings app config.
@@ -110,6 +111,10 @@ const SettingsAppConfig = {
 				{
 					path: "notifications",
 					element: <NotificationsTab />,
+				},
+				{
+					path: "file-service-type-entity",
+					element: <FileServiceTypeEntityTab />,
 				},
 				{
 					path: "team",

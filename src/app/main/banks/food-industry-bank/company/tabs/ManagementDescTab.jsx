@@ -637,7 +637,7 @@ function ManagementDescTab() {
         توضیحات مدیریت
       </Typography>
       <Controller
-        name="managementDesc"
+        name="adminComment"
         control={control}
         render={({ field }) => (
           <TextField
@@ -646,7 +646,7 @@ function ManagementDescTab() {
             multiline
             minRows={5}
             label="توضیحات مدیریت"
-            id="managementDesc"
+            id="adminComment"
             variant="outlined"
             fullWidth
           />

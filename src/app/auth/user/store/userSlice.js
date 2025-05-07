@@ -138,7 +138,7 @@ const selectMostAuthoritativeRole = (roles) => {
 	if (isGuest(roles) || !roles.length) return roles;
 
 	return settingsConfig.defaultAuth.find((auth) => {
-		console.log(`User roles in slice: ${roles}` && roles.length ? JSON.stringify(roles) : roles);
+		// console.log(`User roles in slice: ${roles}` && roles.length ? JSON.stringify(roles) : roles);
 
 		if (roles.map((role) => role.toLowerCase()).includes(auth.toLowerCase())) return auth;
 

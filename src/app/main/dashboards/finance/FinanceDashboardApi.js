@@ -1,27 +1,213 @@
-import { createSelector } from '@reduxjs/toolkit';
-import { apiService as api } from 'app/store/apiService';
+import { createSelector } from "@reduxjs/toolkit";
+import { apiService as api } from "app/store/apiService";
 
-export const addTagTypes = ['finance_dashboard_widgets'];
+export const addTagTypes = ["finance_dashboard_widgets"];
 const FinanceDashboardApi = api
-	.enhanceEndpoints({
-		addTagTypes
-	})
-	.injectEndpoints({
-		endpoints: (build) => ({
-			getFinanceDashboardWidgets: build.query({
-				query: () => ({ url: `/mock-api/dashboards/finance/widgets` }),
-				providesTags: ['finance_dashboard_widgets']
-			})
-		}),
-		overrideExisting: false
-	});
+  .enhanceEndpoints({
+    addTagTypes,
+  })
+  .injectEndpoints({
+    endpoints: (build) => ({
+      getFinanceDashboardWidgets: build.query({
+        query: () => ({ url: `/dashboard/finance/widgets/all` }),
+        providesTags: ["finance_dashboard_widgets"],
+      }),
+      getTransactions: build.query({
+        query: (params) => ({
+          url: "/transaction",
+          params,
+        }),
+        transformResponse: (response) => ({
+          data: response.data,
+          pagination: response.pagination,
+        }),
+        providesTags: (result) =>
+          result?.data
+            ? [
+                ...result.data.map(({ id }) => ({ type: "Transaction", id })),
+                { type: "Transaction", id: "LIST" },
+              ]
+            : [{ type: "Transaction", id: "LIST" }],
+      }),
+
+      getMyTransactions: build.query({
+        query: (params) => ({
+          url: "/transaction/me",
+          params,
+        }),
+        transformResponse: (response) => ({
+          data: response.data,
+          pagination: response.pagination,
+        }),
+        providesTags: (result) =>
+          result?.data
+            ? [
+                ...result.data.map(({ id }) => ({ type: "Transaction", id })),
+                { type: "Transaction", id: "MY_LIST" },
+              ]
+            : [{ type: "Transaction", id: "MY_LIST" }],
+      }),
+
+      getTransactionById: build.query({
+        query: (id) => `transactions/${id}`,
+        transformResponse: (response) => response.data,
+        providesTags: (result, error, id) => [{ type: "Transaction", id }],
+      }),
+
+      // Payments
+      getPayments: build.query({
+        query: (params) => ({
+          url: "/payment",
+          params,
+        }),
+        transformResponse: (response) => ({
+          data: response.data,
+          pagination: response.pagination,
+        }),
+        providesTags: (result) =>
+          result?.data
+            ? [
+                ...result.data.map(({ id }) => ({ type: "Payment", id })),
+                { type: "Payment", id: "LIST" },
+              ]
+            : [{ type: "Payment", id: "LIST" }],
+      }),
+
+      getMyPayments: build.query({
+        query: (params) => ({
+          url: "/payment/me",
+          params,
+        }),
+        transformResponse: (response) => ({
+          data: response.data,
+          pagination: response.pagination,
+        }),
+        providesTags: (result) =>
+          result?.data
+            ? [
+                ...result.data.map(({ id }) => ({ type: "Payment", id })),
+                { type: "Payment", id: "MY_LIST" },
+              ]
+            : [{ type: "Payment", id: "MY_LIST" }],
+      }),
+
+      getPaymentById: build.query({
+        query: (id) => `payments/${id}`,
+        transformResponse: (response) => response.data,
+        providesTags: (result, error, id) => [{ type: "Payment", id }],
+      }),
+
+      startPayment: build.mutation({
+        query: ({ clientId, data }) => ({
+          url: `payments/start/${clientId}`,
+          method: "POST",
+          body: data,
+        }),
+        transformResponse: (response) => response.data,
+        invalidatesTags: [
+          { type: "Payment", id: "LIST" },
+          { type: "Payment", id: "MY_LIST" },
+          { type: "Transaction", id: "LIST" },
+          { type: "Transaction", id: "MY_LIST" },
+          "Dashboard",
+        ],
+      }),
+
+      updatePaymentStatus: build.mutation({
+        query: ({ id, status }) => ({
+          url: `payments/${id}/status`,
+          method: "PUT",
+          params: { status },
+        }),
+        transformResponse: (response) => response.data,
+        invalidatesTags: (result, error, { id }) => [
+          { type: "Payment", id },
+          { type: "Payment", id: "LIST" },
+          { type: "Payment", id: "MY_LIST" },
+          "Dashboard",
+        ],
+      }),
+
+      generateBill: build.mutation({
+        query: (paymentId) => ({
+          url: `payments/${paymentId}/bill`,
+          method: "POST",
+        }),
+        transformResponse: (response) => response.data,
+        invalidatesTags: (result, error, id) => [
+          { type: "Payment", id },
+          { type: "Bill", id: "LIST" },
+          { type: "Bill", id: "MY_LIST" },
+          "Dashboard",
+        ],
+      }),
+
+      // Bills
+      getBills: build.query({
+        query: (params) => ({
+          url: "bills",
+          params,
+        }),
+        transformResponse: (response) => ({
+          data: response.data,
+          pagination: response.pagination,
+        }),
+        providesTags: (result) =>
+          result?.data
+            ? [
+                ...result.data.map(({ id }) => ({ type: "Bill", id })),
+                { type: "Bill", id: "LIST" },
+              ]
+            : [{ type: "Bill", id: "LIST" }],
+      }),
+
+      getMyBills: build.query({
+        query: (params) => ({
+          url: "bills/me",
+          params,
+        }),
+        transformResponse: (response) => ({
+          data: response.data,
+          pagination: response.pagination,
+        }),
+        providesTags: (result) =>
+          result?.data
+            ? [
+                ...result.data.map(({ id }) => ({ type: "Bill", id })),
+                { type: "Bill", id: "MY_LIST" },
+              ]
+            : [{ type: "Bill", id: "MY_LIST" }],
+      }),
+
+      getBillById: build.query({
+        query: (id) => `bills/${id}`,
+        transformResponse: (response) => response.data,
+        providesTags: (result, error, id) => [{ type: "Bill", id }],
+      }),
+    }),
+    overrideExisting: false,
+  });
 export default FinanceDashboardApi;
-export const { useGetFinanceDashboardWidgetsQuery } = FinanceDashboardApi;
+export const {
+  useGetFinanceDashboardWidgetsQuery,
+  useGetTransactionsQuery,
+  useGetMyTransactionsQuery,
+  useGetTransactionByIdQuery,
+  useGetPaymentsQuery,
+  useGetMyPaymentsQuery,
+  useGetPaymentByIdQuery,
+  useStartPaymentMutation,
+  useUpdatePaymentStatusMutation,
+  useGenerateBillMutation,
+  useGetBillsQuery,
+  useGetMyBillsQuery,
+  useGetBillByIdQuery,
+} = FinanceDashboardApi;
 export const selectFinanceDashboardWidgets = createSelector(
-	FinanceDashboardApi.endpoints.getFinanceDashboardWidgets.select(),
-	(results) => results.data
+  FinanceDashboardApi.endpoints.getFinanceDashboardWidgets.select(),
+  (results) => results.data
 );
 export const selectWidget = (id) =>
-	createSelector(selectFinanceDashboardWidgets, (widgets) => {
-		return widgets?.[id];
-	});
+  createSelector(selectFinanceDashboardWidgets, (widgets) => {
+    return widgets?.[id];
+  });

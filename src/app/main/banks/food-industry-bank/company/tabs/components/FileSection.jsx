@@ -24,10 +24,6 @@ import {
   isVideoFile 
 } from '../utils/fileUtils';
 import FileCard from './FileCard';
-import { 
-  useUploadGalleryFilesMutation, 
-  useDeleteGalleryFileMutation 
-} from '../../../FoodIndustryBankApi';
 import axios from 'axios';
 
 function FileSection({ 
@@ -46,10 +42,6 @@ function FileSection({
   const [lightboxIndex, setLightboxIndex] = useState(-1);
   const [uploadError, setUploadError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  
-  // RTK Query mutations
-  const [uploadFiles] = useUploadGalleryFilesMutation();
-  const [deleteFile] = useDeleteGalleryFileMutation();
 
   // Prepare slides for Lightbox
   const slides = files.map((file) => {
@@ -74,28 +66,6 @@ function FileSection({
     }
     return null;
   }).filter(Boolean);
-
-  // Handle file upload using direct axios as a fallback if needed
-  const uploadFilesDirectly = async (selectedFiles) => {
-    const formData = new FormData();
-    
-    // Add files to formData
-    for (let i = 0; i < selectedFiles.length; i++) {
-      formData.append('files', selectedFiles[i]);
-    }
-    
-    // Add fileServiceType
-    formData.append('fileServiceType', fileServiceType);
-    
-    // Make the request
-    const response = await axios.post('/file', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    
-    return response.data;
-  };
 
   // Handle file upload
   const handleAddFiles = async (e) => {
@@ -132,38 +102,57 @@ function FileSection({
     setValue(fieldName, [...files, ...tempFiles]);
     
     try {
-      // First try with RTK Query
-      let result;
-      try {
-        // Try the RTK Query mutation
-        result = await uploadFiles({
-          files: selectedFiles,
-          fileServiceType
-        }).unwrap();
-      } catch (rtqError) {
-        console.error('RTK Query upload failed, trying direct axios:', rtqError);
-        // Fall back to direct axios if RTK Query fails
-        result = await uploadFilesDirectly(selectedFiles);
+      // Create FormData
+      const formData = new FormData();
+      
+      // Add files to formData
+      for (let i = 0; i < selectedFiles.length; i++) {
+        formData.append('files', selectedFiles[i]);
       }
       
-      if (result?.data && Array.isArray(result.data)) {
+      // Add fileServiceType and companyId
+      formData.append('fileServiceType', fileServiceType);
+      formData.append('companyId', companyId);
+      
+      // Send request to upload files
+      const response = await axios.post(`/file`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      if (response.data && response.data.status === 'SUCCESS' && response.data.data) {
+        // Get uploaded files from response
+        const uploadedFiles = Array.isArray(response.data.data) ? response.data.data : [response.data.data];
+        
         // Update the form with the server response
         const currentFiles = getValues(fieldName);
         const updatedFiles = currentFiles.map(file => {
           if (file.uploadPending) {
             // Find the matching uploaded file by name
-            const uploadedFile = result.data.find(
-              uploaded => uploaded.fileName === file.fileName
+            const uploadedFile = uploadedFiles.find(
+              uploaded => uploaded.fileName.includes(file.fileName.split('.')[0])
             );
             
             if (uploadedFile) {
+              // Parse metadata from the server or use what we already have
+              let metadata = file.metadata;
+              if (uploadedFile.metadata) {
+                try {
+                  metadata = typeof uploadedFile.metadata === 'string'
+                    ? JSON.parse(uploadedFile.metadata)
+                    : uploadedFile.metadata;
+                } catch (e) {
+                  console.error('Error parsing metadata:', e);
+                }
+              }
+              
               return {
                 ...file,
                 id: uploadedFile.id,
                 filePath: uploadedFile.filePath,
                 uploadPending: false,
-                // Keep the metadata we initialized
-                metadata: file.metadata
+                metadata: metadata
               };
             }
           }
@@ -205,10 +194,7 @@ function FileSection({
     // If the file has an ID from the server and is not a temporary upload, delete it there too
     if (fileToRemove.id && !fileToRemove.uploadPending && !fileToRemove.uploadError) {
       try {
-        await deleteFile({
-          fileId: fileToRemove.id,
-          companyId
-        });
+        await axios.delete(`/${companyId}/gallery/${fileToRemove.id}`);
       } catch (error) {
         console.error('Error deleting file:', error);
         // File is already removed from the form, so just log the error
@@ -227,6 +213,19 @@ function FileSection({
       f.id === file.id ? { ...f, metadata: newMetadata } : f
     );
     setValue(fieldName, updatedFiles);
+    
+    // If the file has an ID from the server, update metadata there too
+    if (file.id && !file.uploadPending && !file.uploadError) {
+      try {
+        axios.patch(`/${companyId}/gallery/${file.id}/metadata`, {
+          metadata: newMetadata
+        }).catch(error => {
+          console.error('Error updating file metadata:', error);
+        });
+      } catch (error) {
+        console.error('Error updating file metadata:', error);
+      }
+    }
   };
 
   // Clean up URLs when component unmounts
@@ -238,7 +237,7 @@ function FileSection({
         }
       });
     };
-  }, []);
+  }, [files]);
 
   return (
     <Paper

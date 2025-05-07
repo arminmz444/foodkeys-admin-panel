@@ -17,16 +17,16 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { lighten } from '@mui/material/styles';
 import Statuses from '../../Statuses';
 import UserAvatar from '../../UserAvatar';
-import { ChatAppContext } from '../../TicketingApp.jsx';
-import { useGetTicketingUserProfileQuery, useUpdateTicketingUserProfileMutation } from '../../TicketingApi.js';
+import { TicketAppContext } from '../../TicketingApp.jsx';
+import { useGetTicketByIdQuery, useUpdateTicketStatusMutation } from '../../TicketingApi.js';
 
 /**
  * The user sidebar.
  */
 function UserSidebar() {
-	const { setUserSidebarOpen } = useContext(ChatAppContext);
-	const { data: user } = useGetTicketingUserProfileQuery();
-	const [updateUserData] = useUpdateTicketingUserProfileMutation();
+	const { setUserSidebarOpen } = useContext(TicketAppContext);
+	const { data: user } = useGetTicketByIdQuery();
+	const [updateUserData] = useUpdateTicketStatusMutation();
 	const { control, handleSubmit, reset, formState, watch } = useForm({});
 	const { isValid, dirtyFields, errors } = formState;
 	useEffect(() => {

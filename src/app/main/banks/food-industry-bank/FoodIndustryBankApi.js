@@ -1,166 +1,4 @@
-// import { apiService as api } from 'app/store/apiService';
-// import ProductModel from './product/models/ProductModel';
-
-// export const addTagTypes = [
-// 	'eCommerce_products',
-// 	'eCommerce_product',
-// 	'eCommerce_orders',
-// 	'eCommerce_order',
-// 	'foodCompanyDetails',
-// 	'foodCompanyList',
-// 	'foodCompanyRequestList'
-// ];
-// const FoodIndustryBankApi = api
-// 	.enhanceEndpoints({
-// 		addTagTypes
-// 	})
-// 	.injectEndpoints({
-// 		endpoints: (build) => ({
-// 			getAllFoodIndustryCompanies: build.query({
-// 				query: ({ pageNumber, pageSize, search, sort, filter }) => ({
-// 					url: `/company/?categoryId=1&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}&sort=${(sort && Object.entries(sort)?.length && JSON.stringify(sort)) || ''}&filter=${(filter && Object.entries(filter)?.length && JSON.stringify(filter)) || ''}`,
-// 					method: 'GET'
-// 				}),
-// 				transformResponse: (response) => {
-// 					const data = { data: response?.data };
-
-// 					if (response && response.pagination) {
-// 						data.totalPages = response.pagination.totalPages;
-// 						data.totalElements = response.pagination.totalElements;
-// 						data.pageSize = response.pagination.pageSize;
-// 						data.pageIndex = response.pagination.pageNumber;
-// 					}
-
-// 					// console.log(`response: ${JSON.stringify(response)}`);
-// 					// console.log(`Data: ${JSON.stringify(data)}`);
-// 					return data;
-// 				},
-// 				providesTags: ['foodCompanyList']
-// 			}),
-// 			getFoodIndustryCompanyDetails: build.query({
-// 				query: (companyId) => ({
-// 					url: `/company/${companyId}`
-// 				}),
-// 				transformResponse: (response) => response?.data,
-// 				providesTags: ['foodCompanyList', 'foodCompanyDetails']
-// 			}),
-// 			getAllFoodIndustryCompanyRequests: build.query({
-// 				query: ({ pageNumber, pageSize, search, sort, filter }) => ({
-// 					url: `/request/company?categoryId=1&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}&sort=${(sort && Object.entries(sort)?.length && JSON.stringify(sort)) || ''}&filter=${(filter && Object.entries(filter)?.length && JSON.stringify(filter)) || ''}`,
-// 					method: 'GET'
-// 				}),
-// 				transformResponse: (response) => {
-// 					const data = { data: response?.data };
-
-// 					if (response && response.pagination) {
-// 						data.totalPages = response.pagination.totalPages;
-// 						data.totalElements = response.pagination.totalElements;
-// 						data.pageSize = response.pagination.pageSize;
-// 						data.pageIndex = response.pagination.pageIndex;
-// 					}
-
-// 					// console.log(`response: ${JSON.stringify(response)}`);
-// 					// console.log(`Data: ${JSON.stringify(data)}`);
-// 					return data;
-// 				},
-// 				providesTags: ['foodCompanyRequestList']
-// 			}),
-// 			getECommerceProducts: build.query({
-// 				query: () => ({ url: `/mock-api/ecommerce/products` }),
-// 				providesTags: ['eCommerce_products']
-// 			}),
-// 			deleteECommerceProducts: build.mutation({
-// 				query: (productIds) => ({
-// 					url: `/mock-api/ecommerce/products`,
-// 					method: 'DELETE',
-// 					data: productIds
-// 				}),
-// 				invalidatesTags: ['eCommerce_products']
-// 			}),
-// 			getECommerceProduct: build.query({
-// 				query: (productId) => ({
-// 					url: `/mock-api/ecommerce/products/${productId}`
-// 				}),
-// 				providesTags: ['eCommerce_product', 'eCommerce_products']
-// 			}),
-// 			createECommerceProduct: build.mutation({
-// 				query: (newProduct) => ({
-// 					url: `/mock-api/ecommerce/products`,
-// 					method: 'POST',
-// 					data: ProductModel(newProduct)
-// 				}),
-// 				invalidatesTags: ['eCommerce_products', 'eCommerce_product']
-// 			}),
-// 			updateECommerceProduct: build.mutation({
-// 				query: (product) => ({
-// 					url: `/mock-api/ecommerce/products/${product.id}`,
-// 					method: 'PUT',
-// 					data: product
-// 				}),
-// 				invalidatesTags: ['eCommerce_product', 'eCommerce_products']
-// 			}),
-// 			deleteECommerceProduct: build.mutation({
-// 				query: (productId) => ({
-// 					url: `/mock-api/ecommerce/products/${productId}`,
-// 					method: 'DELETE'
-// 				}),
-// 				invalidatesTags: ['eCommerce_product', 'eCommerce_products']
-// 			}),
-// 			getECommerceOrders: build.query({
-// 				query: () => ({ url: `/mock-api/ecommerce/orders` }),
-// 				providesTags: ['eCommerce_orders']
-// 			}),
-// 			getECommerceOrder: build.query({
-// 				query: (orderId) => ({ url: `/mock-api/ecommerce/orders/${orderId}` }),
-// 				providesTags: ['eCommerce_order']
-// 			}),
-// 			updateECommerceOrder: build.mutation({
-// 				query: (order) => ({
-// 					url: `/mock-api/ecommerce/orders/${order.id}`,
-// 					method: 'PUT',
-// 					data: order
-// 				}),
-// 				invalidatesTags: ['eCommerce_order', 'eCommerce_orders']
-// 			}),
-// 			deleteECommerceOrder: build.mutation({
-// 				query: (orderId) => ({
-// 					url: `/mock-api/ecommerce/orders/${orderId}`,
-// 					method: 'DELETE'
-// 				}),
-// 				invalidatesTags: ['eCommerce_order', 'eCommerce_orders']
-// 			}),
-// 			deleteECommerceOrders: build.mutation({
-// 				query: (ordersId) => ({
-// 					url: `/mock-api/ecommerce/orders`,
-// 					method: 'DELETE',
-// 					data: ordersId
-// 				}),
-// 				invalidatesTags: ['eCommerce_order', 'eCommerce_orders']
-// 			})
-// 		}),
-// 		overrideExisting: false
-// 	});
-// export default FoodIndustryBankApi;
-// export const {
-// 	useGetAllFoodIndustryCompaniesQuery,
-// 	useGetAllFoodIndustryCompanyRequestsQuery,
-// 	useGetFoodIndustryCompanyDetailsQuery,
-// 	useGetECommerceProductsQuery,
-// 	useDeleteECommerceProductsMutation,
-// 	useGetECommerceProductQuery,
-// 	useUpdateECommerceProductMutation,
-// 	useDeleteECommerceProductMutation,
-// 	useGetECommerceOrdersQuery,
-// 	useGetECommerceOrderQuery,
-// 	useUpdateECommerceOrderMutation,
-// 	useDeleteECommerceOrderMutation,
-// 	useDeleteECommerceOrdersMutation,
-// 	useCreateECommerceProductMutation
-// } = FoodIndustryBankApi;
-
-// FoodIndustryBankApi.js - Modified with archive endpoints
 import { apiService as api } from 'app/store/apiService';
-import ProductModel from './product/models/ProductModel';
 
 export const addTagTypes = [
   'foodCompanyDetails',
@@ -288,13 +126,19 @@ const FoodIndustryBankApi = api
         };
       },
     }),
-    
+
     getCompanyGalleryFiles: build.query({
-      query: (companyId) => `food-industry-bank/companies/${companyId}/gallery-files`,
-      providesTags: (result, error, companyId) => [
-        { type: 'GalleryFiles', id: companyId },
-      ],
-    }),
+        query: (companyId) => ({
+          url: `/company/${companyId}/gallery`,
+          method: 'GET'
+        }),
+        transformResponse: (response) => response?.data,
+        providesTags: (result, error, companyId) => [
+          { type: 'GalleryFiles', id: companyId },
+        ],
+      }),
+    
+
     
     updateGalleryFileMetadata: build.mutation({
       query: ({ fileId, metadata }) => ({
@@ -316,7 +160,26 @@ const FoodIndustryBankApi = api
         { type: 'GalleryFiles', id: companyId },
       ],
     }),
-    
+    createCompany: build.mutation({
+        query: (companyData) => ({
+          url: `/company/`,
+          method: 'POST',
+          data: prepareCompanyData(companyData)
+        }),
+        invalidatesTags: ['foodCompanyList']
+      }),
+      
+      updateCompany: build.mutation({
+        query: (companyData) => ({
+          url: `/company/${companyData.id}`,
+          method: 'PUT',
+          data: prepareCompanyData(companyData)
+        }),
+        invalidatesTags: (result, error, { id }) => [
+          { type: 'foodCompanyDetails', id },
+          'foodCompanyList'
+        ]
+      }),
     saveCompanyGalleryFiles: build.mutation({
       query: ({ companyId, galleryFiles }) => ({
         url: `food-industry-bank/companies/${companyId}/gallery-files`,
@@ -515,8 +378,221 @@ const FoodIndustryBankApi = api
     overrideExisting: false
   });
 
+  function prepareCompanyData(data) {
+    // Create a new object with the correct structure for CompanyCreateDTO
+    const companyData = {
+      // Basic information
+      id: null,
+      adminComment: data.adminComment,
+      activities: data.activities || [],
+      advertisingSlogan: data.advertisingSlogan,
+      companyName: data.companyName,
+      companyNameEn: data.companyNameEn,
+      companyType: data.companyType?.value,
+      companyTypeOther: data.companyTypeOther,
+      subCategoryId: data.subCategory?.value || data.subCategoryId,
+      userId: data.registrantId?.value || data.registrantId ||data.userId,
+      parentCompanyId: data.parentCompanyId,
+      subCompanyIds: data.subCompanyIds,
+      ranking: data.ranking,
+      rankingAll: data.rankingAll,
+      status: data.status,
+      // Company description fields
+      primaryBrand: data.mainBrand,
+      mainBrandEn: data.mainBrandEn,
+      description: data.description,
+      history: data.history,
+      subjectOfActivity: data.subjectOfActivity,
+      
+      // Company metadata
+      establishDate: null,// data.establishDateStr,
+      companyKeyWords: data.companyKeyWords,
+      companyTags: data.companyTags,
+      
+      // Physical properties
+      landArea: data.landArea,
+      buildingArea: data.buildingArea,
+      
+      // Personnel
+      ceo: data.ceo,
+      ceoPhoneNumber: data.ceoPhoneNumber,
+      owner: data.owner,
+      employeesCount: data.employeesCount,
+      answerName: data.answerName,
+      companyStakeholders: data.companyStakeholders,
+      
+      // Products
+      productTitles: data.productTitles,
+      outSourcedProductTitles: data.outSourcedProductTitles,
+      productAvailability: data.productAvailability,
+      rawMaterialsOrigin: data.rawMaterialsOrigin,
+      products: prepareProducts(data.products || []),
+      outSourcedProducts: prepareProducts(data.outSourcedProducts || [], true),
+      
+      // Location and contact info
+      location: {
+        officeLocation: data.officeLocation,
+        factoryLocation: data.factoryLocation,
+        officePoBox: data.officePoBox,
+        factoryPoBox: data.factoryPoBox,
+        officeState: data.officeState,
+        officeCity: data.officeCity,
+        factoryState: data.factoryState,
+        factoryCity: data.factoryCity,
+        industrialCity: data.industrialCity,
+        country: data.country || "ایران",
+        commonName: data.commonName,
+        fullAddress: data.fullAddress,
+        latitude: data.latitude,
+        longitude: data.longitude
+      },
+      
+      // Contact details
+      factoryTels: preparePhoneArray(data.factoryTels),
+      factoryFaxes: preparePhoneArray(data.factoryFaxes),
+      officeTels: preparePhoneArray(data.officeTels),
+      officeFaxes: preparePhoneArray(data.officeFaxes),
+      emails: data.emails || [],
+      smsNumber: data.smsNumber,
+      specialLineNumber: data.specialLineNumber,
+      
+      // Social media
+      telegramId: data.telegramId,
+      telegramPhoneNo: data.telegramPhoneNo,
+      whatsAppId: data.whatsAppId,
+      whatsAppPhoneNo: data.whatsAppPhoneNo,
+      instagramId: data.instagramId,
+      linkedInId: data.linkedInId,
+      skypeId: data.skypeId,
+      eitaaPhoneNo: data.eitaaPhoneNo,
+      rubikaPhoneNo: data.rubikaPhoneNo,
+      website: data.website,
+      socialMedias: data.socialMedias || [],
+      
+      // Stakeholders
+      stakeholders: prepareStakeholders(data.stakeholders),
+      
+      // Contacts
+      contacts: prepareContacts(data.contacts),
+      
+      // Brand data
+      brands: prepareBrands(data.brands),
+      
+      // Media and settings
+      hasPrivatePage: data.hasPrivatePage || false,
+      miniAppIframeSource: data.miniAppIframeSource,
+      logo: data.logo,
+      backgroundImage: data.backgroundImage,
+      
+      // Gallery files
+      galleryFiles: prepareGalleryFiles(data)
+    };
+    
+    return companyData;
+  }
+  
+  // Helper function to prepare products array
+  function prepareProducts(products, isOutsourced = false) {
+    if (!products || !Array.isArray(products)) return [];
+    
+    return products.map(product => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      categoryType: product.categoryType,
+      showProduct: product.showProduct || false,
+      outsourced: isOutsourced,
+      machineUsage: product.machineUsage || false
+    }));
+  }
+  
+  // Helper function to prepare phone array (tels, faxes)
+  function preparePhoneArray(phones) {
+    if (!phones || !Array.isArray(phones)) return [];
+    
+    return phones.filter(p => p && p.telNumber).map(phone => ({
+      telNumber: phone.telNumber,
+      telType: phone.telType
+    }));
+  }
+  
+  // Helper function to prepare stakeholders array
+  function prepareStakeholders(stakeholders) {
+    if (!stakeholders || !Array.isArray(stakeholders)) return [];
+    
+    return stakeholders.map(stakeholder => ({
+      name: stakeholder.name,
+      lastName: stakeholder.lastName,
+      phone: stakeholder.phone,
+      email: stakeholder.email
+    }));
+  }
+  
+  // Helper function to prepare contacts array
+  function prepareContacts(contacts) {
+    if (!contacts || !Array.isArray(contacts)) return [];
+    
+    return contacts.map(contact => ({
+      name: contact.name,
+      lastName: contact.lastName,
+      email: contact.email,
+      phone: contact.phone,
+      position: contact.position
+    }));
+  }
+  
+  // Helper function to prepare brands array
+  function prepareBrands(brands) {
+    if (!brands || !Array.isArray(brands)) return [];
+    
+    return brands.map(brand => ({
+      name: brand.name,
+      nameEn: brand.nameEn,
+      primary: brand.primary || false
+    }));
+  }
+  
+  // Helper function to prepare gallery files from all file categories
+  function prepareGalleryFiles(data) {
+    const galleryFiles = [];
+    
+    // Process each gallery file category
+    processFileCategory(galleryFiles, data.companyLogoFiles, "COMPANY_LOGO");
+    processFileCategory(galleryFiles, data.companyBackgroundImages, "COMPANY_BACKGROUND_IMAGE");
+    processFileCategory(galleryFiles, data.companyCertificates, "COMPANY_CERTIFICATE");
+    processFileCategory(galleryFiles, data.companyGalleryDocument, "COMPANY_GALLERY_DOCUMENT");
+    processFileCategory(galleryFiles, data.companyGalleryProduct, "COMPANY_GALLERY_PRODUCT");
+    processFileCategory(galleryFiles, data.companyGalleryContact, "COMPANY_GALLERY_CONTACT");
+    processFileCategory(galleryFiles, data.companyGalleryCatalog, "COMPANY_GALLERY_CATALOG");
+    processFileCategory(galleryFiles, data.companyGallerySlider, "COMPANY_GALLERY_SLIDER");
+    
+    return galleryFiles;
+  }
+  
+  // Helper to process each file category
+  function processFileCategory(galleryFiles, fileArray, fileServiceType) {
+    if (fileArray && Array.isArray(fileArray)) {
+      fileArray.forEach(file => {
+        if (file) {
+          galleryFiles.push({
+            id: file.id,
+            fileName: file.fileName,
+            filePath: file.filePath,
+            fileExtension: file.fileExtension,
+            fileSize: file.fileSize,
+            contentType: file.contentType,
+            metadata: typeof file.metadata === 'string' ? file.metadata : JSON.stringify(file.metadata),
+            fileServiceType: fileServiceType
+          });
+        }
+      });
+    }
+  }
+
 export default FoodIndustryBankApi;
 export const {
+  useCreateCompanyMutation,
+  useUpdateCompanyMutation,
   useGetCompanyGalleryFilesQuery,
   useUploadGalleryFilesMutation,
   useUpdateGalleryFileMetadataMutation,

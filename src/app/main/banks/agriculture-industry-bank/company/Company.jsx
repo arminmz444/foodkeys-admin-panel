@@ -160,10 +160,10 @@ function Company() {
 								className="h-64"
 								label="ثبت‌کننده"
 							/>
-							<Tab 
-								className="h-64"
-								label="ویرایش صفحه"
-							/>
+							{/*<Tab */}
+							{/*	className="h-64"*/}
+							{/*	label="ویرایش صفحه"*/}
+							{/*/>*/}
 							{/* <Tab */}
 							{/*	className="h-64" */}
 							{/*	label="Product Images" */}
@@ -212,9 +212,9 @@ function Company() {
 							<div className={tabValue !== 7 ? 'hidden' : ''}>
 								<RegistrarTab />
 							</div>
-							<div className={tabValue !== 8 ? 'hidden' : ''}>
-								<MiniAppTab />
-							</div>
+							{/*<div className={tabValue !== 8 ? 'hidden' : ''}>*/}
+							{/*	<MiniAppTab />*/}
+							{/*</div>*/}
 						</div>
 					</>
 				}

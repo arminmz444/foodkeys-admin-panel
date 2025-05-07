@@ -1,14 +1,15 @@
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useFieldArray } from "react-hook-form";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import { MenuItem } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Input } from "@mui/base";
-
+import FuseSvgIcon from "@fuse/core/FuseSvgIcon";
+import { BiMinus } from "react-icons/bi";
+import { Button, InputAdornment, Grid } from "@mui/material";
 /**
  * The basic info tab.
  */
@@ -53,6 +54,9 @@ function BasicInfoTab() {
     }
   }, []);
   
+  const { fields: activityFields, append: appendActivity, remove: removeActivity } =
+  useFieldArray({ control, name: "activities" });
+
   const watchedSubCategory = watch("subCategory");
   const watchedCompanyType = watch("companyType");
   useEffect(() => {
@@ -60,8 +64,17 @@ function BasicInfoTab() {
     // if (subcategories && subcategories.length) setSubCategory(subCategoryWatch[0].value);
     if (watchedCompanyType) setCompanyType(watchedCompanyType.value);
   }, [watchedSubCategory, watchedCompanyType]);
-  const handleChange = (event, setter) => {
-    setter(event.target.value);
+  const handleChange = (event, setter, fieldName) => {
+    const { value } = event.target;
+    setter(value);
+    if (fieldName) {
+      methods.setValue(fieldName, { 
+        value, 
+        label: fieldName === "companyType" 
+          ? companyTypeOptions.find(type => type.value === value)?.name
+          : subcategories.find(cat => cat.value === value)?.name 
+      });
+    }
   };
 
   return (
@@ -82,7 +95,7 @@ function BasicInfoTab() {
               value={subCategory}
               label="زیرشاخه"
               getOptionLabel={(option) => option.name}
-              onChange={(e) => handleChange(e, setSubCategory)}
+              onChange={(e) => handleChange(e, setSubCategory, "subCategory")}
               fullWidth
               required
             >
@@ -197,7 +210,7 @@ function BasicInfoTab() {
               value={companyType}
               label="نوع شرکت"
               getOptionLabel={(option) => option.name}
-              onChange={(e) => handleChange(e, setCompanyType)}
+              onChange={(e) => handleChange(e, setCompanyType, "companyType")}
               fullWidth
               required
             >
@@ -234,42 +247,139 @@ function BasicInfoTab() {
           )}
         />
       </div>
+      
+      <div className="flex flex-col space-y-4 mt-8 mb-16">
+        <label className="font-medium text-gray-700 dark:text-gray-300">
+            فعالیت‌های شرکت
+        </label>
+
+        {activityFields.map((field, index) => (
+            <div key={field.id} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-4">
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                        <Controller
+                            name={`activities.${index}.name`}
+                            control={control}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label="نام فعالیت"
+                                    placeholder="نام فعالیت را وارد کنید"
+                                    variant="outlined"
+                                    fullWidth
+                                    error={!!errors?.activities?.[index]?.name}
+                                    helperText={errors?.activities?.[index]?.name?.message}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <FuseSvgIcon size={20}>heroicons-solid:briefcase</FuseSvgIcon>
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+                            )}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Controller
+                            name={`activities.${index}.capacity`}
+                            control={control}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label="ظرفیت"
+                                    placeholder="ظرفیت فعالیت"
+                                    variant="outlined"
+                                    fullWidth
+                                    type="number"
+                                    error={!!errors?.activities?.[index]?.capacity}
+                                    helperText={errors?.activities?.[index]?.capacity?.message}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <FuseSvgIcon size={20}>heroicons-solid:chart-bar</FuseSvgIcon>
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                    onChange={(e) => {
+                                        // Ensure only integers are accepted
+                                        const value = e.target.value;
+                                        if (value === '' || /^[0-9]\d*$/.test(value)) {
+                                            field.onChange(value === '' ? '' : parseInt(value, 10));
+                                        }
+                                    }}
+                                />
+                            )}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Controller
+                            name={`activities.${index}.description`}
+                            control={control}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label="توضیحات فعالیت"
+                                    placeholder="توضیحات مربوط به این فعالیت را وارد کنید"
+                                    variant="outlined"
+                                    fullWidth
+                                    multiline
+                                    rows={3}
+                                    error={!!errors?.activities?.[index]?.description}
+                                    helperText={errors?.activities?.[index]?.description?.message}
+                                />
+                            )}
+                        />
+                    </Grid>
+                </Grid>
+
+                <div className="flex justify-end mt-2">
+                    <Button
+                        onClick={() => removeActivity(index)}
+                        variant="outlined"
+                        color="error"
+                        size="small"
+                        className="mt-2"
+                        startIcon={<BiMinus />}
+                    >
+                        حذف فعالیت
+                    </Button>
+                </div>
+            </div>
+        ))}
+
+        <Button
+            className="mt-2 self-start"
+            variant="contained"
+            color="secondary"
+            onClick={() => appendActivity({ name: '', description: '', capacity: '' })}
+            startIcon={<FuseSvgIcon>heroicons-solid:plus-circle</FuseSvgIcon>}
+        >
+            افزودن فعالیت جدید
+        </Button>
+      </div>
+      
       <div className="flex sm:flex-row flex-col -mx-4">
         <Controller
-          name="activityType"
+          name="advertisingSlogan"
           control={control}
           render={({ field }) => (
             <TextField
               {...field}
               className="mt-8 mb-16 sm:mx-4"
-              error={!!errors.activityType}
+              error={!!errors.advertisingSlogan}
               helperText={
-                errors?.activityType?.message ||
-                "(مثال : تولیدکننده، واردکننده، فروشنده، پرورش دهنده)"
+                errors?.advertisingSlogan?.message ||
+                "متن شعار تبلیغاتی را وارد کنید"
               }
-              label="نوع فعالیت"
-              id="activityType"
+              label="شعار تبلیغاتی"
+              id="advertisingSlogan"
               variant="outlined"
               fullWidth
             />
           )}
         />
-        <Controller
-          name="activityCapacity"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              className="mt-8 mb-16 sm:mx-4"
-              error={!!errors.activityCapacity}
-              helperText={errors?.activityCapacity?.message}
-              label="ظرفیت فعالیت"
-              id="activityCapacity"
-              variant="outlined"
-              fullWidth
-            />
-          )}
-        />
+
       </div>
       <Controller
         name="subjectOfActivity"
@@ -359,6 +469,22 @@ function BasicInfoTab() {
           )}
         />
       </div>
+        <Controller
+            name="owner"
+            control={control}
+            render={({ field }) => (
+                <TextField
+                    {...field}
+                    className="mt-8 mb-16 sm:mx-4"
+                    error={!!errors.owner}
+                    helperText={errors?.owner?.message}
+                    label="نام مالک"
+                    id="owner"
+                    variant="outlined"
+                    fullWidth
+                />
+            )}
+        />
       <Controller
         name="stakeholders"
         control={control}
@@ -368,7 +494,7 @@ function BasicInfoTab() {
             className="mt-8 mb-16 sm:mx-4"
             error={!!errors.stakeholders}
             helperText={errors?.stakeholders?.message}
-            label="نام مالک یا سهامداران"
+            label="سهامداران"
             id="stakeholders"
             variant="outlined"
             fullWidth
@@ -451,167 +577,6 @@ function BasicInfoTab() {
         )}
       />
     </div>
-    // <Grid
-    // 	container
-    // 	rowSpacing={1}
-    // 	columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-    // 	className="pt-8 px-32"
-    // >
-    // 	<Controller
-    // 		name="category"
-    // 		control={control}
-    // 		render={({ field }) => (
-    // 			<FormControl className="mt-8 mb-16 w-full">
-    // 				<InputLabel id="categorySelect">دسته بندی</InputLabel>
-    // 				<Select
-    // 					labelId="categorySelect"
-    // 					id="categorySelect1"
-    // 					value={AGRICULTURE_INDUSTRY_CATEGORIES}
-    // 					label="دسته بندی"
-    // 					onChange={handleChange}
-    // 					fullWidth
-    // 					required
-    // 				>
-    // 					{AGRICULTURE_INDUSTRY_CATEGORIES.map((cat, catIndex) => (
-    // 						<MenuItem
-    // 							key={cat}
-    // 							value={catIndex}
-    // 						>
-    // 							{cat}
-    // 						</MenuItem>
-    // 					))}
-    // 				</Select>
-    // 			</FormControl>
-    // 			// <TextField
-    // 			// 	{...field}
-    // 			// 	className="mt-8 mb-16 sm:mx-4"
-    // 			// 	error={!!errors.category}
-    // 			// 	required
-    // 			// 	helperText={errors?.category?.message}
-    // 			// 	label="دسته بندی"
-    // 			// 	id="category"
-    // 			// 	variant="outlined"
-    // 			// 	fullWidth
-    // 			// />
-    // 		)}
-    // 	/>
-    // 	<Grid xs={6}>
-    // 		<Controller
-    // 			name="companyName"
-    // 			control={control}
-    // 			render={({ field }) => (
-    // 				<TextField
-    // 					{...field}
-    // 					className="mt-8 mb-16 me-4"
-    // 					required
-    // 					label="نام شرکت"
-    // 					autoFocus
-    // 					id="companyName"
-    // 					variant="outlined"
-    // 					fullWidth
-    // 					error={!!errors.companyName}
-    // 					helperText={errors?.companyName?.message}
-    // 				/>
-    // 			)}
-    // 		/>
-    // 	</Grid>
-    // 	<Grid xs={6}>
-    // 		<Controller
-    // 			name="companyNameEn"
-    // 			control={control}
-    // 			render={({ field }) => (
-    // 				<TextField
-    // 					{...field}
-    // 					className="mt-8 mb-16 ms-4"
-    // 					required
-    // 					label="نام شرکت به انگلیسی"
-    // 					autoFocus
-    // 					id="companyNameEn"
-    // 					variant="outlined"
-    // 					fullWidth
-    // 					error={!!errors.companyNameEn}
-    // 					helperText={errors?.companyNameEn?.message}
-    // 				/>
-    // 			)}
-    // 		/>
-    // 	</Grid>
-    //
-    // 	<Controller
-    // 		name="description"
-    // 		control={control}
-    // 		render={({ field }) => (
-    // 			<TextField
-    // 				{...field}
-    // 				className="mt-8 mb-16"
-    // 				id="description"
-    // 				label="Description"
-    // 				type="text"
-    // 				multiline
-    // 				rows={5}
-    // 				variant="outlined"
-    // 				fullWidth
-    // 			/>
-    // 		)}
-    // 	/>
-    //
-    // 	<Controller
-    // 		name="categories"
-    // 		control={control}
-    // 		defaultValue={[]}
-    // 		render={({ field: { onChange, value } }) => (
-    // 			<Autocomplete
-    // 				className="mt-8 mb-16"
-    // 				multiple
-    // 				freeSolo
-    // 				options={[]}
-    // 				value={value}
-    // 				onChange={(event, newValue) => {
-    // 					onChange(newValue);
-    // 				}}
-    // 				renderInput={(params) => (
-    // 					<TextField
-    // 						{...params}
-    // 						placeholder="Select multiple categories"
-    // 						label="CategoriesOutlet"
-    // 						variant="outlined"
-    // 						InputLabelProps={{
-    // 							shrink: true
-    // 						}}
-    // 					/>
-    // 				)}
-    // 			/>
-    // 		)}
-    // 	/>
-    //
-    // 	<Controller
-    // 		name="tags"
-    // 		control={control}
-    // 		defaultValue={[]}
-    // 		render={({ field: { onChange, value } }) => (
-    // 			<Autocomplete
-    // 				className="mt-8 mb-16"
-    // 				multiple
-    // 				freeSolo
-    // 				options={[]}
-    // 				value={value}
-    // 				onChange={(event, newValue) => {
-    // 					onChange(newValue);
-    // 				}}
-    // 				renderInput={(params) => (
-    // 					<TextField
-    // 						{...params}
-    // 						placeholder="Select multiple tags"
-    // 						label="Tags"
-    // 						variant="outlined"
-    // 						InputLabelProps={{
-    // 							shrink: true
-    // 						}}
-    // 					/>
-    // 				)}
-    // 			/>
-    // 		)}
-    // 	/>
-    // </Grid>
   );
 }
 

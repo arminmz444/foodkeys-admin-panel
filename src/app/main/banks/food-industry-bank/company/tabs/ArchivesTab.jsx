@@ -65,7 +65,6 @@ function ArchivesTab() {
     archiveType: 'MANUAL'
   });
   
-  // Queries and mutations
   const { data: companyArchives, isLoading: isLoadingArchives, refetch } = useGetArchivesByEntityQuery({
     entityType: 'Company',
     entityId: companyId,
@@ -77,31 +76,26 @@ function ArchivesTab() {
   const [rollbackToArchive, { isLoading: isRollingBack }] = useRollbackToArchiveMutation();
   const [deleteArchive, { isLoading: isDeleting }] = useDeleteArchiveMutation();
   
-  // Reset selections when data changes
   useEffect(() => {
     setSelectedArchives([]);
     setCompareMode(false);
   }, [companyArchives]);
   
-  // Filter archives by type
   const getFilteredArchives = () => {
     if (!companyArchives || !companyArchives.data) return [];
     
-    if (activeTab === 0) return companyArchives.data; // All archives
+    if (activeTab === 0) return companyArchives.data; 
     
-    // Get archives by type
     const archiveTypeName = archiveTypes?.[activeTab - 1]?.value;
     return companyArchives.data.filter(archive => 
       archive.metadata?.archiveType === archiveTypeName);
   };
   
-  // Handle tab change
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
     setSelectedArchives([]);
   };
   
-  // Toggle archive selection
   const handleArchiveSelection = (archiveId) => {
     if (!compareMode) {
       handleViewArchive(archiveId);
@@ -113,7 +107,6 @@ function ArchivesTab() {
         return prev.filter(id => id !== archiveId);
       }
       
-      // Limit selection to 2 archives
       if (prev.length >= 2) {
         return [prev[1], archiveId];
       }
@@ -122,20 +115,17 @@ function ArchivesTab() {
     });
   };
   
-  // View archive details
   const handleViewArchive = (archiveId) => {
     setSelectedArchiveId(archiveId);
     setSelectedArchive(companyArchives.data.find(a => a.id === archiveId));
     setDetailsDialogOpen(true);
   };
   
-  // Toggle compare mode
   const handleToggleCompareMode = () => {
     setCompareMode(prev => !prev);
     setSelectedArchives([]);
   };
   
-  // Open compare dialog
   const handleOpenCompareDialog = () => {
     if (selectedArchives.length !== 2) {
       showSnackbar('لطفاً دو آرشیو برای مقایسه انتخاب کنید', 'warning');

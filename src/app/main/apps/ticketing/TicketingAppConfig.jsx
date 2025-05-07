@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import Chat from './chat/Chat';
+import Chat from './chat/TicketChat';
 import TicketingFirstScreen from './TicketingFirstScreen.jsx';
 
 const TicketingApp = lazy(() => import('./TicketingApp.jsx'));

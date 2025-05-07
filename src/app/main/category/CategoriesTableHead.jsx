@@ -84,7 +84,7 @@ function CategoriesTableHead(props) {
 
 	function openSelectedOrdersMenu(event) {
 		setSelectedOrdersMenu(event.currentTarget);
-	}
+	
 
 	function closeSelectedOrdersMenu() {
 		setSelectedOrdersMenu(null);

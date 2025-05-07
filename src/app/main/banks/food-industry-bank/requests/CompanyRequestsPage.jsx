@@ -28,7 +28,7 @@ export default function CompanyRequests() {
     status: null, 
     type: null, 
     search: '',
-    categoryId: 1 // Default to Food Industry category
+    categoryId: 1 
   });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
@@ -37,7 +37,6 @@ export default function CompanyRequests() {
     pageSize: 12
   });
 
-  // Fetch company requests with RTK Query
   const { 
     data, 
     isLoading, 

@@ -13,6 +13,8 @@ module.exports = {
     },
     port: 3000,
     historyApiFallback: true,
+    // <- add this:
+    allowedHosts: 'all', 
   },
   output: {
     publicPath: 'auto',
@@ -23,9 +25,7 @@ module.exports = {
         test: /\.jsx?$/,
         loader: 'babel-loader',
         exclude: /node_modules/,
-        options: {
-          presets: ['@babel/preset-react'],
-        },
+        options: { presets: ['@babel/preset-react'] },
       },
       {
         test: /\.css$/i,

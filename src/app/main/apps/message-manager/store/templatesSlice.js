@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import _ from '@lodash';
 import { rootReducer } from 'app/store/lazyLoadedSlices';
+
 const mockSystemEmailTemplates = [
   {
     id: "1",
@@ -146,6 +146,9 @@ export const templatesSlice = createSlice({
     setSelectedSmsTemplate: (state, action) => {
       state.selectedSmsTemplate = action.payload;
     },
+    setEmailTemplates: (state, action) => {
+      state.emailTemplates = action.payload;
+    },
     addEmailTemplate: (state, action) => {
       state.emailTemplates = [...state.emailTemplates, action.payload];
     },
@@ -173,13 +176,15 @@ export const templatesSlice = createSlice({
     deleteEmailTemplate: (state, action) => {
       state.emailTemplates = state.emailTemplates.filter(template => template.id !== action.payload);
       if (state.selectedEmailTemplate.id === action.payload) {
-        state.selectedEmailTemplate = state.systemEmailTemplates[0];
+        const [firstTemplate] = state.systemEmailTemplates;
+        state.selectedEmailTemplate = firstTemplate;
       }
     },
     deleteSmsTemplate: (state, action) => {
       state.smsTemplates = state.smsTemplates.filter(template => template.id !== action.payload);
       if (state.selectedSmsTemplate.id === action.payload) {
-        state.selectedSmsTemplate = state.systemSmsTemplates[0];
+        const [firstTemplate] = state.systemSmsTemplates;
+        state.selectedSmsTemplate = firstTemplate;
       }
     },
   },
@@ -192,6 +197,7 @@ const injectedSlice = templatesSlice.injectInto(rootReducer);
 export const {
   setSelectedEmailTemplate,
   setSelectedSmsTemplate,
+  setEmailTemplates,
   addEmailTemplate,
   addSmsTemplate,
   updateEmailTemplate,

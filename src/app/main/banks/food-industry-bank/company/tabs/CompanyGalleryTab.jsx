@@ -1,99 +1,107 @@
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { Typography, Alert, Box, CircularProgress } from '@mui/material';
+import axios from 'axios';
 import { motion } from 'framer-motion';
 import FileSection from './components/FileSection';
-import { useGetCompanyGalleryFilesQuery } from '../../FoodIndustryBankApi';
-import { getServerFile } from '@/utils/string-utils';
 
 function CompanyGalleryTab() {
   const methods = useFormContext();
   const { setValue } = methods;
   const routeParams = useParams();
   const { companyId } = routeParams;
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   
-  // Fetch gallery files if in edit mode
-  const { 
-    data: galleryFilesResponse, 
-    isLoading, 
-    isError, 
-    error 
-  } = useGetCompanyGalleryFilesQuery(companyId, {
-    // Skip if we're creating a new company
-    skip: !companyId || companyId === 'new'
-  });
-  
-  // Group files by service type when data is loaded
+  // Fetch gallery files when component mounts
   useEffect(() => {
-    if (galleryFilesResponse && Array.isArray(galleryFilesResponse.data)) {
-      // Process the galleryFiles data
-      const galleryFiles = galleryFilesResponse.data;
+    // Skip if we're creating a new company
+    if (!companyId || companyId === 'new') return;
+    
+    const fetchGalleryFiles = async () => {
+      setIsLoading(true);
+      setError(null);
       
-      // Group files by fileServiceType
-      const groupedFiles = galleryFiles.reduce((groups, file) => {
-        const serviceType = file.fileServiceType;
-        if (!groups[serviceType]) {
-          groups[serviceType] = [];
-        }
-        
-        let metadata = {};
-        if (file.metadata) {
-          try {
-            metadata = typeof file.metadata === 'string' 
-              ? JSON.parse(file.metadata) 
-              : file.metadata;
-          } catch (e) {
-            console.error('Error parsing file metadata:', e);
+      try {
+        const response = await axios.get(`/company/${companyId}/gallery`);
+        if (response.data && response.data.status === 'SUCCESS') {
+          const galleryFiles = response.data.data || [];
+          
+          // Group files by their file service type
+          const groupedFiles = galleryFiles.reduce((groups, file) => {
+            const serviceType = file.fileServiceType;
+            if (!groups[serviceType]) {
+              groups[serviceType] = [];
+            }
+            
+            let metadata = {};
+            if (file.metadata) {
+              try {
+                metadata = typeof file.metadata === 'string' 
+                  ? JSON.parse(file.metadata) 
+                  : file.metadata;
+              } catch (e) {
+                console.error('Error parsing file metadata:', e);
+              }
+            }
+            
+            groups[serviceType].push({
+              id: file.id,
+              fileName: file.fileName,
+              filePath: file.filePath,
+              contentType: file.contentType || `image/${file.fileExtension.substring(1)}`,
+              fileSize: file.fileSize,
+              metadata,
+              fileServiceType: serviceType,
+            });
+            
+            return groups;
+          }, {});
+          
+          // Set values in form for each file type
+          if (groupedFiles.COMPANY_LOGO) {
+            setValue('companyLogoFiles', groupedFiles.COMPANY_LOGO);
+          }
+          
+          if (groupedFiles.COMPANY_BACKGROUND_IMAGE) {
+            setValue('companyBackgroundImages', groupedFiles.COMPANY_BACKGROUND_IMAGE);
+          }
+          
+          if (groupedFiles.COMPANY_CERTIFICATE) {
+            setValue('companyCertificates', groupedFiles.COMPANY_CERTIFICATE);
+          }
+          
+          if (groupedFiles.COMPANY_GALLERY_DOCUMENT) {
+            setValue('companyGalleryDocument', groupedFiles.COMPANY_GALLERY_DOCUMENT);
+          }
+          
+          if (groupedFiles.COMPANY_GALLERY_PRODUCT) {
+            setValue('companyGalleryProduct', groupedFiles.COMPANY_GALLERY_PRODUCT);
+          }
+          
+          if (groupedFiles.COMPANY_GALLERY_CONTACT) {
+            setValue('companyGalleryContact', groupedFiles.COMPANY_GALLERY_CONTACT);
+          }
+          
+          if (groupedFiles.COMPANY_GALLERY_CATALOG) {
+            setValue('companyGalleryCatalog', groupedFiles.COMPANY_GALLERY_CATALOG);
+          }
+          
+          if (groupedFiles.COMPANY_GALLERY_SLIDER) {
+            setValue('companyGallerySlider', groupedFiles.COMPANY_GALLERY_SLIDER);
           }
         }
-        
-        groups[serviceType].push({
-          id: file.id,
-          fileName: file.fileName,
-          filePath: file.filePath,
-          contentType: file.contentType,
-          fileSize: file.fileSize,
-          metadata: metadata,
-          fileServiceType: serviceType,
-        });
-        
-        return groups;
-      }, {});
-      
-      if (groupedFiles.COMPANY_LOGO) {
-        setValue('companyLogoFiles', groupedFiles.COMPANY_LOGO);
+      } catch (err) {
+        console.error('Error fetching gallery files:', err);
+        setError(err.response?.data?.message || 'خطا در بارگیری اطلاعات گالری');
+      } finally {
+        setIsLoading(false);
       }
-      
-      if (groupedFiles.COMPANY_BACKGROUND_IMAGE) {
-        setValue('companyBackgroundImages', groupedFiles.COMPANY_BACKGROUND_IMAGE);
-      }
-      
-      if (groupedFiles.COMPANY_CERTIFICATE) {
-        setValue('companyCertificates', groupedFiles.COMPANY_CERTIFICATE);
-      }
-      
-      if (groupedFiles.COMPANY_GALLERY_DOCUMENT) {
-        setValue('companyGalleryDocument', groupedFiles.COMPANY_GALLERY_DOCUMENT);
-      }
-      
-      if (groupedFiles.COMPANY_GALLERY_PRODUCT) {
-        setValue('companyGalleryProduct', groupedFiles.COMPANY_GALLERY_PRODUCT);
-      }
-      
-      if (groupedFiles.COMPANY_GALLERY_CONTACT) {
-        setValue('companyGalleryContact', groupedFiles.COMPANY_GALLERY_CONTACT);
-      }
-      
-      if (groupedFiles.COMPANY_GALLERY_CATALOG) {
-        setValue('companyGalleryCatalog', groupedFiles.COMPANY_GALLERY_CATALOG);
-      }
-      
-      if (groupedFiles.COMPANY_GALLERY_SLIDER) {
-        setValue('companyGallerySlider', groupedFiles.COMPANY_GALLERY_SLIDER);
-      }
-    }
-  }, [galleryFilesResponse, setValue]);
+    };
+    
+    fetchGalleryFiles();
+  }, [companyId, setValue]);
 
   if (isLoading && companyId && companyId !== 'new') {
     return (
@@ -103,10 +111,10 @@ function CompanyGalleryTab() {
     );
   }
 
-  if (isError) {
+  if (error) {
     return (
       <Alert severity="error" className="my-16">
-        خطا در بارگیری اطلاعات گالری: {error?.data?.message || 'خطای ناشناخته'}
+        خطا در بارگیری اطلاعات گالری: {error}
       </Alert>
     );
   }

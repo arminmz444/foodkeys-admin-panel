@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
-import { useGetConfigsQuery } from "./configManagementApi";
+import { useGetConfigsQuery } from "./store/configManagementApi";
 import WebsiteConfigListCard from "./WebsiteConfigListCard";
 
 // || [

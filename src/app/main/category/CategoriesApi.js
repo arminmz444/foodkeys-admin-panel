@@ -46,7 +46,7 @@ const CategoryApi = api.enhanceEndpoints({ addTagTypes }).injectEndpoints({
         }
 
         // console.log(`response: ${JSON.stringify(response)}`);
-        // console.log(`Data: ${JSON.stringify(data)}`);
+        console.log(`Categories Data: ${JSON.stringify(response?.data)}`);
         return data;
       },
       providesTags: (result) =>
@@ -115,7 +115,7 @@ const CategoryApi = api.enhanceEndpoints({ addTagTypes }).injectEndpoints({
       ],
     }),
   }),
-  overrideExisting: false,
+  overrideExisting: true,
 });
 
 export default CategoryApi;

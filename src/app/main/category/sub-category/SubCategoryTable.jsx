@@ -272,6 +272,11 @@ function SubCategoryTable() {
         size: 200,
       },
       {
+        header: "نام نمایشی",
+        accessorKey: "displayName",
+        size: 200,
+      },
+      {
         header: "ترتیب صفحه",
         accessorKey: "pageOrder",
         size: 200,
@@ -412,6 +417,17 @@ function SubCategoryTable() {
           label: "نام انگلیسی زیرشاخه",
           placeholder: "نام انگلیسی زیرشاخه را وارد کنید",
         }),
+        displayName: z
+        .string({
+          invalid_type_error: "فرمت داده ورودی اشتباه است",
+          required_error: "این فیلد الزامی است",
+        })
+        .min(1, { message: "این فیلد الزامی است" })
+        .uniforms({
+          displayName: "نام نمایشی",
+          label: "نام نمایشی زیرشاخه",
+          placeholder: "نام نمایشی زیرشاخه را وارد کنید",
+        }),
       categoryId: z
         .number({
           required_error: "این فیلد الزامی است",
@@ -469,6 +485,16 @@ function SubCategoryTable() {
       },
       nameEn: {
         label: "نام انگلیسی",
+        inputType: "TextField",
+        renderCustomInput: false,
+        classes: "mt-10",
+        styles: null,
+        props: {
+          fullWidth: true,
+        },
+      },
+      displayName: {
+        label: "نام نمایشی",
         inputType: "TextField",
         renderCustomInput: false,
         classes: "mt-10",

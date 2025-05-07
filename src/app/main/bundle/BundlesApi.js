@@ -1,5 +1,5 @@
 import { apiService as api } from 'app/store/apiService';
-import ProductModel from '../users/product/models/ProductModel';
+// import ProductModel from '../users/product/models/ProductModel';
 
 // Tag types for bundle
 const addTagTypes = [
@@ -35,7 +35,8 @@ const BundlesApi = api.enhanceEndpoints({ addTagTypes }).injectEndpoints({
 			query: (newProduct) => ({
 				url: `/mock-api/ecommerce/products`,
 				method: 'POST',
-				data: ProductModel(newProduct)
+				body: newProduct
+				// data: ProductModel(newProduct)
 			}),
 			invalidatesTags: ['eCommerce_products', 'eCommerce_product']
 		}),

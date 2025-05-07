@@ -738,14 +738,283 @@
 // export default ProductsAndServicesTab;
 
 // ProductsAndServicesTab.tsx
-import { useFieldArray, useFormContext, Controller } from "react-hook-form";
-import { Button, TextField, FormControlLabel, Checkbox } from "@mui/material";
-import { useState } from "react";
+import { useFieldArray, useFormContext, Controller, useWatch } from "react-hook-form";
+import { 
+  Button, 
+  TextField, 
+  FormControlLabel, 
+  Checkbox, 
+  Switch,
+  Typography,
+  Box,
+  CircularProgress,
+  Paper,
+  Grid
+} from "@mui/material";
 import FuseSvgIcon from "@fuse/core/FuseSvgIcon";
-// Suppose you have a helper from string-utils for building the image URL:
+import { useState, useEffect } from "react";
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 import { getServerFile } from "@/utils/string-utils";
 
-function ProductItem({ name, index, onRemove, isOutsourced }) {
+// Product Picture File Upload Component
+function ProductPictureUpload({ productIndex, name, companyId }) {
+  const { watch, setValue, getValues } = useFormContext();
+  const [isLoading, setIsLoading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+
+  // Get the current pictures array for this product
+  const pictures = watch(`${name}.${productIndex}.pictures`) || [];
+
+  const handleAddFiles = async (e) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    if (!selectedFiles.length) return;
+    
+    setIsLoading(true);
+    setUploadError(null);
+    
+    // Create temporary preview objects
+    const tempFiles = selectedFiles.map(file => {
+      const previewUrl = URL.createObjectURL(file);
+      return {
+        id: uuidv4(), // Temporary ID
+        fileName: file.name,
+        filePath: null,
+        contentType: file.type,
+        fileSize: file.size,
+        uploadPending: true,
+        previewUrl,
+        description: ''
+      };
+    });
+    
+    // Add temporary files to the form
+    const updatedPictures = [...pictures, ...tempFiles];
+    setValue(`${name}.${productIndex}.pictures`, updatedPictures);
+    
+    try {
+      // Create FormData
+      const formData = new FormData();
+      
+      // Add files to formData
+      for (let i = 0; i < selectedFiles.length; i += 1) {
+        formData.append('files', selectedFiles[i]);
+      }
+      
+      // Add fileServiceType and companyId
+      formData.append('fileServiceType', 'PRODUCT_PICTURE');
+      formData.append('companyId', companyId);
+      
+      // Send request to upload files
+      const response = await axios.post(`/file`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      if (response.data && response.data.status === 'SUCCESS' && response.data.data) {
+        // Get uploaded files from response
+        const uploadedFiles = Array.isArray(response.data.data) 
+          ? response.data.data 
+          : [response.data.data];
+        
+        // Update the form with the server response
+        const currentPictures = getValues(`${name}.${productIndex}.pictures`);
+        
+        const updatedPictures = currentPictures.map(picture => {
+          // If this is a temp file that was just uploaded, find its permanent data
+          if (picture.uploadPending) {
+            const uploadedFile = uploadedFiles.shift(); // Take first file from uploaded files
+            if (uploadedFile) {
+              return {
+                ...uploadedFile,
+                description: picture.description,
+                previewUrl: null,
+                uploadPending: false
+              };
+            }
+          }
+          return picture;
+        });
+        
+        setValue(`${name}.${productIndex}.pictures`, updatedPictures);
+        setUploadError(null);
+      }
+    } catch (error) {
+      console.error('Error uploading files:', error);
+      setUploadError('خطا در آپلود فایل‌ها. لطفا دوباره تلاش کنید.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRemovePicture = async (pictureIndex) => {
+    const newPictures = [...pictures];
+    const removedPicture = newPictures[pictureIndex];
+    
+    newPictures.splice(pictureIndex, 1);
+    setValue(`${name}.${productIndex}.pictures`, newPictures);
+    
+    // If the picture has a blob URL, revoke it to free memory
+    if (removedPicture.previewUrl && removedPicture.previewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(removedPicture.previewUrl);
+    }
+    
+    // If the file has an ID from the server, delete it there too
+    if (removedPicture.id && !removedPicture.uploadPending) {
+      try {
+        await axios.delete(`/${companyId}/gallery/${removedPicture.id}`);
+      } catch (error) {
+        console.error('Error deleting file:', error);
+      }
+    }
+  };
+
+  const handleUpdateDescription = (pictureIndex, newDescription) => {
+    const updatedPictures = [...pictures];
+    
+    if (updatedPictures[pictureIndex]) {
+      updatedPictures[pictureIndex] = {
+        ...updatedPictures[pictureIndex],
+        description: newDescription
+      };
+      
+      setValue(`${name}.${productIndex}.pictures`, updatedPictures);
+      
+      // If the file has an ID from the server, update metadata there too
+      const picture = updatedPictures[pictureIndex];
+      if (picture.id && !picture.uploadPending) {
+        try {
+          axios.patch(`/${companyId}/gallery/${picture.id}/metadata`, {
+            metadata: { description: newDescription }
+          }).catch(error => {
+            console.error('Error updating file metadata:', error);
+          });
+        } catch (error) {
+          console.error('Error updating file metadata:', error);
+        }
+      }
+    }
+  };
+
+  // Clean up URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      pictures.forEach(picture => {
+        if (picture.previewUrl && picture.previewUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(picture.previewUrl);
+        }
+      });
+    };
+  }, [pictures]);
+
+  return (
+    <Paper className="p-16 mb-16">
+      <Box className="flex justify-between items-center mb-16">
+        <Typography variant="subtitle1" className="font-medium">
+          تصاویر محصول
+        </Typography>
+        
+        <Button
+          variant="contained"
+          color="secondary"
+          disabled={isLoading}
+          startIcon={<FuseSvgIcon>heroicons-outline:upload</FuseSvgIcon>}
+          component="label"
+        >
+          آپلود تصویر
+          <input
+            type="file"
+            multiple
+            hidden
+            accept="image/*"
+            onChange={handleAddFiles}
+            disabled={isLoading}
+            onClick={(e) => {
+              e.target.value = null;
+            }}
+          />
+        </Button>
+      </Box>
+      
+      {uploadError && (
+        <Box className="mb-16 p-12 bg-red-50 text-red-800 rounded">
+          {uploadError}
+        </Box>
+      )}
+      
+      {isLoading && (
+        <Box className="flex items-center mb-16">
+          <CircularProgress size={24} className="mr-8" />
+          <Typography>در حال آپلود تصاویر...</Typography>
+        </Box>
+      )}
+      
+      {pictures.length === 0 ? (
+        <Box className="p-24 text-center border-2 border-dashed rounded-md">
+          <FuseSvgIcon className="text-gray-300 mb-8" size={48}>
+            heroicons-outline:photograph
+          </FuseSvgIcon>
+          <Typography className="text-gray-500">
+            هیچ تصویری برای این محصول آپلود نشده است.
+          </Typography>
+        </Box>
+      ) : (
+        <Grid container spacing={2}>
+          {pictures.map((picture, index) => {
+            const url = picture.filePath 
+              ? getServerFile(picture.filePath) 
+              : picture.previewUrl;
+              
+            return (
+              <Grid item xs={12} sm={6} md={4} key={picture.id || index}>
+                <Box className="border rounded p-8 h-full flex flex-col">
+                  <Box className="relative mb-8 flex-1">
+                    <img
+                      src={url}
+                      alt={picture.description || picture.fileName}
+                      className="w-full h-128 object-cover rounded"
+                    />
+                    {picture.uploadPending && (
+                      <Box 
+                        className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center"
+                      >
+                        <CircularProgress size={40} />
+                      </Box>
+                    )}
+                  </Box>
+                  
+                  <TextField
+                    fullWidth
+                    label="توضیحات تصویر"
+                    value={picture.description || ''}
+                    onChange={(e) => handleUpdateDescription(index, e.target.value)}
+                    variant="outlined"
+                    size="small"
+                    className="mb-8"
+                  />
+                  
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => handleRemovePicture(index)}
+                    startIcon={<FuseSvgIcon>heroicons-outline:trash</FuseSvgIcon>}
+                    disabled={picture.uploadPending}
+                    size="small"
+                  >
+                    حذف تصویر
+                  </Button>
+                </Box>
+              </Grid>
+            );
+          })}
+        </Grid>
+      )}
+    </Paper>
+  );
+}
+
+function ProductItem({ name, index, onRemove, isOutsourced, companyId }) {
   const { control, watch } = useFormContext();
   // Watch the pictures subarray to update previews
   const pictures = watch(`${name}.${index}.pictures`) || [];
@@ -806,7 +1075,7 @@ function ProductItem({ name, index, onRemove, isOutsourced }) {
           />
         )}
       />
-      {/* If you have a field for `outsourced`, automatically set it or hide it if it's a separate array */}
+      {/* Hidden field for outsourced status */}
       {isOutsourced && (
         <Controller
           name={`${name}.${index}.outsourced`}
@@ -817,29 +1086,12 @@ function ProductItem({ name, index, onRemove, isOutsourced }) {
         />
       )}
 
-      {/* Picture Previews */}
-      <div className="flex flex-row gap-8 flex-wrap my-8">
-        {pictures.map((pic, picIndex) => {
-          const url = getServerFile(
-            pic?.filePath,
-            "/assets/images/placeholders/image_placeholder.png"
-          );
-          return (
-            <div
-              key={picIndex}
-              className="relative w-128 h-128 border rounded-md overflow-hidden"
-            >
-              <img
-                src={url}
-                alt="product pic"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          );
-        })}
-      </div>
-      {/* If you have a button to add new pictures, do it here */}
-      {/* or use a sub-field array. This code is just a placeholder. */}
+      {/* Product Pictures Upload */}
+      <ProductPictureUpload 
+        productIndex={index} 
+        name={name} 
+        companyId={companyId} 
+      />
 
       <Button
         variant="outlined"
@@ -856,6 +1108,19 @@ function ProductItem({ name, index, onRemove, isOutsourced }) {
 
 function ProductsAndServicesTab() {
   const { control } = useFormContext();
+
+  // Get companyId from form context (assuming it's available)
+  const companyId = useWatch({ name: 'id' });
+
+  // Watch the productAvailability field
+  const productAvailability = useWatch({
+    control,
+    name: 'productAvailability',
+    defaultValue: '0', // default to new approach
+  });
+
+  // Determine if we should use the old approach
+  const useOldApproach = productAvailability === '1';
 
   const {
     fields: normalFields,
@@ -876,67 +1141,113 @@ function ProductsAndServicesTab() {
   });
 
   return (
-    <div className="flex flex-col md:flex-row gap-16">
-      <div className="flex-1">
-        <h3 className="font-bold text-lg mb-16">محصولات عادی</h3>
-        {normalFields.map((field, index) => (
-          <ProductItem
-            key={field.id}
-            name="products"
-            index={index}
-            onRemove={normalRemove}
-            isOutsourced={false}
-          />
-        ))}
+    <>
+      {/* Switch for toggling between old and new approach */}
+      <Box className="mb-16">
+        <Controller
+          name="productAvailability"
+          control={control}
+          render={({ field }) => (
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={field.value === '1'}
+                  onChange={(e) => field.onChange(e.target.checked ? '1' : '0')}
+                  color="primary"
+                />
+              }
+              label="استفاده از روش قدیمی برای ثبت محصولات"
+            />
+          )}
+        />
+      </Box>
 
-        <Button
-          variant="contained"
-          onClick={() =>
-            normalAppend({
-              name: "",
-              description: "",
-              categoryType: "",
-              showProduct: false,
-              outsourced: false,
-              pictures: [],
-            })
-          }
-          startIcon={<FuseSvgIcon>heroicons-solid:plus-circle</FuseSvgIcon>}
-        >
-          ثبت محصول جدید
-        </Button>
-      </div>
+      {useOldApproach ? (
+        // Old approach - similar to productTitles
+        <Controller
+          name="productTitles"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              className="mt-8 mb-16"
+              id="productTitles"
+              label="عنوان محصولات (یا خدمات)"
+              type="text"
+              multiline
+              rows={3}
+              variant="outlined"
+              fullWidth
+            />
+          )}
+        />
+      ) : (
+        // New approach - with separate product sections
+        <div className="flex flex-col md:flex-row gap-16">
+          <div className="flex-1">
+            <h3 className="font-bold text-lg mb-16">محصولات عادی</h3>
+            {normalFields.map((field, index) => (
+              <ProductItem
+                key={field.id}
+                name="products"
+                index={index}
+                onRemove={normalRemove}
+                isOutsourced={false}
+                companyId={companyId}
+              />
+            ))}
 
-      <div className="flex-1">
-        <h3 className="font-bold text-lg mb-16">محصولات برون‌سپاری شده</h3>
-        {outsourcedFields.map((field, index) => (
-          <ProductItem
-            key={field.id}
-            name="outSourcedProducts"
-            index={index}
-            onRemove={outsourcedRemove}
-            isOutsourced
-          />
-        ))}
+            <Button
+              variant="contained"
+              onClick={() =>
+                normalAppend({
+                  name: "",
+                  description: "",
+                  categoryType: "",
+                  showProduct: false,
+                  outsourced: false,
+                  pictures: [],
+                })
+              }
+              startIcon={<FuseSvgIcon>heroicons-solid:plus-circle</FuseSvgIcon>}
+            >
+              ثبت محصول جدید
+            </Button>
+          </div>
 
-        <Button
-          variant="contained"
-          onClick={() =>
-            outsourcedAppend({
-              name: "",
-              description: "",
-              categoryType: "",
-              showProduct: false,
-              outsourced: true,
-              pictures: [],
-            })
-          }
-          startIcon={<FuseSvgIcon>heroicons-solid:plus-circle</FuseSvgIcon>}
-        >
-          ثبت محصول برون‌سپاری شده جدید
-        </Button>
-      </div>
-    </div>
+          <div className="flex-1">
+            <h3 className="font-bold text-lg mb-16">محصولات برون‌سپاری شده</h3>
+            {outsourcedFields.map((field, index) => (
+              <ProductItem
+                key={field.id}
+                name="outSourcedProducts"
+                index={index}
+                onRemove={outsourcedRemove}
+                isOutsourced
+                companyId={companyId}
+              />
+            ))}
+
+            <Button
+              variant="contained"
+              onClick={() =>
+                outsourcedAppend({
+                  name: "",
+                  description: "",
+                  categoryType: "",
+                  showProduct: false,
+                  outsourced: true,
+                  pictures: [],
+                })
+              }
+              startIcon={<FuseSvgIcon>heroicons-solid:plus-circle</FuseSvgIcon>}
+            >
+              ثبت محصول برون‌سپاری شده جدید
+            </Button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

@@ -8,17 +8,14 @@ function MapTab({ tabValue, myIndex = 7 }) {
   const methods = useFormContext();
   const { control, setValue, watch } = methods;
 
-  // Watch relevant form fields
   const latitude = watch("latitude");
   const longitude = watch("longitude");
   const commonName = watch("commonName");
   const fullAddress = watch("fullAddress");
 
-  // Prepare initialPosition for the map if coordinates exist
   const initialPosition = latitude && longitude ? [parseFloat(latitude), parseFloat(longitude)] : null;
 
   useEffect(() => {
-    // Invalidate map size when tab becomes visible
     if (tabValue === myIndex && mapRef.current && mapRef.current.invalidateSize) {
       setTimeout(() => {
         if (mapRef.current && mapRef.current.invalidateSize) {
@@ -28,10 +25,8 @@ function MapTab({ tabValue, myIndex = 7 }) {
     }
   }, [tabValue, myIndex]);
 
-  // Handle location selection from the map
   const handleLocationSelect = (locationData) => {
     if (locationData) {
-      // Always update latitude and longitude if they are valid
       if (locationData.latitude !== undefined && locationData.latitude !== null) {
         setValue("latitude", locationData.latitude);
       }
@@ -40,35 +35,27 @@ function MapTab({ tabValue, myIndex = 7 }) {
         setValue("longitude", locationData.longitude);
       }
       
-      // Always update commonName and fullAddress fields, including clearing them
-      // This is important so direct clicks on the map clear these fields
       setValue("commonName", locationData.commonName || "");
       setValue("fullAddress", locationData.fullAddress || "");
     }
   };
 
-  // Handle manual coordinate input
   const handleManualCoordinates = (e) => {
     e.preventDefault();
     const manualLat = parseFloat(watch("manualLatitude"));
     const manualLng = parseFloat(watch("manualLongitude"));
     
     if (!isNaN(manualLat) && !isNaN(manualLng)) {
-      // Update form fields
       setValue("latitude", manualLat);
       setValue("longitude", manualLng);
       
-      // Clear the commonName and fullAddress since this is manual input
       setValue("commonName", "");
       setValue("fullAddress", "");
       
-      // Update map position - use the appropriate method for the map ref
       if (mapRef.current) {
-        // Check if it's a Leaflet map instance or MapContainer ref
         if (mapRef.current.setView) {
           mapRef.current.setView([manualLat, manualLng], 13);
         } else if (mapRef.current._leaflet_id) {
-          // It's a MapContainer ref
           const leafletMap = mapRef.current;
           leafletMap.setView([manualLat, manualLng], 13);
         }

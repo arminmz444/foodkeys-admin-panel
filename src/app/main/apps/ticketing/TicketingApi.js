@@ -1,89 +1,137 @@
-import { apiService as api } from 'app/store/apiService';
+import { apiService as api } from "app/store/apiService";
 
 export const addTagTypes = [
-	'ticketing_contacts',
-	'ticketing_contact',
-	'ticketing_chats',
-	'ticketing_chat',
-	'ticketing_user_profile'
+  "tickets",
+  "ticket",
+  "ticket_messages",
+  "ticket_message",
+  "ticket_categories",
+  "ticket_departments",
+  "ticket_priorities",
+  "user_profile",
 ];
-const TicketingApi = api
-	.enhanceEndpoints({
-		addTagTypes
-	})
-	.injectEndpoints({
-		endpoints: (build) => ({
-			getTicketingContacts: build.query({
-				query: () => ({ url: `/mock-api/ticketing/contacts` }),
-				providesTags: ['ticketing_contacts']
-			}),
-			getTicketingContact: build.query({
-				query: (queryArg) => ({ url: `/mock-api/ticketing/contacts/${queryArg}` }),
-				providesTags: ['ticketing_contact']
-			}),
-			updateTicketingContact: build.mutation({
-				query: (queryArg) => ({
-					url: `/mock-api/ticketing/contacts/${queryArg.id}`,
-					method: 'PUT',
-					data: queryArg
-				}),
-				invalidatesTags: ['ticketing_contact']
-			}),
-			deleteTicketingContact: build.mutation({
-				query: (queryArg) => ({
-					url: `/mock-api/ticketing/contacts/${queryArg}`,
-					method: 'DELETE'
-				}),
-				invalidatesTags: ['ticketing_contact']
-			}),
-			getTicketingChats: build.query({
-				query: () => ({ url: `/mock-api/ticketing/chats` }),
-				providesTags: ['ticketing_chats']
-			}),
-			getTicketingChat: build.query({
-				query: (queryArg) => ({ url: `/mock-api/ticketing/chats/${queryArg}` }),
-				providesTags: ['ticketing_chat']
-			}),
-			deleteTicketingChat: build.mutation({
-				query: (queryArg) => ({
-					url: `/mock-api/ticketing/chats/${queryArg}`,
-					method: 'DELETE'
-				}),
-				invalidatesTags: ['ticketing_chats']
-			}),
-			sendTicketingMessage: build.mutation({
-				query: (queryArg) => ({
-					url: `/mock-api/ticketing/chats/${queryArg.contactId}`,
-					method: 'POST',
-					data: queryArg.message
-				}),
-				invalidatesTags: ['ticketing_chat', 'ticketing_chats']
-			}),
-			getTicketingUserProfile: build.query({
-				query: () => ({ url: `/mock-api/ticketing/profile` }),
-				providesTags: ['ticketing_user_profile']
-			}),
-			updateTicketingUserProfile: build.mutation({
-				query: (queryArg) => ({
-					url: `/mock-api/ticketing/profile`,
-					method: 'PUT',
-					data: queryArg
-				}),
-				invalidatesTags: ['ticketing_user_profile']
-			})
-		}),
-		overrideExisting: false
-	});
-export default TicketingApi;
+
+const TicketsApi = api
+  .enhanceEndpoints({
+    addTagTypes,
+  })
+  .injectEndpoints({
+    endpoints: (build) => ({
+      getTickets: build.query({
+        query: (params) => ({
+          url: `/ticket/`,
+          params,
+        }),
+        transformResponse: (response) => {
+          return response?.data;
+        },
+        providesTags: ["tickets"],
+      }),
+      getTicketById: build.query({
+        query: (ticketId) => ({
+          url: `/ticket/${ticketId}/`,
+        }),
+        transformResponse: (response) => {
+          return response?.data;
+        },
+        providesTags: (result, error, id) => [{ type: "ticket", id }],
+      }),
+      createTicket: build.mutation({
+        query: (ticket) => ({
+          url: `/ticket/`,
+          method: "POST",
+          data: ticket,
+        }),
+        invalidatesTags: ["tickets"],
+      }),
+      updateTicketStatus: build.mutation({
+        query: ({ ticketId, status }) => ({
+          url: `/ticket/${ticketId}/status`,
+          method: "PUT",
+          data: { status },
+        }),
+        invalidatesTags: (result, error, { ticketId }) => [
+          { type: "ticket", id: ticketId },
+          "tickets",
+        ],
+      }),
+      deleteTicket: build.mutation({
+        query: (ticketId) => ({
+          url: `/ticket/${ticketId}`,
+          method: "DELETE",
+        }),
+        invalidatesTags: ["tickets"],
+      }),
+      getTicketMessages: build.query({
+        query: ({ ticketId, ...params }) => ({
+          url: `/ticket/${ticketId}/messages`,
+          params,
+        }),
+        providesTags: (result, error, { ticketId }) => [
+          { type: "ticket_messages", id: ticketId },
+        ],
+      }),
+      sendTicketMessage: build.mutation({
+        query: ({ ticketId, message }) => ({
+          url: `/ticket/${ticketId}/messages`,
+          method: "POST",
+          data: message,
+        }),
+        invalidatesTags: (result, error, { ticketId }) => [
+          { type: "ticket_messages", id: ticketId },
+          { type: "ticket", id: ticketId },
+          "tickets",
+        ],
+      }),
+      uploadMessageAttachment: build.mutation({
+        query: ({ ticketId, messageId, file }) => {
+          const formData = new FormData();
+          formData.append("file", file);
+
+          return {
+            url: `/ticket/${ticketId}/messages/${messageId}/attachments`,
+            method: "POST",
+            data: formData,
+            formData: true,
+          };
+        },
+        invalidatesTags: (result, error, { ticketId, messageId }) => [
+          { type: "ticket_message", id: messageId },
+          { type: "ticket_messages", id: ticketId },
+        ],
+      }),
+      getTicketCategories: build.query({
+        query: () => ({ url: `/ticket/categories` }),
+        providesTags: ["ticket_categories"],
+      }),
+      getTicketDepartments: build.query({
+        query: () => ({ url: `/ticket/departments` }),
+        providesTags: ["ticket_departments"],
+      }),
+      getTicketPriorities: build.query({
+        query: () => ({ url: `/ticket/priorities` }),
+        providesTags: ["ticket_priorities"],
+      }),
+      getUserProfile: build.query({
+        query: () => ({ url: `/user/profile` }),
+        providesTags: ["user_profile"],
+      }),
+    }),
+    overrideExisting: false,
+  });
+
+export default TicketsApi;
 export const {
-	useGetTicketingContactsQuery,
-	useGetTicketingContactQuery,
-	useUpdateTicketingContactMutation,
-	useDeleteTicketingContactMutation,
-	useGetTicketingChatsQuery,
-	useGetTicketingChatQuery,
-	useDeleteTicketingChatMutation,
-	useGetTicketingUserProfileQuery,
-	useUpdateTicketingUserProfileMutation,
-	useSendTicketingMessageMutation
-} = TicketingApi;
+  useGetTicketsQuery,
+  useGetTicketByIdQuery,
+  useCreateTicketMutation,
+  useUpdateTicketStatusMutation,
+  useDeleteTicketMutation,
+  useGetTicketMessagesQuery,
+  useSendTicketMessageMutation,
+  useUploadMessageAttachmentMutation,
+  useGetTicketCategoriesQuery,
+  useGetTicketDepartmentsQuery,
+  useGetTicketPrioritiesQuery,
+  useGetUserProfileQuery,
+} = TicketsApi;
