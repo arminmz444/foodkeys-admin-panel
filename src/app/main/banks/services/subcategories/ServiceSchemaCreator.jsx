@@ -370,8 +370,8 @@ function ServiceSchemaCreator() {
   //   subcategoryData?.serviceSchemaId, 
   //   { skip: !subcategoryData?.serviceSchemaId }
   // );
-  const existingSchema = {}
-  
+  const existingSchema = null; // or undefined
+
   // Mutations for creating/updating schema
   // const [createServiceSchema, { isLoading: isCreating }] = useCreateServiceSchemaMutation();
   // const [updateServiceSchema, { isLoading: isUpdating }] = useUpdateServiceSchemaMutation();
@@ -395,18 +395,19 @@ function ServiceSchemaCreator() {
   // Initialize form with subcategory data
   useEffect(() => {
     if (subcategoryData) {
-      const defaultName = `${subcategoryData.subCategoryName}Schema`;
+      const defaultName = `${subcategoryData.nameEn} Schema`;
       setSchemaName(defaultName);
-      setSchemaDisplayName(subcategoryData.subCategoryDisplayName || '');
+      setSchemaDisplayName("اسکیمای خدمت " + subcategoryData.name || '');
     }
   }, [subcategoryData]);
   
   // Load existing schema data if available
   useEffect(() => {
-    if (existingSchema) {
+    if (!existingSchema) return;   // bail out early
+
       try {
-        setSchemaName(existingSchema.name || '');
-        setSchemaDisplayName(existingSchema.displayName || '');
+        setSchemaName(existingSchema.name);
+        setSchemaDisplayName(existingSchema.displayName);
         
         if (existingSchema.elasticFields && Array.isArray(existingSchema.elasticFields)) {
           setElasticFields(existingSchema.elasticFields);
@@ -426,7 +427,6 @@ function ServiceSchemaCreator() {
         console.error('Error parsing existing schema:', error);
         showNotification('خطا در بارگذاری اسکیمای موجود', 'error');
       }
-    }
   }, [existingSchema]);
   
   // Handle form field updates
@@ -454,7 +454,7 @@ function ServiceSchemaCreator() {
   
   // Handle form submission
   const handleSubmit = async () => {
-    if (!schemaName.trim()) {
+    if (!schemaName || !schemaName.trim()) {
       showNotification('لطفاً نام اسکیما را وارد کنید', 'error');
       return;
     }
@@ -468,7 +468,7 @@ function ServiceSchemaCreator() {
       // Parse the schema from string to object
       const schemaObject = schemaFormat === 'json' 
         ? JSON.parse(generatedSchema)
-        : { type: 'object', properties: {} }; // Fallback for Zod schema
+        : generatedSchema; // Fallback for Zod schema
       
       // Prepare the schema data
       const schemaData = {
@@ -491,6 +491,7 @@ function ServiceSchemaCreator() {
         showNotification('اسکیمای سرویس با موفقیت بروزرسانی شد', 'success');
       } else {
         // Create new schema
+        console.log(JSON.stringify(schemaData))
         result = undefined //await createServiceSchema(schemaData).unwrap();
         showNotification('اسکیمای سرویس با موفقیت ذخیره شد', 'success');
       }
@@ -623,10 +624,10 @@ function ServiceSchemaCreator() {
           </IconButton>
           <div>
             <Typography variant="h4" className="font-bold">
-              تنظیم اسکیمای سرویس
+              تنظیم اسکیمای خدمت
             </Typography>
             <Typography variant="subtitle1" color="textSecondary">
-              {subcategoryData?.subCategoryDisplayName}
+              {subcategoryData?.name}
             </Typography>
           </div>
         </div>
@@ -757,7 +758,7 @@ function ServiceSchemaCreator() {
             <FormPreview 
               fields={formFields} 
               formTitle={schemaDisplayName || schemaName} 
-              formDescription={`این فرم برای زیرشاخه ${subcategoryData?.subCategoryDisplayName} طراحی شده است.`}
+              formDescription={`این فرم برای زیرشاخه ${subcategoryData?.name} طراحی شده است.`}
             />
           ) : (
             <Box sx={{ p: 3, bgcolor: '#f5f5f5', borderRadius: 1 }}>
@@ -786,7 +787,7 @@ function ServiceSchemaCreator() {
                   fontSize: '0.875rem'
                 }}
               >
-                <pre>{generatedSchema}</pre>
+                <pre dir='ltr'>{generatedSchema}</pre>
               </Paper>
               
               <Box sx={{ mt: 2, textAlign: 'right' }}>

@@ -1,5 +1,5 @@
 // // src/app/shared-components/form-builder/FormPreview.jsx
-// import { useState, useEffect } from 'react';
+// import { useState } from 'react';
 // import { 
 //   Paper, 
 //   Typography, 
@@ -24,42 +24,24 @@
 // } from '@mui/material';
 // import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 // import { motion } from 'framer-motion';
-// import { z } from 'zod';
 // import { useForm, Controller } from 'react-hook-form';
-// import { zodResolver } from '@hookform/resolvers/zod';
 
 // function FormPreview({ 
 //   fields = [], 
 //   formTitle = 'فرم پیش‌نمایش', 
-//   formDescription = '',
-//   schema,
-//   schemaFormat
+//   formDescription = ''
 // }) {
 //   const [submittedData, setSubmittedData] = useState(null);
 //   const [isSubmitting, setIsSubmitting] = useState(false);
 //   const [showSuccess, setShowSuccess] = useState(false);
-//   const [zodSchema, setZodSchema] = useState(null);
   
-//   // Create Zod schema dynamically from fields
-//   useEffect(() => {
-//     if (!fields.length) return;
-    
-//     try {
-//       const schemaObj = buildZodSchema(fields);
-//       setZodSchema(schemaObj);
-//     } catch (error) {
-//       console.error('Error creating Zod schema:', error);
-//     }
-//   }, [fields]);
-  
-//   // Create react-hook-form with Zod validation
+//   // Create react-hook-form without Zod
 //   const { 
 //     control, 
 //     handleSubmit, 
 //     formState: { errors },
 //     reset
 //   } = useForm({
-//     resolver: zodSchema ? zodResolver(zodSchema) : undefined,
 //     mode: 'onBlur'
 //   });
   
@@ -86,134 +68,61 @@
 //     setSubmittedData(null);
 //   };
   
-//   // Build Zod schema from fields
-//   const buildZodSchema = (fields) => {
-//     const shape = {};
+//   // Create validation rules from field configuration
+//   const getValidationRules = (field) => {
+//     const rules = {};
     
-//     fields.forEach(field => {
-//       let fieldSchema;
-      
-//       switch (field.type) {
-//         case 'text':
-//         case 'password':
-//         case 'textarea':
-//         case 'email':
-//         case 'url':
-//         case 'tel':
-//           fieldSchema = z.string({
-//             invalid_type_error: 'فرمت داده ورودی اشتباه است',
-//             required_error: field.required ? 'این فیلد الزامی است' : undefined
-//           });
-          
-//           if (field.required) {
-//             fieldSchema = fieldSchema.min(1, { message: 'این فیلد الزامی است' });
-//           }
-          
-//           if (field.minLength) {
-//             fieldSchema = fieldSchema.min(Number(field.minLength), { 
-//               message: `حداقل ${field.minLength} کاراکتر وارد کنید` 
-//             });
-//           }
-          
-//           if (field.maxLength) {
-//             fieldSchema = fieldSchema.max(Number(field.maxLength), { 
-//               message: `حداکثر ${field.maxLength} کاراکتر مجاز است` 
-//             });
-//           }
-          
-//           if (field.type === 'email') {
-//             fieldSchema = fieldSchema.email({ message: 'ایمیل معتبر وارد کنید' });
-//           }
-          
-//           if (field.type === 'url') {
-//             fieldSchema = fieldSchema.url({ message: 'آدرس اینترنتی معتبر وارد کنید' });
-//           }
-          
-//           if (field.pattern) {
-//             fieldSchema = fieldSchema.regex(new RegExp(field.pattern), { 
-//               message: 'فرمت وارد شده صحیح نیست' 
-//             });
-//           }
-//           break;
-          
-//         case 'number':
-//         case 'range':
-//           fieldSchema = z.number({
-//             invalid_type_error: 'فرمت داده ورودی اشتباه است',
-//             required_error: field.required ? 'این فیلد الزامی است' : undefined
-//           });
-          
-//           if (field.min !== undefined && field.min !== '') {
-//             fieldSchema = fieldSchema.min(Number(field.min), { 
-//               message: `حداقل مقدار ${field.min} است` 
-//             });
-//           }
-          
-//           if (field.max !== undefined && field.max !== '') {
-//             fieldSchema = fieldSchema.max(Number(field.max), { 
-//               message: `حداکثر مقدار ${field.max} است` 
-//             });
-//           }
-//           break;
-          
-//         case 'checkbox':
-//           fieldSchema = z.boolean();
-//           break;
-          
-//         case 'select':
-//         case 'radio':
-//           if (field.options && field.options.length > 0) {
-//             fieldSchema = z.enum(field.options, {
-//               required_error: field.required ? 'این فیلد الزامی است' : undefined,
-//               invalid_type_error: 'فرمت داده ورودی اشتباه است',
-//               message: 'مقدار انتخاب شده معتبر نیست'
-//             });
-//           } else {
-//             fieldSchema = z.string();
-//           }
-//           break;
-          
-//         case 'multiselect':
-//           if (field.options && field.options.length > 0) {
-//             fieldSchema = z.array(z.string()).min(
-//               field.required ? 1 : 0, 
-//               field.required ? { message: 'حداقل یک گزینه انتخاب کنید' } : undefined
-//             );
-//           } else {
-//             fieldSchema = z.array(z.string());
-//           }
-//           break;
-          
-//         case 'date':
-//         case 'datetime-local':
-//         case 'time':
-//           fieldSchema = z.string();
-//           if (field.required) {
-//             fieldSchema = fieldSchema.min(1, { message: 'این فیلد الزامی است' });
-//           }
-//           break;
-          
-//         default:
-//           fieldSchema = z.string();
-//       }
-      
-//       // Add uniforms metadata
-//       fieldSchema = fieldSchema.uniforms({
-//         displayName: field.label,
-//         label: field.label,
-//         placeholder: field.placeholder,
-//         description: field.description
-//       });
-      
-//       // Make optional if not required
-//       if (!field.required && field.type !== 'checkbox') {
-//         fieldSchema = fieldSchema.optional();
-//       }
-      
-//       shape[field.name] = fieldSchema;
-//     });
+//     if (field.required) {
+//       rules.required = "این فیلد الزامی است";
+//     }
     
-//     return z.object(shape);
+//     if (field.type === 'email') {
+//       rules.pattern = {
+//         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+//         message: "ایمیل معتبر وارد کنید"
+//       };
+//     }
+    
+//     if (field.minLength && ['text', 'password', 'textarea', 'email', 'url', 'tel'].includes(field.type)) {
+//       rules.minLength = {
+//         value: Number(field.minLength),
+//         message: `حداقل ${field.minLength} کاراکتر وارد کنید`
+//       };
+//     }
+    
+//     if (field.maxLength && ['text', 'password', 'textarea', 'email', 'url', 'tel'].includes(field.type)) {
+//       rules.maxLength = {
+//         value: Number(field.maxLength),
+//         message: `حداکثر ${field.maxLength} کاراکتر مجاز است`
+//       };
+//     }
+    
+//     if (field.min && ['number', 'range'].includes(field.type)) {
+//       rules.min = {
+//         value: Number(field.min),
+//         message: `حداقل مقدار ${field.min} است`
+//       };
+//     }
+    
+//     if (field.max && ['number', 'range'].includes(field.type)) {
+//       rules.max = {
+//         value: Number(field.max),
+//         message: `حداکثر مقدار ${field.max} است`
+//       };
+//     }
+    
+//     if (field.pattern) {
+//       try {
+//         rules.pattern = {
+//           value: new RegExp(field.pattern),
+//           message: "فرمت وارد شده صحیح نیست"
+//         };
+//       } catch (error) {
+//         console.error('Invalid regex pattern:', error);
+//       }
+//     }
+    
+//     return rules;
 //   };
   
 //   // Render field based on type
@@ -221,12 +130,14 @@
 //     const fieldProps = {
 //       fullWidth: true,
 //       margin: "normal",
-//       label: field.label,
-//       placeholder: field.placeholder,
-//       helperText: errors[field.name]?.message || field.description,
+//       label: field.label || field.name,
+//       placeholder: field.placeholder || '',
+//       helperText: errors[field.name]?.message || field.description || '',
 //       error: !!errors[field.name],
 //       disabled: isSubmitting
 //     };
+    
+//     const validationRules = getValidationRules(field);
     
 //     switch (field.type) {
 //       case 'text':
@@ -239,7 +150,8 @@
 //             key={field.id}
 //             name={field.name}
 //             control={control}
-//             defaultValue=""
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
 //             render={({ field: { onChange, onBlur, value, ref } }) => (
 //               <TextField
 //                 {...fieldProps}
@@ -259,7 +171,8 @@
 //             key={field.id}
 //             name={field.name}
 //             control={control}
-//             defaultValue=""
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
 //             render={({ field: { onChange, onBlur, value, ref } }) => (
 //               <TextField
 //                 {...fieldProps}
@@ -281,7 +194,8 @@
 //             key={field.id}
 //             name={field.name}
 //             control={control}
-//             defaultValue=""
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
 //             render={({ field: { onChange, onBlur, value, ref } }) => (
 //               <TextField
 //                 {...fieldProps}
@@ -297,7 +211,7 @@
 //                   inputProps: {
 //                     min: field.min,
 //                     max: field.max,
-//                     step: field.step
+//                     step: field.step || 1
 //                   }
 //                 }}
 //               />
@@ -311,7 +225,8 @@
 //             key={field.id}
 //             name={field.name}
 //             control={control}
-//             defaultValue=""
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
 //             render={({ field: { onChange, onBlur, value, ref } }) => (
 //               <FormControl 
 //                 fullWidth 
@@ -319,22 +234,22 @@
 //                 error={!!errors[field.name]}
 //                 disabled={isSubmitting}
 //               >
-//                 <InputLabel>{field.label}</InputLabel>
+//                 <InputLabel>{field.label || field.name}</InputLabel>
 //                 <Select
 //                   onChange={onChange}
 //                   onBlur={onBlur}
 //                   value={value}
 //                   inputRef={ref}
-//                   label={field.label}
+//                   label={field.label || field.name}
 //                 >
-//                   {field.options.map((option) => (
+//                   {(field.options || []).map((option) => (
 //                     <MenuItem key={option} value={option}>
 //                       {option}
 //                     </MenuItem>
 //                   ))}
 //                 </Select>
 //                 {(errors[field.name]?.message || field.description) && (
-//                   <FormHelperText>
+//                   <FormHelperText error={!!errors[field.name]}>
 //                     {errors[field.name]?.message || field.description}
 //                   </FormHelperText>
 //                 )}
@@ -349,7 +264,8 @@
 //             key={field.id}
 //             name={field.name}
 //             control={control}
-//             defaultValue={[]}
+//             defaultValue={field.defaultValue || []}
+//             rules={validationRules}
 //             render={({ field: { onChange, onBlur, value = [], ref } }) => (
 //               <FormControl 
 //                 fullWidth 
@@ -357,23 +273,23 @@
 //                 error={!!errors[field.name]}
 //                 disabled={isSubmitting}
 //               >
-//                 <InputLabel>{field.label}</InputLabel>
+//                 <InputLabel>{field.label || field.name}</InputLabel>
 //                 <Select
 //                   multiple
 //                   onChange={onChange}
 //                   onBlur={onBlur}
 //                   value={value}
 //                   inputRef={ref}
-//                   label={field.label}
+//                   label={field.label || field.name}
 //                 >
-//                   {field.options.map((option) => (
+//                   {(field.options || []).map((option) => (
 //                     <MenuItem key={option} value={option}>
 //                       {option}
 //                     </MenuItem>
 //                   ))}
 //                 </Select>
 //                 {(errors[field.name]?.message || field.description) && (
-//                   <FormHelperText>
+//                   <FormHelperText error={!!errors[field.name]}>
 //                     {errors[field.name]?.message || field.description}
 //                   </FormHelperText>
 //                 )}
@@ -388,20 +304,32 @@
 //             key={field.id}
 //             name={field.name}
 //             control={control}
-//             defaultValue={false}
+//             defaultValue={field.defaultValue || false}
+//             rules={validationRules}
 //             render={({ field: { onChange, onBlur, value, ref } }) => (
-//               <FormControlLabel
-//                 control={
-//                   <Checkbox
-//                     checked={!!value}
-//                     onChange={onChange}
-//                     onBlur={onBlur}
-//                     inputRef={ref}
-//                     disabled={isSubmitting}
-//                   />
-//                 }
-//                 label={field.label}
-//               />
+//               <FormControl 
+//                 fullWidth 
+//                 margin="normal" 
+//                 error={!!errors[field.name]}
+//               >
+//                 <FormControlLabel
+//                   control={
+//                     <Checkbox
+//                       checked={!!value}
+//                       onChange={onChange}
+//                       onBlur={onBlur}
+//                       inputRef={ref}
+//                       disabled={isSubmitting}
+//                     />
+//                   }
+//                   label={field.label || field.name}
+//                 />
+//                 {errors[field.name]?.message && (
+//                   <FormHelperText error>
+//                     {errors[field.name].message}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
 //             )}
 //           />
 //         );
@@ -412,22 +340,24 @@
 //             key={field.id}
 //             name={field.name}
 //             control={control}
-//             defaultValue=""
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
 //             render={({ field: { onChange, onBlur, value, ref } }) => (
 //               <FormControl 
 //                 component="fieldset" 
 //                 margin="normal"
 //                 error={!!errors[field.name]}
 //                 disabled={isSubmitting}
+//                 fullWidth
 //               >
-//                 <FormLabel component="legend">{field.label}</FormLabel>
+//                 <FormLabel component="legend">{field.label || field.name}</FormLabel>
 //                 <RadioGroup
 //                   onChange={onChange}
 //                   onBlur={onBlur}
 //                   value={value}
 //                   ref={ref}
 //                 >
-//                   {field.options.map((option) => (
+//                   {(field.options || []).map((option) => (
 //                     <FormControlLabel
 //                       key={option}
 //                       value={option}
@@ -437,7 +367,7 @@
 //                   ))}
 //                 </RadioGroup>
 //                 {(errors[field.name]?.message || field.description) && (
-//                   <FormHelperText>
+//                   <FormHelperText error={!!errors[field.name]}>
 //                     {errors[field.name]?.message || field.description}
 //                   </FormHelperText>
 //                 )}
@@ -454,7 +384,8 @@
 //             key={field.id}
 //             name={field.name}
 //             control={control}
-//             defaultValue=""
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
 //             render={({ field: { onChange, onBlur, value, ref } }) => (
 //               <TextField
 //                 {...fieldProps}
@@ -597,8 +528,2027 @@
 
 // export default FormPreview;
 
+// import { useState, useEffect } from 'react';
+// import { 
+//   Paper, 
+//   Typography, 
+//   Box, 
+//   Button, 
+//   TextField, 
+//   FormControl, 
+//   InputLabel, 
+//   Select, 
+//   MenuItem, 
+//   FormControlLabel, 
+//   Checkbox, 
+//   FormHelperText,
+//   Radio,
+//   RadioGroup,
+//   FormLabel,
+//   Divider,
+//   Grid,
+//   CircularProgress,
+//   Collapse,
+//   Fade
+// } from '@mui/material';
+// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+// import { motion } from 'framer-motion';
+// import { useForm, Controller } from 'react-hook-form';
+
+// function FormPreview({ 
+//   fields = [], 
+//   formTitle = 'فرم پیش‌نمایش', 
+//   formDescription = '',
+//   initialData = {},
+//   onDataChange = () => {},
+//   submitButtonLabel = 'ارسال فرم',
+//   hideSubmitButton = false
+// }) {
+//   const [submittedData, setSubmittedData] = useState(null);
+//   const [isSubmitting, setIsSubmitting] = useState(false);
+//   const [showSuccess, setShowSuccess] = useState(false);
+  
+//   // Create react-hook-form without Zod
+//   const { 
+//     control, 
+//     handleSubmit, 
+//     formState: { errors },
+//     reset,
+//     watch
+//   } = useForm({
+//     mode: 'onBlur',
+//     defaultValues: initialData
+//   });
+  
+//   // Watch all fields to notify parent component of changes
+//   const formValues = watch();
+//   useEffect(() => {
+//     onDataChange(formValues);
+//   }, [formValues, onDataChange]);
+  
+//   // Reset form when initialData changes
+//   useEffect(() => {
+//     if (initialData && Object.keys(initialData).length > 0) {
+//       reset(initialData);
+//     }
+//   }, [initialData, reset]);
+  
+//   // Submit handler
+//   const onSubmit = async (data) => {
+//     setIsSubmitting(true);
+    
+//     // Simulate API call
+//     await new Promise(resolve => setTimeout(resolve, 1000));
+    
+//     setSubmittedData(data);
+//     setIsSubmitting(false);
+//     setShowSuccess(true);
+    
+//     // Notify parent component of submitted data
+//     onDataChange(data);
+    
+//     // Hide success message after 3 seconds
+//     setTimeout(() => {
+//       setShowSuccess(false);
+//     }, 3000);
+//   };
+  
+//   // Reset form
+//   const handleReset = () => {
+//     reset(initialData);
+//     setSubmittedData(null);
+//   };
+  
+//   // Create validation rules from field configuration
+//   const getValidationRules = (field) => {
+//     const rules = {};
+    
+//     if (field.required) {
+//       rules.required = "این فیلد الزامی است";
+//     }
+    
+//     if (field.type === 'email') {
+//       rules.pattern = {
+//         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+//         message: "ایمیل معتبر وارد کنید"
+//       };
+//     }
+    
+//     if (field.minLength && ['text', 'password', 'textarea', 'email', 'url', 'tel'].includes(field.type)) {
+//       rules.minLength = {
+//         value: Number(field.minLength),
+//         message: `حداقل ${field.minLength} کاراکتر وارد کنید`
+//       };
+//     }
+    
+//     if (field.maxLength && ['text', 'password', 'textarea', 'email', 'url', 'tel'].includes(field.type)) {
+//       rules.maxLength = {
+//         value: Number(field.maxLength),
+//         message: `حداکثر ${field.maxLength} کاراکتر مجاز است`
+//       };
+//     }
+    
+//     if (field.min && ['number', 'range'].includes(field.type)) {
+//       rules.min = {
+//         value: Number(field.min),
+//         message: `حداقل مقدار ${field.min} است`
+//       };
+//     }
+    
+//     if (field.max && ['number', 'range'].includes(field.type)) {
+//       rules.max = {
+//         value: Number(field.max),
+//         message: `حداکثر مقدار ${field.max} است`
+//       };
+//     }
+    
+//     if (field.pattern) {
+//       try {
+//         rules.pattern = {
+//           value: new RegExp(field.pattern),
+//           message: "فرمت وارد شده صحیح نیست"
+//         };
+//       } catch (error) {
+//         console.error('Invalid regex pattern:', error);
+//       }
+//     }
+    
+//     return rules;
+//   };
+  
+//   // Render field based on type
+//   const renderField = (field) => {
+//     const fieldProps = {
+//       fullWidth: true,
+//       margin: "normal",
+//       label: field.label || field.name,
+//       placeholder: field.placeholder || '',
+//       helperText: errors[field.name]?.message || field.description || '',
+//       error: !!errors[field.name],
+//       disabled: isSubmitting,
+//       size: "medium"
+//     };
+    
+//     const validationRules = getValidationRules(field);
+    
+//     switch (field.type) {
+//       case 'text':
+//       case 'password':
+//       case 'email':
+//       case 'url':
+//       case 'tel':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 type={field.type}
+//                 onChange={onChange}
+//                 onBlur={onBlur}
+//                 value={value || ""}
+//                 inputRef={ref}
+//               />
+//             )}
+//           />
+//         );
+        
+//       case 'textarea':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 multiline
+//                 rows={4}
+//                 onChange={onChange}
+//                 onBlur={onBlur}
+//                 value={value || ""}
+//                 inputRef={ref}
+//               />
+//             )}
+//           />
+//         );
+        
+//       case 'number':
+//       case 'range':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 type="number"
+//                 onChange={(e) => {
+//                   const val = e.target.value === '' ? '' : Number(e.target.value);
+//                   onChange(val);
+//                 }}
+//                 onBlur={onBlur}
+//                 value={value ?? ""}
+//                 inputRef={ref}
+//                 InputProps={{
+//                   inputProps: {
+//                     min: field.min,
+//                     max: field.max,
+//                     step: field.step || 1
+//                   }
+//                 }}
+//               />
+//             )}
+//           />
+//         );
+        
+//       case 'select':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <FormControl 
+//                 fullWidth 
+//                 margin="normal" 
+//                 error={!!errors[field.name]}
+//                 disabled={isSubmitting}
+//               >
+//                 <InputLabel>{field.label || field.name}</InputLabel>
+//                 <Select
+//                   onChange={onChange}
+//                   onBlur={onBlur}
+//                   value={value || ""}
+//                   inputRef={ref}
+//                   label={field.label || field.name}
+//                 >
+//                   {(field.options || []).map((option) => (
+//                     <MenuItem key={option} value={option}>
+//                       {option}
+//                     </MenuItem>
+//                   ))}
+//                 </Select>
+//                 {(errors[field.name]?.message || field.description) && (
+//                   <FormHelperText error={!!errors[field.name]}>
+//                     {errors[field.name]?.message || field.description}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'multiselect':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || []}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value = [], ref } }) => (
+//               <FormControl 
+//                 fullWidth 
+//                 margin="normal" 
+//                 error={!!errors[field.name]}
+//                 disabled={isSubmitting}
+//               >
+//                 <InputLabel>{field.label || field.name}</InputLabel>
+//                 <Select
+//                   multiple
+//                   onChange={onChange}
+//                   onBlur={onBlur}
+//                   value={value || []}
+//                   inputRef={ref}
+//                   label={field.label || field.name}
+//                 >
+//                   {(field.options || []).map((option) => (
+//                     <MenuItem key={option} value={option}>
+//                       {option}
+//                     </MenuItem>
+//                   ))}
+//                 </Select>
+//                 {(errors[field.name]?.message || field.description) && (
+//                   <FormHelperText error={!!errors[field.name]}>
+//                     {errors[field.name]?.message || field.description}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'checkbox':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || false}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <FormControl 
+//                 fullWidth 
+//                 margin="normal" 
+//                 error={!!errors[field.name]}
+//               >
+//                 <FormControlLabel
+//                   control={
+//                     <Checkbox
+//                       checked={!!value}
+//                       onChange={onChange}
+//                       onBlur={onBlur}
+//                       inputRef={ref}
+//                       disabled={isSubmitting}
+//                     />
+//                   }
+//                   label={field.label || field.name}
+//                 />
+//                 {errors[field.name]?.message && (
+//                   <FormHelperText error>
+//                     {errors[field.name].message}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'radio':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <FormControl 
+//                 component="fieldset" 
+//                 margin="normal"
+//                 error={!!errors[field.name]}
+//                 disabled={isSubmitting}
+//                 fullWidth
+//               >
+//                 <FormLabel component="legend">{field.label || field.name}</FormLabel>
+//                 <RadioGroup
+//                   onChange={onChange}
+//                   onBlur={onBlur}
+//                   value={value || ""}
+//                   ref={ref}
+//                 >
+//                   {(field.options || []).map((option) => (
+//                     <FormControlLabel
+//                       key={option}
+//                       value={option}
+//                       control={<Radio />}
+//                       label={option}
+//                     />
+//                   ))}
+//                 </RadioGroup>
+//                 {(errors[field.name]?.message || field.description) && (
+//                   <FormHelperText error={!!errors[field.name]}>
+//                     {errors[field.name]?.message || field.description}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'date':
+//       case 'datetime-local':
+//       case 'time':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 type={field.type}
+//                 onChange={onChange}
+//                 onBlur={onBlur}
+//                 value={value || ""}
+//                 inputRef={ref}
+//                 InputLabelProps={{ shrink: true }}
+//               />
+//             )}
+//           />
+//         );
+        
+//       default:
+//         return null;
+//     }
+//   };
+  
+//   return (
+//     <Paper 
+//       className="p-6 relative" 
+//       elevation={0} 
+//       sx={{ 
+//         maxWidth: '100%', 
+//         margin: '0 auto', 
+//         backgroundColor: '#fafafa',
+//         position: 'relative' 
+//       }}
+//     >
+//       {/* Success animation */}
+//       <Fade in={showSuccess}>
+//         <Box
+//           sx={{
+//             position: 'absolute',
+//             top: 0,
+//             left: 0,
+//             right: 0,
+//             bottom: 0,
+//             display: 'flex',
+//             flexDirection: 'column',
+//             alignItems: 'center',
+//             justifyContent: 'center',
+//             backgroundColor: 'rgba(255, 255, 255, 0.8)',
+//             zIndex: 10,
+//             backdropFilter: 'blur(2px)'
+//           }}
+//         >
+//           <motion.div
+//             initial={{ scale: 0.5, opacity: 0 }}
+//             animate={{ scale: 1, opacity: 1 }}
+//             transition={{ duration: 0.5, type: 'spring' }}
+//           >
+//             <CheckCircleIcon 
+//               color="success" 
+//               sx={{ fontSize: 80, mb: 2 }} 
+//             />
+//           </motion.div>
+//           <Typography variant="h5" color="success.main" gutterBottom>
+//             فرم با موفقیت ارسال شد
+//           </Typography>
+//         </Box>
+//       </Fade>
+      
+//       {formTitle && (
+//         <Typography variant="h6" gutterBottom>
+//           {formTitle}
+//         </Typography>
+//       )}
+      
+//       {formDescription && (
+//         <Typography 
+//           variant="body2" 
+//           color="textSecondary" 
+//           paragraph
+//           sx={{ mb: 3 }}
+//         >
+//           {formDescription}
+//         </Typography>
+//       )}
+      
+//       {(formTitle || formDescription) && (
+//         <Divider sx={{ mb: 3 }} />
+//       )}
+      
+//       <form onSubmit={handleSubmit(onSubmit)}>
+//         <Grid container spacing={2}>
+//           {fields.map(field => (
+//             <Grid item xs={12} sm={field.column === 6 ? 6 : 12} key={field.id}>
+//               {renderField(field)}
+//             </Grid>
+//           ))}
+//         </Grid>
+        
+//         {!hideSubmitButton && (
+//           <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
+//             <Button
+//               variant="outlined"
+//               onClick={handleReset}
+//               disabled={isSubmitting}
+//             >
+//               پاک کردن فرم
+//             </Button>
+            
+//             <Button
+//               type="submit"
+//               variant="contained"
+//               color="primary"
+//               disabled={isSubmitting}
+//               startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
+//             >
+//               {isSubmitting ? 'در حال ارسال...' : submitButtonLabel}
+//             </Button>
+//           </Box>
+//         )}
+//       </form>
+      
+//       {/* Show submitted data for debugging */}
+//       {submittedData && !showSuccess && !hideSubmitButton && (
+//         <Collapse in={!!submittedData}>
+//           <Paper 
+//             elevation={2} 
+//             sx={{ mt: 4, p: 2, backgroundColor: '#f0f8ff' }}
+//           >
+//             <Typography variant="subtitle1" gutterBottom>
+//               داده‌های ارسال شده:
+//             </Typography>
+//             <pre
+//               style={{
+//                 direction: 'ltr',
+//                 textAlign: 'left',
+//                 overflow: 'auto',
+//                 maxHeight: '300px',
+//                 padding: '12px',
+//                 backgroundColor: '#f5f5f5',
+//                 borderRadius: '4px',
+//                 fontSize: '0.875rem'
+//               }}
+//             >
+//               {JSON.stringify(submittedData, null, 2)}
+//             </pre>
+//           </Paper>
+//         </Collapse>
+//       )}
+//     </Paper>
+//   );
+// }
+
+// export default FormPreview;
+
+// // src/app/shared-components/form-builder/FormPreview.jsx
+// import { useState, useEffect } from 'react';
+// import { 
+//   Paper, 
+//   Typography, 
+//   Box, 
+//   Button, 
+//   TextField, 
+//   FormControl, 
+//   InputLabel, 
+//   Select, 
+//   MenuItem, 
+//   FormControlLabel, 
+//   Checkbox, 
+//   FormHelperText,
+//   Radio,
+//   RadioGroup,
+//   FormLabel,
+//   Divider,
+//   Grid,
+//   CircularProgress,
+//   Collapse,
+//   Fade,
+//   IconButton,
+//   Card,
+//   CardContent
+// } from '@mui/material';
+// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+// import AddCircleIcon from '@mui/icons-material/AddCircle';
+// import DeleteIcon from '@mui/icons-material/Delete';
+// import { motion } from 'framer-motion';
+// import { useForm, Controller, useFieldArray } from 'react-hook-form';
+
+// function FormPreview({ 
+//   fields = [], 
+//   formTitle = 'فرم پیش‌نمایش', 
+//   formDescription = '',
+//   initialData = {},
+//   onDataChange = () => {},
+//   submitButtonLabel = 'ارسال فرم',
+//   hideSubmitButton = false
+// }) {
+//   const [submittedData, setSubmittedData] = useState(null);
+//   const [isSubmitting, setIsSubmitting] = useState(false);
+//   const [showSuccess, setShowSuccess] = useState(false);
+  
+//   // Create react-hook-form 
+//   const { 
+//     control, 
+//     handleSubmit, 
+//     formState: { errors },
+//     reset,
+//     watch,
+//     getValues
+//   } = useForm({
+//     mode: 'onBlur',
+//     defaultValues: initialData
+//   });
+  
+//   // Watch all fields to notify parent component of changes
+//   const formValues = watch();
+//   useEffect(() => {
+//     onDataChange(formValues);
+//   }, [formValues, onDataChange]);
+  
+//   // Reset form when initialData changes
+//   useEffect(() => {
+//     if (initialData && Object.keys(initialData).length > 0) {
+//       reset(initialData);
+//     }
+//   }, [initialData, reset]);
+  
+//   // Submit handler
+//   const onSubmit = async (data) => {
+//     setIsSubmitting(true);
+    
+//     // Simulate API call
+//     await new Promise(resolve => setTimeout(resolve, 1000));
+    
+//     setSubmittedData(data);
+//     setIsSubmitting(false);
+//     setShowSuccess(true);
+    
+//     // Notify parent component of submitted data
+//     onDataChange(data);
+    
+//     // Hide success message after 3 seconds
+//     setTimeout(() => {
+//       setShowSuccess(false);
+//     }, 3000);
+//   };
+  
+//   // Reset form
+//   const handleReset = () => {
+//     reset(initialData);
+//     setSubmittedData(null);
+//   };
+  
+//   // Create validation rules from field configuration
+//   const getValidationRules = (field) => {
+//     const rules = {};
+    
+//     if (field.required) {
+//       rules.required = "این فیلد الزامی است";
+//     }
+    
+//     if (field.type === 'email') {
+//       rules.pattern = {
+//         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+//         message: "ایمیل معتبر وارد کنید"
+//       };
+//     }
+    
+//     if (field.minLength && ['text', 'password', 'textarea', 'email', 'url', 'tel'].includes(field.type)) {
+//       rules.minLength = {
+//         value: Number(field.minLength),
+//         message: `حداقل ${field.minLength} کاراکتر وارد کنید`
+//       };
+//     }
+    
+//     if (field.maxLength && ['text', 'password', 'textarea', 'email', 'url', 'tel'].includes(field.type)) {
+//       rules.maxLength = {
+//         value: Number(field.maxLength),
+//         message: `حداکثر ${field.maxLength} کاراکتر مجاز است`
+//       };
+//     }
+    
+//     if (field.min && ['number', 'range'].includes(field.type)) {
+//       rules.min = {
+//         value: Number(field.min),
+//         message: `حداقل مقدار ${field.min} است`
+//       };
+//     }
+    
+//     if (field.max && ['number', 'range'].includes(field.type)) {
+//       rules.max = {
+//         value: Number(field.max),
+//         message: `حداکثر مقدار ${field.max} است`
+//       };
+//     }
+    
+//     if (field.minItems && field.type === 'array') {
+//       rules.validate = {
+//         minItems: value => {
+//           const arrayValue = Array.isArray(value) ? value : [];
+//           // Filter out empty values for validation
+//           const nonEmptyItems = arrayValue.filter(item => item !== null && item !== undefined && item !== '');
+//           return nonEmptyItems.length >= field.minItems || `حداقل ${field.minItems} مورد الزامی است`;
+//         }
+//       };
+//     }
+    
+//     if (field.pattern) {
+//       try {
+//         rules.pattern = {
+//           value: new RegExp(field.pattern),
+//           message: "فرمت وارد شده صحیح نیست"
+//         };
+//       } catch (error) {
+//         console.error('Invalid regex pattern:', error);
+//       }
+//     }
+    
+//     return rules;
+//   };
+  
+//   // Render field based on type
+//   const renderField = (field) => {
+//     const fieldProps = {
+//       fullWidth: true,
+//       margin: "normal",
+//       label: field.label || field.name,
+//       placeholder: field.placeholder || '',
+//       helperText: errors[field.name]?.message || field.description || '',
+//       error: !!errors[field.name],
+//       disabled: isSubmitting,
+//       size: "medium"
+//     };
+    
+//     const validationRules = getValidationRules(field);
+    
+//     switch (field.type) {
+//       case 'text':
+//       case 'password':
+//       case 'email':
+//       case 'url':
+//       case 'tel':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 type={field.type}
+//                 onChange={onChange}
+//                 onBlur={onBlur}
+//                 value={value || ""}
+//                 inputRef={ref}
+//               />
+//             )}
+//           />
+//         );
+        
+//       case 'textarea':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 multiline
+//                 rows={4}
+//                 onChange={onChange}
+//                 onBlur={onBlur}
+//                 value={value || ""}
+//                 inputRef={ref}
+//               />
+//             )}
+//           />
+//         );
+        
+//       case 'number':
+//       case 'range':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 type="number"
+//                 onChange={(e) => {
+//                   const val = e.target.value === '' ? '' : Number(e.target.value);
+//                   onChange(val);
+//                 }}
+//                 onBlur={onBlur}
+//                 value={value ?? ""}
+//                 inputRef={ref}
+//                 InputProps={{
+//                   inputProps: {
+//                     min: field.min,
+//                     max: field.max,
+//                     step: field.step || 1
+//                   }
+//                 }}
+//               />
+//             )}
+//           />
+//         );
+        
+//       case 'array':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ['']}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => {
+//               // Ensure value is always an array with at least one item
+//               const arrayValues = Array.isArray(value) && value.length > 0 ? value : [''];
+              
+//               return (
+//                 <FormControl
+//                   fullWidth
+//                   margin="normal"
+//                   error={!!errors[field.name]}
+//                 >
+//                   <Typography variant="subtitle2" gutterBottom>
+//                     {field.label || field.name}
+//                     {field.required && <span style={{ color: 'red' }}> *</span>}
+//                   </Typography>
+                  
+//                   {arrayValues.map((item, index) => (
+//                     <Box key={index} sx={{ display: 'flex', mb: 1, alignItems: 'center' }}>
+//                       <TextField
+//                         fullWidth
+//                         size="medium"
+//                         value={item || ''}
+//                         onChange={(e) => {
+//                           const newValues = [...arrayValues];
+//                           newValues[index] = e.target.value;
+//                           onChange(newValues);
+//                         }}
+//                         onBlur={onBlur}
+//                         placeholder={`${field.placeholder || ''} ${index + 1}`}
+//                         error={!!errors[field.name]}
+//                       />
+                      
+//                       <IconButton
+//                         color="error"
+//                         size="small"
+//                         onClick={() => {
+//                           // Remove this item if there's more than one
+//                           if (arrayValues.length > 1) {
+//                             const newValues = arrayValues.filter((_, i) => i !== index);
+//                             onChange(newValues);
+//                           } else {
+//                             // If it's the last one, just clear it
+//                             const newValues = [''];
+//                             onChange(newValues);
+//                           }
+//                         }}
+//                         sx={{ ml: 1 }}
+//                         disabled={arrayValues.length === 1 && !arrayValues[0]}
+//                       >
+//                         <DeleteIcon />
+//                       </IconButton>
+                      
+//                       {index === arrayValues.length - 1 && (
+//                         <IconButton
+//                           color="primary"
+//                           size="small"
+//                           onClick={() => {
+//                             const newValues = [...arrayValues, ''];
+//                             onChange(newValues);
+//                           }}
+//                           sx={{ ml: 1 }}
+//                         >
+//                           <AddCircleIcon />
+//                         </IconButton>
+//                       )}
+//                     </Box>
+//                   ))}
+                  
+//                   {(errors[field.name]?.message || field.description) && (
+//                     <FormHelperText error={!!errors[field.name]}>
+//                       {errors[field.name]?.message || field.description}
+//                     </FormHelperText>
+//                   )}
+//                 </FormControl>
+//               );
+//             }}
+//           />
+//         );        
+        
+//       case 'select':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <FormControl 
+//                 fullWidth 
+//                 margin="normal" 
+//                 error={!!errors[field.name]}
+//                 disabled={isSubmitting}
+//               >
+//                 <InputLabel>{field.label || field.name}</InputLabel>
+//                 <Select
+//                   onChange={onChange}
+//                   onBlur={onBlur}
+//                   value={value || ""}
+//                   inputRef={ref}
+//                   label={field.label || field.name}
+//                 >
+//                   {(field.options || []).map((option) => (
+//                     <MenuItem key={option} value={option}>
+//                       {option}
+//                     </MenuItem>
+//                   ))}
+//                 </Select>
+//                 {(errors[field.name]?.message || field.description) && (
+//                   <FormHelperText error={!!errors[field.name]}>
+//                     {errors[field.name]?.message || field.description}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'multiselect':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || []}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value = [], ref } }) => (
+//               <FormControl 
+//                 fullWidth 
+//                 margin="normal" 
+//                 error={!!errors[field.name]}
+//                 disabled={isSubmitting}
+//               >
+//                 <InputLabel>{field.label || field.name}</InputLabel>
+//                 <Select
+//                   multiple
+//                   onChange={onChange}
+//                   onBlur={onBlur}
+//                   value={value || []}
+//                   inputRef={ref}
+//                   label={field.label || field.name}
+//                 >
+//                   {(field.options || []).map((option) => (
+//                     <MenuItem key={option} value={option}>
+//                       {option}
+//                     </MenuItem>
+//                   ))}
+//                 </Select>
+//                 {(errors[field.name]?.message || field.description) && (
+//                   <FormHelperText error={!!errors[field.name]}>
+//                     {errors[field.name]?.message || field.description}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'checkbox':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || false}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <FormControl 
+//                 fullWidth 
+//                 margin="normal" 
+//                 error={!!errors[field.name]}
+//               >
+//                 <FormControlLabel
+//                   control={
+//                     <Checkbox
+//                       checked={!!value}
+//                       onChange={onChange}
+//                       onBlur={onBlur}
+//                       inputRef={ref}
+//                       disabled={isSubmitting}
+//                     />
+//                   }
+//                   label={field.label || field.name}
+//                 />
+//                 {errors[field.name]?.message && (
+//                   <FormHelperText error>
+//                     {errors[field.name].message}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'radio':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <FormControl 
+//                 component="fieldset" 
+//                 margin="normal"
+//                 error={!!errors[field.name]}
+//                 disabled={isSubmitting}
+//                 fullWidth
+//               >
+//                 <FormLabel component="legend">{field.label || field.name}</FormLabel>
+//                 <RadioGroup
+//                   onChange={onChange}
+//                   onBlur={onBlur}
+//                   value={value || ""}
+//                   ref={ref}
+//                 >
+//                   {(field.options || []).map((option) => (
+//                     <FormControlLabel
+//                       key={option}
+//                       value={option}
+//                       control={<Radio />}
+//                       label={option}
+//                     />
+//                   ))}
+//                 </RadioGroup>
+//                 {(errors[field.name]?.message || field.description) && (
+//                   <FormHelperText error={!!errors[field.name]}>
+//                     {errors[field.name]?.message || field.description}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'date':
+//       case 'datetime-local':
+//       case 'time':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 type={field.type}
+//                 onChange={onChange}
+//                 onBlur={onBlur}
+//                 value={value || ""}
+//                 inputRef={ref}
+//                 InputLabelProps={{ shrink: true }}
+//               />
+//             )}
+//           />
+//         );
+        
+//       default:
+//         return null;
+//     }
+//   };
+  
+//   return (
+//     <Paper 
+//       className="p-6 relative" 
+//       elevation={0} 
+//       sx={{ 
+//         maxWidth: '100%', 
+//         margin: '0 auto', 
+//         backgroundColor: '#fafafa',
+//         position: 'relative' 
+//       }}
+//     >
+//       {/* Success animation */}
+//       <Fade in={showSuccess}>
+//         <Box
+//           sx={{
+//             position: 'absolute',
+//             top: 0,
+//             left: 0,
+//             right: 0,
+//             bottom: 0,
+//             display: 'flex',
+//             flexDirection: 'column',
+//             alignItems: 'center',
+//             justifyContent: 'center',
+//             backgroundColor: 'rgba(255, 255, 255, 0.8)',
+//             zIndex: 10,
+//             backdropFilter: 'blur(2px)'
+//           }}
+//         >
+//           <motion.div
+//             initial={{ scale: 0.5, opacity: 0 }}
+//             animate={{ scale: 1, opacity: 1 }}
+//             transition={{ duration: 0.5, type: 'spring' }}
+//           >
+//             <CheckCircleIcon 
+//               color="success" 
+//               sx={{ fontSize: 80, mb: 2 }} 
+//             />
+//           </motion.div>
+//           <Typography variant="h5" color="success.main" gutterBottom>
+//             فرم با موفقیت ارسال شد
+//           </Typography>
+//         </Box>
+//       </Fade>
+      
+//       {formTitle && (
+//         <Typography variant="h6" gutterBottom>
+//           {formTitle}
+//         </Typography>
+//       )}
+      
+//       {formDescription && (
+//         <Typography 
+//           variant="body2" 
+//           color="textSecondary" 
+//           paragraph
+//           sx={{ mb: 3 }}
+//         >
+//           {formDescription}
+//         </Typography>
+//       )}
+      
+//       {(formTitle || formDescription) && (
+//         <Divider sx={{ mb: 3 }} />
+//       )}
+      
+//       <form onSubmit={handleSubmit(onSubmit)}>
+//         <Grid container spacing={2}>
+//           {fields.map(field => (
+//             <Grid item xs={12} sm={field.column === 6 ? 6 : 12} key={field.id}>
+//               {renderField(field)}
+//             </Grid>
+//           ))}
+//         </Grid>
+        
+//         {!hideSubmitButton && (
+//           <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
+//             <Button
+//               variant="outlined"
+//               onClick={handleReset}
+//               disabled={isSubmitting}
+//             >
+//               پاک کردن فرم
+//             </Button>
+            
+//             <Button
+//               type="submit"
+//               variant="contained"
+//               color="primary"
+//               disabled={isSubmitting}
+//               startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
+//             >
+//               {isSubmitting ? 'در حال ارسال...' : submitButtonLabel}
+//             </Button>
+//           </Box>
+//         )}
+//       </form>
+      
+//       {/* Show submitted data for debugging */}
+//       {submittedData && !showSuccess && !hideSubmitButton && (
+//         <Collapse in={!!submittedData}>
+//           <Paper 
+//             elevation={2} 
+//             sx={{ mt: 4, p: 2, backgroundColor: '#f0f8ff' }}
+//           >
+//             <Typography variant="subtitle1" gutterBottom>
+//               داده‌های ارسال شده:
+//             </Typography>
+//             <pre
+//               style={{
+//                 direction: 'ltr',
+//                 textAlign: 'left',
+//                 overflow: 'auto',
+//                 maxHeight: '300px',
+//                 padding: '12px',
+//                 backgroundColor: '#f5f5f5',
+//                 borderRadius: '4px',
+//                 fontSize: '0.875rem'
+//               }}
+//             >
+//               {JSON.stringify(submittedData, null, 2)}
+//             </pre>
+//           </Paper>
+//         </Collapse>
+//       )}
+//     </Paper>
+//   );
+// }
+
+// export default FormPreview;
+
+////BEST VERSION////
+// // src/app/shared-components/form-builder/FormPreview.jsx
+// import { useState, useEffect, useRef } from 'react';
+// import { 
+//   Paper, 
+//   Typography, 
+//   Box, 
+//   Button, 
+//   TextField, 
+//   FormControl, 
+//   InputLabel, 
+//   Select, 
+//   MenuItem, 
+//   FormControlLabel, 
+//   Checkbox, 
+//   FormHelperText,
+//   Radio,
+//   RadioGroup,
+//   FormLabel,
+//   Divider,
+//   Grid,
+//   CircularProgress,
+//   Collapse,
+//   Fade,
+//   IconButton
+// } from '@mui/material';
+// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+// import AddCircleIcon from '@mui/icons-material/AddCircle';
+// import DeleteIcon from '@mui/icons-material/Delete';
+// import { motion } from 'framer-motion';
+// import { useForm, Controller } from 'react-hook-form';
+
+// function FormPreview({ 
+//   fields = [], 
+//   formTitle = 'فرم پیش‌نمایش', 
+//   formDescription = '',
+//   initialData = {},
+//   onDataChange = () => {},
+//   submitButtonLabel = 'ارسال فرم',
+//   hideSubmitButton = false
+// }) {
+//   const [submittedData, setSubmittedData] = useState(null);
+//   const [isSubmitting, setIsSubmitting] = useState(false);
+//   const [showSuccess, setShowSuccess] = useState(false);
+  
+//   // Use ref to track if the component is mounted to prevent unnecessary updates
+//   const isMounted = useRef(true);
+//   // Use ref to track if we're currently sending updates to parent to avoid loops
+//   const isUpdatingParent = useRef(false);
+//   // Use refs for the processed initial data and date fields
+//   const dateFieldsRef = useRef(new Set());
+  
+//   // Process initial data to identify date fields and prepare Form values
+//   const processedInitialData = (() => {
+//     if (!initialData || Object.keys(initialData).length === 0) {
+//       return {};
+//     }
+    
+//     const processed = { ...initialData };
+    
+//     // Find date fields and convert string dates to Date objects
+//     fields.forEach(field => {
+//       if (field.type === 'date') {
+//         // Mark this as a date field for future processing
+//         dateFieldsRef.current.add(field.name);
+        
+//         if (initialData[field.name]) {
+//           try {
+//             const dateValue = initialData[field.name];
+//             if (typeof dateValue === 'string') {
+//               processed[field.name] = new Date(dateValue);
+//             }
+//           } catch (error) {
+//             console.error(`Error parsing date for field ${field.name}:`, error);
+//           }
+//         }
+//       }
+//     });
+    
+//     return processed;
+//   })();
+  
+//   // Create react-hook-form
+//   const { 
+//     control, 
+//     handleSubmit, 
+//     formState: { errors },
+//     reset,
+//     watch
+//   } = useForm({
+//     mode: 'onBlur',
+//     defaultValues: processedInitialData
+//   });
+  
+//   // Reset form when needed, with proper initial data
+//   useEffect(() => {
+//     if (Object.keys(processedInitialData).length > 0) {
+//       reset(processedInitialData);
+//     }
+    
+//     // Cleanup function
+//     return () => {
+//       isMounted.current = false;
+//     };
+//   }, [reset]);
+  
+//   // Watch all fields to notify parent component of changes
+//   const formValues = watch();
+  
+//   // Handle notifying parent of changes without causing infinite loops
+//   useEffect(() => {
+//     // Skip if already updating parent or if no values
+//     if (isUpdatingParent.current || !Object.keys(formValues).length) {
+//       return;
+//     }
+    
+//     // Set flag to prevent loops
+//     isUpdatingParent.current = true;
+    
+//     // Process date fields for API
+//     const processedValues = { ...formValues };
+    
+//     // Only process date fields that are actual Date objects
+//     Array.from(dateFieldsRef.current).forEach(fieldName => {
+//       if (formValues[fieldName] instanceof Date) {
+//         try {
+//           const date = formValues[fieldName];
+//           const year = date.getFullYear();
+//           const month = String(date.getMonth() + 1).padStart(2, '0');
+//           const day = String(date.getDate()).padStart(2, '0');
+//           processedValues[fieldName] = `${year}-${month}-${day}`;
+//         } catch (error) {
+//           console.error(`Error formatting date for field ${fieldName}:`, error);
+//         }
+//       }
+//     });
+    
+//     // Notify parent with processed values
+//     onDataChange(processedValues);
+    
+//     // Reset the flag after a short delay
+//     setTimeout(() => {
+//       isUpdatingParent.current = false;
+//     }, 0);
+//   }, [formValues, onDataChange]);
+  
+//   // Submit handler
+//   const onSubmit = async (data) => {
+//     setIsSubmitting(true);
+    
+//     // Format dates for submission
+//     const processedData = { ...data };
+    
+//     // Process date fields
+//     Array.from(dateFieldsRef.current).forEach(fieldName => {
+//       if (data[fieldName] instanceof Date) {
+//         try {
+//           const date = data[fieldName];
+//           const year = date.getFullYear();
+//           const month = String(date.getMonth() + 1).padStart(2, '0');
+//           const day = String(date.getDate()).padStart(2, '0');
+//           processedData[fieldName] = `${year}-${month}-${day}`;
+//         } catch (error) {
+//           console.error(`Error formatting date for field ${fieldName}:`, error);
+//         }
+//       }
+//     });
+    
+//     // Simulate API call
+//     await new Promise(resolve => setTimeout(resolve, 1000));
+    
+//     // Only proceed if still mounted
+//     if (isMounted.current) {
+//       setSubmittedData(processedData);
+//       setIsSubmitting(false);
+//       setShowSuccess(true);
+      
+//       // Hide success message after 3 seconds
+//       setTimeout(() => {
+//         if (isMounted.current) {
+//           setShowSuccess(false);
+//         }
+//       }, 3000);
+//     }
+//   };
+  
+//   // Reset form
+//   const handleReset = () => {
+//     reset(processedInitialData);
+//     setSubmittedData(null);
+//   };
+  
+//   // Create validation rules from field configuration
+//   const getValidationRules = (field) => {
+//     const rules = {};
+    
+//     if (field.required) {
+//       rules.required = "این فیلد الزامی است";
+//     }
+    
+//     if (field.type === 'email') {
+//       rules.pattern = {
+//         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+//         message: "ایمیل معتبر وارد کنید"
+//       };
+//     }
+    
+//     if (field.minLength && ['text', 'password', 'textarea', 'email', 'url', 'tel'].includes(field.type)) {
+//       rules.minLength = {
+//         value: Number(field.minLength),
+//         message: `حداقل ${field.minLength} کاراکتر وارد کنید`
+//       };
+//     }
+    
+//     if (field.maxLength && ['text', 'password', 'textarea', 'email', 'url', 'tel'].includes(field.type)) {
+//       rules.maxLength = {
+//         value: Number(field.maxLength),
+//         message: `حداکثر ${field.maxLength} کاراکتر مجاز است`
+//       };
+//     }
+    
+//     if (field.min && ['number', 'range'].includes(field.type)) {
+//       rules.min = {
+//         value: Number(field.min),
+//         message: `حداقل مقدار ${field.min} است`
+//       };
+//     }
+    
+//     if (field.max && ['number', 'range'].includes(field.type)) {
+//       rules.max = {
+//         value: Number(field.max),
+//         message: `حداکثر مقدار ${field.max} است`
+//       };
+//     }
+    
+//     if (field.minItems && field.type === 'array') {
+//       rules.validate = {
+//         minItems: value => {
+//           const arrayValue = Array.isArray(value) ? value : [];
+//           // Filter out empty values for validation
+//           const nonEmptyItems = arrayValue.filter(item => item !== null && item !== undefined && item !== '');
+//           return nonEmptyItems.length >= field.minItems || `حداقل ${field.minItems} مورد الزامی است`;
+//         }
+//       };
+//     }
+    
+//     if (field.pattern) {
+//       try {
+//         rules.pattern = {
+//           value: new RegExp(field.pattern),
+//           message: "فرمت وارد شده صحیح نیست"
+//         };
+//       } catch (error) {
+//         console.error('Invalid regex pattern:', error);
+//       }
+//     }
+    
+//     return rules;
+//   };
+  
+//   // Render field based on type
+//   const renderField = (field) => {
+//     const fieldProps = {
+//       fullWidth: true,
+//       margin: "normal",
+//       label: field.label || field.name,
+//       placeholder: field.placeholder || '',
+//       helperText: errors[field.name]?.message || field.description || '',
+//       error: !!errors[field.name],
+//       disabled: isSubmitting,
+//       size: "medium"
+//     };
+    
+//     const validationRules = getValidationRules(field);
+    
+//     switch (field.type) {
+//       case 'text':
+//       case 'password':
+//       case 'email':
+//       case 'url':
+//       case 'tel':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 type={field.type}
+//                 onChange={onChange}
+//                 onBlur={onBlur}
+//                 value={value || ""}
+//                 inputRef={ref}
+//               />
+//             )}
+//           />
+//         );
+        
+//       case 'textarea':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 multiline
+//                 rows={4}
+//                 onChange={onChange}
+//                 onBlur={onBlur}
+//                 value={value || ""}
+//                 inputRef={ref}
+//               />
+//             )}
+//           />
+//         );
+        
+//       case 'number':
+//       case 'range':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 type="number"
+//                 onChange={(e) => {
+//                   const val = e.target.value === '' ? '' : Number(e.target.value);
+//                   onChange(val);
+//                 }}
+//                 onBlur={onBlur}
+//                 value={value ?? ""}
+//                 inputRef={ref}
+//                 InputProps={{
+//                   inputProps: {
+//                     min: field.min,
+//                     max: field.max,
+//                     step: field.step || 1
+//                   }
+//                 }}
+//               />
+//             )}
+//           />
+//         );
+        
+//       case 'array':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ['']}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => {
+//               // Ensure value is always an array with at least one item
+//               const arrayValues = Array.isArray(value) && value.length > 0 ? value : [''];
+              
+//               return (
+//                 <FormControl
+//                   fullWidth
+//                   margin="normal"
+//                   error={!!errors[field.name]}
+//                 >
+//                   <Typography variant="subtitle2" gutterBottom>
+//                     {field.label || field.name}
+//                     {field.required && <span style={{ color: 'red' }}> *</span>}
+//                   </Typography>
+                  
+//                   {arrayValues.map((item, index) => (
+//                     <Box key={index} sx={{ display: 'flex', mb: 1, alignItems: 'center' }}>
+//                       <TextField
+//                         fullWidth
+//                         size="medium"
+//                         value={item || ''}
+//                         onChange={(e) => {
+//                           const newValues = [...arrayValues];
+//                           newValues[index] = e.target.value;
+//                           onChange(newValues);
+//                         }}
+//                         onBlur={onBlur}
+//                         placeholder={`${field.placeholder || ''} ${index + 1}`}
+//                         error={!!errors[field.name]}
+//                       />
+                      
+//                       <IconButton
+//                         color="error"
+//                         size="small"
+//                         onClick={() => {
+//                           // Remove this item if there's more than one
+//                           if (arrayValues.length > 1) {
+//                             const newValues = arrayValues.filter((_, i) => i !== index);
+//                             onChange(newValues);
+//                           } else {
+//                             // If it's the last one, just clear it
+//                             const newValues = [''];
+//                             onChange(newValues);
+//                           }
+//                         }}
+//                         sx={{ ml: 1 }}
+//                         disabled={arrayValues.length === 1 && !arrayValues[0]}
+//                       >
+//                         <DeleteIcon />
+//                       </IconButton>
+                      
+//                       {index === arrayValues.length - 1 && (
+//                         <IconButton
+//                           color="primary"
+//                           size="small"
+//                           onClick={() => {
+//                             const newValues = [...arrayValues, ''];
+//                             onChange(newValues);
+//                           }}
+//                           sx={{ ml: 1 }}
+//                         >
+//                           <AddCircleIcon />
+//                         </IconButton>
+//                       )}
+//                     </Box>
+//                   ))}
+                  
+//                   {(errors[field.name]?.message || field.description) && (
+//                     <FormHelperText error={!!errors[field.name]}>
+//                       {errors[field.name]?.message || field.description}
+//                     </FormHelperText>
+//                   )}
+//                 </FormControl>
+//               );
+//             }}
+//           />
+//         );        
+        
+//       case 'select':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <FormControl 
+//                 fullWidth 
+//                 margin="normal" 
+//                 error={!!errors[field.name]}
+//                 disabled={isSubmitting}
+//               >
+//                 <InputLabel>{field.label || field.name}</InputLabel>
+//                 <Select
+//                   onChange={onChange}
+//                   onBlur={onBlur}
+//                   value={value || ""}
+//                   inputRef={ref}
+//                   label={field.label || field.name}
+//                 >
+//                   {(field.options || []).map((option) => (
+//                     <MenuItem key={option} value={option}>
+//                       {option}
+//                     </MenuItem>
+//                   ))}
+//                 </Select>
+//                 {(errors[field.name]?.message || field.description) && (
+//                   <FormHelperText error={!!errors[field.name]}>
+//                     {errors[field.name]?.message || field.description}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'multiselect':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || []}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value = [], ref } }) => (
+//               <FormControl 
+//                 fullWidth 
+//                 margin="normal" 
+//                 error={!!errors[field.name]}
+//                 disabled={isSubmitting}
+//               >
+//                 <InputLabel>{field.label || field.name}</InputLabel>
+//                 <Select
+//                   multiple
+//                   onChange={onChange}
+//                   onBlur={onBlur}
+//                   value={value || []}
+//                   inputRef={ref}
+//                   label={field.label || field.name}
+//                 >
+//                   {(field.options || []).map((option) => (
+//                     <MenuItem key={option} value={option}>
+//                       {option}
+//                     </MenuItem>
+//                   ))}
+//                 </Select>
+//                 {(errors[field.name]?.message || field.description) && (
+//                   <FormHelperText error={!!errors[field.name]}>
+//                     {errors[field.name]?.message || field.description}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'checkbox':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || false}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <FormControl 
+//                 fullWidth 
+//                 margin="normal" 
+//                 error={!!errors[field.name]}
+//               >
+//                 <FormControlLabel
+//                   control={
+//                     <Checkbox
+//                       checked={!!value}
+//                       onChange={onChange}
+//                       onBlur={onBlur}
+//                       inputRef={ref}
+//                       disabled={isSubmitting}
+//                     />
+//                   }
+//                   label={field.label || field.name}
+//                 />
+//                 {errors[field.name]?.message && (
+//                   <FormHelperText error>
+//                     {errors[field.name].message}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'radio':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <FormControl 
+//                 component="fieldset" 
+//                 margin="normal"
+//                 error={!!errors[field.name]}
+//                 disabled={isSubmitting}
+//                 fullWidth
+//               >
+//                 <FormLabel component="legend">{field.label || field.name}</FormLabel>
+//                 <RadioGroup
+//                   onChange={onChange}
+//                   onBlur={onBlur}
+//                   value={value || ""}
+//                   ref={ref}
+//                 >
+//                   {(field.options || []).map((option) => (
+//                     <FormControlLabel
+//                       key={option}
+//                       value={option}
+//                       control={<Radio />}
+//                       label={option}
+//                     />
+//                   ))}
+//                 </RadioGroup>
+//                 {(errors[field.name]?.message || field.description) && (
+//                   <FormHelperText error={!!errors[field.name]}>
+//                     {errors[field.name]?.message || field.description}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'date':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             rules={validationRules}
+//             render={({ field: { onChange, value } }) => (
+//               <FormControl
+//                 fullWidth
+//                 margin="normal"
+//                 error={!!errors[field.name]}
+//               >
+//                 <DatePicker
+//                   label={field.label || field.name}
+//                   value={value}
+//                   onChange={onChange}
+//                   renderInput={(params) => (
+//                     <TextField
+//                       {...params}
+//                       fullWidth
+//                       error={!!errors[field.name]}
+//                       helperText={errors[field.name]?.message || field.description || ''}
+//                     />
+//                   )}
+//                 />
+//                 {errors[field.name] && (
+//                   <FormHelperText error>
+//                     {errors[field.name].message}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'datetime-local':
+//       case 'time':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 type={field.type}
+//                 onChange={onChange}
+//                 onBlur={onBlur}
+//                 value={value || ""}
+//                 inputRef={ref}
+//                 InputLabelProps={{ shrink: true }}
+//               />
+//             )}
+//           />
+//         );
+        
+//       default:
+//         return null;
+//     }
+//   };
+  
+//   return (
+//     <Paper 
+//       className="p-6 relative" 
+//       elevation={0} 
+//       sx={{ 
+//         maxWidth: '100%', 
+//         margin: '0 auto', 
+//         backgroundColor: '#fafafa',
+//         position: 'relative' 
+//       }}
+//     >
+//       {/* Success animation */}
+//       <Fade in={showSuccess}>
+//         <Box
+//           sx={{
+//             position: 'absolute',
+//             top: 0,
+//             left: 0,
+//             right: 0,
+//             bottom: 0,
+//             display: 'flex',
+//             flexDirection: 'column',
+//             alignItems: 'center',
+//             justifyContent: 'center',
+//             backgroundColor: 'rgba(255, 255, 255, 0.8)',
+//             zIndex: 10,
+//             backdropFilter: 'blur(2px)'
+//           }}
+//         >
+//           <motion.div
+//             initial={{ scale: 0.5, opacity: 0 }}
+//             animate={{ scale: 1, opacity: 1 }}
+//             transition={{ duration: 0.5, type: 'spring' }}
+//           >
+//             <CheckCircleIcon 
+//               color="success" 
+//               sx={{ fontSize: 80, mb: 2 }} 
+//             />
+//           </motion.div>
+//           <Typography variant="h5" color="success.main" gutterBottom>
+//             فرم با موفقیت ارسال شد
+//           </Typography>
+//         </Box>
+//       </Fade>
+      
+//       {formTitle && (
+//         <Typography variant="h6" gutterBottom>
+//           {formTitle}
+//         </Typography>
+//       )}
+      
+//       {formDescription && (
+//         <Typography 
+//           variant="body2" 
+//           color="textSecondary" 
+//           paragraph
+//           sx={{ mb: 3 }}
+//         >
+//           {formDescription}
+//         </Typography>
+//       )}
+      
+//       {(formTitle || formDescription) && (
+//         <Divider sx={{ mb: 3 }} />
+//       )}
+      
+//       <form onSubmit={handleSubmit(onSubmit)}>
+//         <Grid container spacing={2}>
+//           {fields.map(field => (
+//             <Grid item xs={12} sm={field.column === 6 ? 6 : 12} key={field.id}>
+//               {renderField(field)}
+//             </Grid>
+//           ))}
+//         </Grid>
+        
+//         {!hideSubmitButton && (
+//           <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
+//             <Button
+//               variant="outlined"
+//               onClick={handleReset}
+//               disabled={isSubmitting}
+//             >
+//               پاک کردن فرم
+//             </Button>
+            
+//             <Button
+//               type="submit"
+//               variant="contained"
+//               color="primary"
+//               disabled={isSubmitting}
+//               startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
+//             >
+//               {isSubmitting ? 'در حال ارسال...' : submitButtonLabel}
+//             </Button>
+//           </Box>
+//         )}
+//       </form>
+      
+//       {/* Show submitted data for debugging */}
+//       {submittedData && !showSuccess && !hideSubmitButton && (
+//         <Collapse in={!!submittedData}>
+//           <Paper 
+//             elevation={2} 
+//             sx={{ mt: 4, p: 2, backgroundColor: '#f0f8ff' }}
+//           >
+//             <Typography variant="subtitle1" gutterBottom>
+//               داده‌های ارسال شده:
+//             </Typography>
+//             <pre
+//               style={{
+//                 direction: 'ltr',
+//                 textAlign: 'left',
+//                 overflow: 'auto',
+//                 maxHeight: '300px',
+//                 padding: '12px',
+//                 backgroundColor: '#f5f5f5',
+//                 borderRadius: '4px',
+//                 fontSize: '0.875rem'
+//               }}
+//             >
+//               {JSON.stringify(submittedData, null, 2)}
+//             </pre>
+//           </Paper>
+//         </Collapse>
+//       )}
+//     </Paper>
+//   );
+// }
+
+// export default FormPreview;
+
+
 // src/app/shared-components/form-builder/FormPreview.jsx
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   Paper, 
   Typography, 
@@ -619,51 +2569,181 @@ import {
   Grid,
   CircularProgress,
   Collapse,
-  Fade
+  Fade,
+  IconButton
 } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { motion } from 'framer-motion';
 import { useForm, Controller } from 'react-hook-form';
+
+// Import the FileUpload component
+import FileUpload from './FileUpload';
 
 function FormPreview({ 
   fields = [], 
   formTitle = 'فرم پیش‌نمایش', 
-  formDescription = ''
+  formDescription = '',
+  initialData = {},
+  onDataChange = () => {},
+  submitButtonLabel = 'ارسال فرم',
+  hideSubmitButton = false
 }) {
   const [submittedData, setSubmittedData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   
-  // Create react-hook-form without Zod
+  // Use ref to track if the component is mounted to prevent unnecessary updates
+  const isMounted = useRef(true);
+  // Use ref to track if we're currently sending updates to parent to avoid loops
+  const isUpdatingParent = useRef(false);
+  // Use refs for the processed initial data and date fields
+  const dateFieldsRef = useRef(new Set());
+  // Set to keep track of file fields
+  const fileFieldsRef = useRef(new Set());
+  
+  // Process initial data to identify date fields and prepare Form values
+  const processedInitialData = (() => {
+    if (!initialData || Object.keys(initialData).length === 0) {
+      return {};
+    }
+    
+    const processed = { ...initialData };
+    
+    // Find date fields and convert string dates to Date objects
+    fields.forEach(field => {
+      if (field.type === 'date') {
+        // Mark this as a date field for future processing
+        dateFieldsRef.current.add(field.name);
+        
+        if (initialData[field.name]) {
+          try {
+            const dateValue = initialData[field.name];
+            if (typeof dateValue === 'string') {
+              processed[field.name] = new Date(dateValue);
+            }
+          } catch (error) {
+            console.error(`Error parsing date for field ${field.name}:`, error);
+          }
+        }
+      } else if (field.type === 'file') {
+        // Mark this as a file field for future processing
+        fileFieldsRef.current.add(field.name);
+      }
+    });
+    
+    return processed;
+  })();
+  
+  // Create react-hook-form
   const { 
     control, 
     handleSubmit, 
     formState: { errors },
-    reset
+    reset,
+    watch
   } = useForm({
-    mode: 'onBlur'
+    mode: 'onBlur',
+    defaultValues: processedInitialData
   });
+  
+  // Reset form when needed, with proper initial data
+  useEffect(() => {
+    if (Object.keys(processedInitialData).length > 0) {
+      reset(processedInitialData);
+    }
+    
+    // Cleanup function
+    return () => {
+      isMounted.current = false;
+    };
+  }, [reset]);
+  
+  // Watch all fields to notify parent component of changes
+  const formValues = watch();
+  
+  // Handle notifying parent of changes without causing infinite loops
+  useEffect(() => {
+    // Skip if already updating parent or if no values
+    if (isUpdatingParent.current || !Object.keys(formValues).length) {
+      return;
+    }
+    
+    // Set flag to prevent loops
+    isUpdatingParent.current = true;
+    
+    // Process date fields for API
+    const processedValues = { ...formValues };
+    
+    // Only process date fields that are actual Date objects
+    Array.from(dateFieldsRef.current).forEach(fieldName => {
+      if (formValues[fieldName] instanceof Date) {
+        try {
+          const date = formValues[fieldName];
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          processedValues[fieldName] = `${year}-${month}-${day}`;
+        } catch (error) {
+          console.error(`Error formatting date for field ${fieldName}:`, error);
+        }
+      }
+    });
+    
+    // Notify parent with processed values
+    onDataChange(processedValues);
+    
+    // Reset the flag after a short delay
+    setTimeout(() => {
+      isUpdatingParent.current = false;
+    }, 0);
+  }, [formValues, onDataChange]);
   
   // Submit handler
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     
+    // Format dates for submission
+    const processedData = { ...data };
+    
+    // Process date fields
+    Array.from(dateFieldsRef.current).forEach(fieldName => {
+      if (data[fieldName] instanceof Date) {
+        try {
+          const date = data[fieldName];
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          processedData[fieldName] = `${year}-${month}-${day}`;
+        } catch (error) {
+          console.error(`Error formatting date for field ${fieldName}:`, error);
+        }
+      }
+    });
+    
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    setSubmittedData(data);
-    setIsSubmitting(false);
-    setShowSuccess(true);
-    
-    // Hide success message after 3 seconds
-    setTimeout(() => {
-      setShowSuccess(false);
-    }, 3000);
+    // Only proceed if still mounted
+    if (isMounted.current) {
+      setSubmittedData(processedData);
+      setIsSubmitting(false);
+      setShowSuccess(true);
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        if (isMounted.current) {
+          setShowSuccess(false);
+        }
+      }, 3000);
+    }
   };
   
   // Reset form
   const handleReset = () => {
-    reset();
+    reset(processedInitialData);
     setSubmittedData(null);
   };
   
@@ -710,6 +2790,17 @@ function FormPreview({
       };
     }
     
+    if (field.minItems && field.type === 'array') {
+      rules.validate = {
+        minItems: value => {
+          const arrayValue = Array.isArray(value) ? value : [];
+          // Filter out empty values for validation
+          const nonEmptyItems = arrayValue.filter(item => item !== null && item !== undefined && item !== '');
+          return nonEmptyItems.length >= field.minItems || `حداقل ${field.minItems} مورد الزامی است`;
+        }
+      };
+    }
+    
     if (field.pattern) {
       try {
         rules.pattern = {
@@ -718,6 +2809,19 @@ function FormPreview({
         };
       } catch (error) {
         console.error('Invalid regex pattern:', error);
+      }
+    }
+    
+    // Add specific validation for file fields
+    if (field.type === 'file') {
+      if (field.maxFiles > 1) {
+        rules.validate = {
+          ...rules.validate,
+          maxFiles: value => {
+            if (!value || !Array.isArray(value)) return true;
+            return value.length <= field.maxFiles || `حداکثر ${field.maxFiles} فایل مجاز است`;
+          }
+        };
       }
     }
     
@@ -733,7 +2837,8 @@ function FormPreview({
       placeholder: field.placeholder || '',
       helperText: errors[field.name]?.message || field.description || '',
       error: !!errors[field.name],
-      disabled: isSubmitting
+      disabled: isSubmitting,
+      size: "medium"
     };
     
     const validationRules = getValidationRules(field);
@@ -757,7 +2862,7 @@ function FormPreview({
                 type={field.type}
                 onChange={onChange}
                 onBlur={onBlur}
-                value={value}
+                value={value || ""}
                 inputRef={ref}
               />
             )}
@@ -779,7 +2884,7 @@ function FormPreview({
                 rows={4}
                 onChange={onChange}
                 onBlur={onBlur}
-                value={value}
+                value={value || ""}
                 inputRef={ref}
               />
             )}
@@ -804,7 +2909,7 @@ function FormPreview({
                   onChange(val);
                 }}
                 onBlur={onBlur}
-                value={value}
+                value={value ?? ""}
                 inputRef={ref}
                 InputProps={{
                   inputProps: {
@@ -817,6 +2922,92 @@ function FormPreview({
             )}
           />
         );
+        
+      case 'array':
+        return (
+          <Controller
+            key={field.id}
+            name={field.name}
+            control={control}
+            defaultValue={field.defaultValue || ['']}
+            rules={validationRules}
+            render={({ field: { onChange, onBlur, value, ref } }) => {
+              // Ensure value is always an array with at least one item
+              const arrayValues = Array.isArray(value) && value.length > 0 ? value : [''];
+              
+              return (
+                <FormControl
+                  fullWidth
+                  margin="normal"
+                  error={!!errors[field.name]}
+                >
+                  <Typography variant="subtitle2" gutterBottom>
+                    {field.label || field.name}
+                    {field.required && <span style={{ color: 'red' }}> *</span>}
+                  </Typography>
+                  
+                  {arrayValues.map((item, index) => (
+                    <Box key={index} sx={{ display: 'flex', mb: 1, alignItems: 'center' }}>
+                      <TextField
+                        fullWidth
+                        size="medium"
+                        value={item || ''}
+                        onChange={(e) => {
+                          const newValues = [...arrayValues];
+                          newValues[index] = e.target.value;
+                          onChange(newValues);
+                        }}
+                        onBlur={onBlur}
+                        placeholder={`${field.placeholder || ''} ${index + 1}`}
+                        error={!!errors[field.name]}
+                      />
+                      
+                      <IconButton
+                        color="error"
+                        size="small"
+                        onClick={() => {
+                          // Remove this item if there's more than one
+                          if (arrayValues.length > 1) {
+                            const newValues = arrayValues.filter((_, i) => i !== index);
+                            onChange(newValues);
+                          } else {
+                            // If it's the last one, just clear it
+                            const newValues = [''];
+                            onChange(newValues);
+                          }
+                        }}
+                        sx={{ ml: 1 }}
+                        disabled={arrayValues.length === 1 && !arrayValues[0]}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                      
+                      {index === arrayValues.length - 1 && (
+                        <IconButton
+                          color="primary"
+                          size="small"
+                          onClick={() => {
+                            const newValues = [...arrayValues, ''];
+                            onChange(newValues);
+                          }}
+                          sx={{ ml: 1 }}
+                        >
+                          <AddCircleIcon />
+                        </IconButton>
+                      )}
+                    </Box>
+                  ))}
+                  
+                  {(errors[field.name]?.message || field.description) && (
+                    <FormHelperText error={!!errors[field.name]}>
+                      {errors[field.name]?.message || field.description}
+                    </FormHelperText>
+                  )}
+                </FormControl>
+              );
+            }}
+          />
+        );        
         
       case 'select':
         return (
@@ -837,7 +3028,7 @@ function FormPreview({
                 <Select
                   onChange={onChange}
                   onBlur={onBlur}
-                  value={value}
+                  value={value || ""}
                   inputRef={ref}
                   label={field.label || field.name}
                 >
@@ -877,7 +3068,7 @@ function FormPreview({
                   multiple
                   onChange={onChange}
                   onBlur={onBlur}
-                  value={value}
+                  value={value || []}
                   inputRef={ref}
                   label={field.label || field.name}
                 >
@@ -953,7 +3144,7 @@ function FormPreview({
                 <RadioGroup
                   onChange={onChange}
                   onBlur={onBlur}
-                  value={value}
+                  value={value || ""}
                   ref={ref}
                 >
                   {(field.options || []).map((option) => (
@@ -976,6 +3167,41 @@ function FormPreview({
         );
         
       case 'date':
+        return (
+          <Controller
+            key={field.id}
+            name={field.name}
+            control={control}
+            rules={validationRules}
+            render={({ field: { onChange, value } }) => (
+              <FormControl
+                fullWidth
+                margin="normal"
+                error={!!errors[field.name]}
+              >
+                <DatePicker
+                  label={field.label || field.name}
+                  value={value}
+                  onChange={onChange}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      fullWidth
+                      error={!!errors[field.name]}
+                      helperText={errors[field.name]?.message || field.description || ''}
+                    />
+                  )}
+                />
+                {errors[field.name] && (
+                  <FormHelperText error>
+                    {errors[field.name].message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+            )}
+          />
+        );
+        
       case 'datetime-local':
       case 'time':
         return (
@@ -991,9 +3217,36 @@ function FormPreview({
                 type={field.type}
                 onChange={onChange}
                 onBlur={onBlur}
-                value={value}
+                value={value || ""}
                 inputRef={ref}
                 InputLabelProps={{ shrink: true }}
+              />
+            )}
+          />
+        );
+        
+      case 'file':
+        return (
+          <Controller
+            key={field.id}
+            name={field.name}
+            control={control}
+            defaultValue={field.maxFiles > 1 ? [] : ""}
+            rules={validationRules}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <FileUpload
+                value={value}
+                onChange={onChange}
+                onBlur={onBlur}
+                error={!!errors[field.name]}
+                helperText={errors[field.name]?.message || field.description}
+                multiple={field.maxFiles > 1}
+                accept={field.accept || "*"}
+                maxSize={field.maxSize || 5 * 1024 * 1024}
+                maxFiles={field.maxFiles || 1}
+                label={field.label || field.name}
+                fileServiceType={field.fileServiceType || "SERVICE_FILE"}
+                disabled={isSubmitting}
               />
             )}
           />
@@ -1003,13 +3256,13 @@ function FormPreview({
         return null;
     }
   };
-  
+
   return (
     <Paper 
       className="p-6 relative" 
-      elevation={3} 
+      elevation={0} 
       sx={{ 
-        maxWidth: '800px', 
+        maxWidth: '100%', 
         margin: '0 auto', 
         backgroundColor: '#fafafa',
         position: 'relative' 
@@ -1049,9 +3302,11 @@ function FormPreview({
         </Box>
       </Fade>
       
-      <Typography variant="h5" gutterBottom>
-        {formTitle}
-      </Typography>
+      {formTitle && (
+        <Typography variant="h6" gutterBottom>
+          {formTitle}
+        </Typography>
+      )}
       
       {formDescription && (
         <Typography 
@@ -1064,65 +3319,923 @@ function FormPreview({
         </Typography>
       )}
       
-      <Divider sx={{ mb: 3 }} />
+      {(formTitle || formDescription) && (
+        <Divider sx={{ mb: 3 }} />
+      )}
       
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
           {fields.map(field => (
-            <Grid item xs={12} key={field.id}>
+            <Grid item xs={12} sm={field.column === 6 ? 6 : 12} key={field.id}>
               {renderField(field)}
             </Grid>
           ))}
         </Grid>
         
-        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
-          <Button
-            variant="outlined"
-            onClick={handleReset}
-            disabled={isSubmitting}
-          >
-            پاک کردن فرم
-          </Button>
-          
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={isSubmitting}
-            startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
-          >
-            {isSubmitting ? 'در حال ارسال...' : 'ارسال فرم'}
-          </Button>
-        </Box>
+        {!hideSubmitButton && (
+          <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              variant="outlined"
+              onClick={handleReset}
+              disabled={isSubmitting}
+            >
+              پاک کردن فرم
+            </Button>
+            
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={isSubmitting}
+              startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
+            >
+              {isSubmitting ? 'در حال ارسال...' : submitButtonLabel}
+            </Button>
+          </Box>
+        )}
       </form>
       
-      {/* Show submitted data */}
-      <Collapse in={!!submittedData && !showSuccess}>
-        <Paper 
-          elevation={2} 
-          sx={{ mt: 4, p: 2, backgroundColor: '#f0f8ff' }}
-        >
-          <Typography variant="subtitle1" gutterBottom>
-            داده‌های ارسال شده:
-          </Typography>
-          <pre
-            style={{
-              direction: 'ltr',
-              textAlign: 'left',
-              overflow: 'auto',
-              maxHeight: '300px',
-              padding: '12px',
-              backgroundColor: '#f5f5f5',
-              borderRadius: '4px',
-              fontSize: '0.875rem'
-            }}
+      {/* Show submitted data for debugging */}
+      {submittedData && !showSuccess && !hideSubmitButton && (
+        <Collapse in={!!submittedData}>
+          <Paper 
+            elevation={2} 
+            sx={{ mt: 4, p: 2, backgroundColor: '#f0f8ff' }}
           >
-            {JSON.stringify(submittedData, null, 2)}
-          </pre>
-        </Paper>
-      </Collapse>
+            <Typography variant="subtitle1" gutterBottom>
+              داده‌های ارسال شده:
+            </Typography>
+            <pre
+              style={{
+                direction: 'ltr',
+                textAlign: 'left',
+                overflow: 'auto',
+                maxHeight: '300px',
+                padding: '12px',
+                backgroundColor: '#f5f5f5',
+                borderRadius: '4px',
+                fontSize: '0.875rem'
+              }}
+            >
+              {JSON.stringify(submittedData, null, 2)}
+            </pre>
+          </Paper>
+        </Collapse>
+      )}
     </Paper>
   );
 }
 
 export default FormPreview;
+// import { useState, useEffect, useRef } from 'react';
+// import { 
+//   Paper, 
+//   Typography, 
+//   Box, 
+//   Button, 
+//   TextField, 
+//   FormControl, 
+//   InputLabel, 
+//   Select, 
+//   MenuItem, 
+//   FormControlLabel, 
+//   Checkbox, 
+//   FormHelperText,
+//   Radio,
+//   RadioGroup,
+//   FormLabel,
+//   Divider,
+//   Grid,
+//   CircularProgress,
+//   Collapse,
+//   Fade,
+//   IconButton
+// } from '@mui/material';
+// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+// import AddCircleIcon from '@mui/icons-material/AddCircle';
+// import DeleteIcon from '@mui/icons-material/Delete';
+// import { motion } from 'framer-motion';
+// import { useForm, Controller } from 'react-hook-form';
+
+// // Import the FileUpload component
+// import FileUpload from './FileUpload';
+
+// function FormPreview({ 
+//   fields = [], 
+//   formTitle = 'فرم پیش‌نمایش', 
+//   formDescription = '',
+//   initialData = {},
+//   onDataChange = () => {},
+//   submitButtonLabel = 'ارسال فرم',
+//   hideSubmitButton = false
+// }) {
+//   const [submittedData, setSubmittedData] = useState(null);
+//   const [isSubmitting, setIsSubmitting] = useState(false);
+//   const [showSuccess, setShowSuccess] = useState(false);
+  
+//   // Use ref to track if the component is mounted to prevent unnecessary updates
+//   const isMounted = useRef(true);
+//   // Use ref to track if we're currently sending updates to parent to avoid loops
+//   const isUpdatingParent = useRef(false);
+//   // Use refs for the processed initial data and date fields
+//   const dateFieldsRef = useRef(new Set());
+//   // Set to keep track of file fields
+//   const fileFieldsRef = useRef(new Set());
+  
+//   // Process initial data to identify date and file fields, and prepare Form values
+//   const processedInitialData = (() => {
+//     if (!initialData || Object.keys(initialData).length === 0) {
+//       return {};
+//     }
+    
+//     const processed = { ...initialData };
+    
+//     // Find date fields and convert string dates to Date objects
+//     // Also identify file fields for special handling
+//     fields.forEach(field => {
+//       if (field.type === 'date') {
+//         // Mark this as a date field for future processing
+//         dateFieldsRef.current.add(field.name);
+        
+//         if (initialData[field.name]) {
+//           try {
+//             const dateValue = initialData[field.name];
+//             if (typeof dateValue === 'string') {
+//               processed[field.name] = new Date(dateValue);
+//             }
+//           } catch (error) {
+//             console.error(`Error parsing date for field ${field.name}:`, error);
+//           }
+//         }
+//       } else if (field.type === 'file') {
+//         // Mark this as a file field for future processing
+//         fileFieldsRef.current.add(field.name);
+        
+//         // Make sure file paths are preserved in edit mode
+//         if (initialData[field.name]) {
+//           const fileValue = initialData[field.name];
+//           // Keep file paths as is (don't try to format them as objects yet)
+//           // FileUpload component will handle the conversion
+//           processed[field.name] = fileValue;
+//         }
+//       }
+//     });
+    
+//     return processed;
+//   })();
+  
+//   // Create react-hook-form
+//   const { 
+//     control, 
+//     handleSubmit, 
+//     formState: { errors },
+//     reset,
+//     watch
+//   } = useForm({
+//     mode: 'onBlur',
+//     defaultValues: processedInitialData
+//   });
+  
+//   // Reset form when needed, with proper initial data
+//   useEffect(() => {
+//     if (Object.keys(processedInitialData).length > 0) {
+//       reset(processedInitialData);
+//     }
+    
+//     // Cleanup function
+//     return () => {
+//       isMounted.current = false;
+//     };
+//   }, [reset, processedInitialData]);
+  
+//   // Watch all fields to notify parent component of changes
+//   const formValues = watch();
+  
+//   // Handle notifying parent of changes without causing infinite loops
+//   useEffect(() => {
+//     // Skip if already updating parent or if no values
+//     if (isUpdatingParent.current || !Object.keys(formValues).length) {
+//       return;
+//     }
+    
+//     // Set flag to prevent loops
+//     isUpdatingParent.current = true;
+    
+//     // Process date fields for API
+//     const processedValues = { ...formValues };
+    
+//     // Only process date fields that are actual Date objects
+//     Array.from(dateFieldsRef.current).forEach(fieldName => {
+//       if (formValues[fieldName] instanceof Date) {
+//         try {
+//           const date = formValues[fieldName];
+//           const year = date.getFullYear();
+//           const month = String(date.getMonth() + 1).padStart(2, '0');
+//           const day = String(date.getDate()).padStart(2, '0');
+//           processedValues[fieldName] = `${year}-${month}-${day}`;
+//         } catch (error) {
+//           console.error(`Error formatting date for field ${fieldName}:`, error);
+//         }
+//       }
+//     });
+    
+//     // Notify parent with processed values
+//     onDataChange(processedValues);
+    
+//     // Reset the flag after a short delay
+//     setTimeout(() => {
+//       isUpdatingParent.current = false;
+//     }, 0);
+//   }, [formValues, onDataChange]);
+  
+//   // Submit handler
+//   const onSubmit = async (data) => {
+//     setIsSubmitting(true);
+    
+//     // Format dates for submission
+//     const processedData = { ...data };
+    
+//     // Process date fields
+//     Array.from(dateFieldsRef.current).forEach(fieldName => {
+//       if (data[fieldName] instanceof Date) {
+//         try {
+//           const date = data[fieldName];
+//           const year = date.getFullYear();
+//           const month = String(date.getMonth() + 1).padStart(2, '0');
+//           const day = String(date.getDate()).padStart(2, '0');
+//           processedData[fieldName] = `${year}-${month}-${day}`;
+//         } catch (error) {
+//           console.error(`Error formatting date for field ${fieldName}:`, error);
+//         }
+//       }
+//     });
+    
+//     // Simulate API call
+//     await new Promise(resolve => setTimeout(resolve, 1000));
+    
+//     // Only proceed if still mounted
+//     if (isMounted.current) {
+//       setSubmittedData(processedData);
+//       setIsSubmitting(false);
+//       setShowSuccess(true);
+      
+//       // Hide success message after 3 seconds
+//       setTimeout(() => {
+//         if (isMounted.current) {
+//           setShowSuccess(false);
+//         }
+//       }, 3000);
+//     }
+//   };
+  
+//   // Reset form
+//   const handleReset = () => {
+//     reset(processedInitialData);
+//     setSubmittedData(null);
+//   };
+  
+//   // Create validation rules from field configuration
+//   const getValidationRules = (field) => {
+//     const rules = {};
+    
+//     if (field.required) {
+//       rules.required = "این فیلد الزامی است";
+//     }
+    
+//     if (field.type === 'email') {
+//       rules.pattern = {
+//         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+//         message: "ایمیل معتبر وارد کنید"
+//       };
+//     }
+    
+//     if (field.minLength && ['text', 'password', 'textarea', 'email', 'url', 'tel'].includes(field.type)) {
+//       rules.minLength = {
+//         value: Number(field.minLength),
+//         message: `حداقل ${field.minLength} کاراکتر وارد کنید`
+//       };
+//     }
+    
+//     if (field.maxLength && ['text', 'password', 'textarea', 'email', 'url', 'tel'].includes(field.type)) {
+//       rules.maxLength = {
+//         value: Number(field.maxLength),
+//         message: `حداکثر ${field.maxLength} کاراکتر مجاز است`
+//       };
+//     }
+    
+//     if (field.min && ['number', 'range'].includes(field.type)) {
+//       rules.min = {
+//         value: Number(field.min),
+//         message: `حداقل مقدار ${field.min} است`
+//       };
+//     }
+    
+//     if (field.max && ['number', 'range'].includes(field.type)) {
+//       rules.max = {
+//         value: Number(field.max),
+//         message: `حداکثر مقدار ${field.max} است`
+//       };
+//     }
+    
+//     if (field.minItems && field.type === 'array') {
+//       rules.validate = {
+//         minItems: value => {
+//           const arrayValue = Array.isArray(value) ? value : [];
+//           // Filter out empty values for validation
+//           const nonEmptyItems = arrayValue.filter(item => item !== null && item !== undefined && item !== '');
+//           return nonEmptyItems.length >= field.minItems || `حداقل ${field.minItems} مورد الزامی است`;
+//         }
+//       };
+//     }
+    
+//     if (field.pattern) {
+//       try {
+//         rules.pattern = {
+//           value: new RegExp(field.pattern),
+//           message: "فرمت وارد شده صحیح نیست"
+//         };
+//       } catch (error) {
+//         console.error('Invalid regex pattern:', error);
+//       }
+//     }
+    
+//     // Add specific validation for file fields
+//     if (field.type === 'file') {
+//       if (field.maxFiles > 1) {
+//         rules.validate = {
+//           ...rules.validate,
+//           maxFiles: value => {
+//             if (!value || !Array.isArray(value)) return true;
+//             return value.length <= field.maxFiles || `حداکثر ${field.maxFiles} فایل مجاز است`;
+//           }
+//         };
+//       }
+//     }
+    
+//     return rules;
+//   };
+  
+//   // Find a field configuration by name
+//   const findFieldByName = (name) => {
+//     return fields.find(field => field.name === name);
+//   };
+  
+//   // Render field based on type
+//   const renderField = (field) => {
+//     const fieldProps = {
+//       fullWidth: true,
+//       margin: "normal",
+//       label: field.label || field.name,
+//       placeholder: field.placeholder || '',
+//       helperText: errors[field.name]?.message || field.description || '',
+//       error: !!errors[field.name],
+//       disabled: isSubmitting,
+//       size: "medium"
+//     };
+    
+//     const validationRules = getValidationRules(field);
+    
+//     switch (field.type) {
+//       case 'text':
+//       case 'password':
+//       case 'email':
+//       case 'url':
+//       case 'tel':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 type={field.type}
+//                 onChange={onChange}
+//                 onBlur={onBlur}
+//                 value={value || ""}
+//                 inputRef={ref}
+//               />
+//             )}
+//           />
+//         );
+        
+//       case 'textarea':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 multiline
+//                 rows={4}
+//                 onChange={onChange}
+//                 onBlur={onBlur}
+//                 value={value || ""}
+//                 inputRef={ref}
+//               />
+//             )}
+//           />
+//         );
+        
+//       case 'number':
+//       case 'range':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 type="number"
+//                 onChange={(e) => {
+//                   const val = e.target.value === '' ? '' : Number(e.target.value);
+//                   onChange(val);
+//                 }}
+//                 onBlur={onBlur}
+//                 value={value ?? ""}
+//                 inputRef={ref}
+//                 InputProps={{
+//                   inputProps: {
+//                     min: field.min,
+//                     max: field.max,
+//                     step: field.step || 1
+//                   }
+//                 }}
+//               />
+//             )}
+//           />
+//         );
+        
+//       case 'array':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ['']}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => {
+//               // Ensure value is always an array with at least one item
+//               const arrayValues = Array.isArray(value) && value.length > 0 ? value : [''];
+              
+//               return (
+//                 <FormControl
+//                   fullWidth
+//                   margin="normal"
+//                   error={!!errors[field.name]}
+//                 >
+//                   <Typography variant="subtitle2" gutterBottom>
+//                     {field.label || field.name}
+//                     {field.required && <span style={{ color: 'red' }}> *</span>}
+//                   </Typography>
+                  
+//                   {arrayValues.map((item, index) => (
+//                     <Box key={index} sx={{ display: 'flex', mb: 1, alignItems: 'center' }}>
+//                       <TextField
+//                         fullWidth
+//                         size="medium"
+//                         value={item || ''}
+//                         onChange={(e) => {
+//                           const newValues = [...arrayValues];
+//                           newValues[index] = e.target.value;
+//                           onChange(newValues);
+//                         }}
+//                         onBlur={onBlur}
+//                         placeholder={`${field.placeholder || ''} ${index + 1}`}
+//                         error={!!errors[field.name]}
+//                       />
+                      
+//                       <IconButton
+//                         color="error"
+//                         size="small"
+//                         onClick={() => {
+//                           // Remove this item if there's more than one
+//                           if (arrayValues.length > 1) {
+//                             const newValues = arrayValues.filter((_, i) => i !== index);
+//                             onChange(newValues);
+//                           } else {
+//                             // If it's the last one, just clear it
+//                             const newValues = [''];
+//                             onChange(newValues);
+//                           }
+//                         }}
+//                         sx={{ ml: 1 }}
+//                         disabled={arrayValues.length === 1 && !arrayValues[0]}
+//                       >
+//                         <DeleteIcon />
+//                       </IconButton>
+                      
+//                       {index === arrayValues.length - 1 && (
+//                         <IconButton
+//                           color="primary"
+//                           size="small"
+//                           onClick={() => {
+//                             const newValues = [...arrayValues, ''];
+//                             onChange(newValues);
+//                           }}
+//                           sx={{ ml: 1 }}
+//                         >
+//                           <AddCircleIcon />
+//                         </IconButton>
+//                       )}
+//                     </Box>
+//                   ))}
+                  
+//                   {(errors[field.name]?.message || field.description) && (
+//                     <FormHelperText error={!!errors[field.name]}>
+//                       {errors[field.name]?.message || field.description}
+//                     </FormHelperText>
+//                   )}
+//                 </FormControl>
+//               );
+//             }}
+//           />
+//         );        
+        
+//       case 'select':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <FormControl 
+//                 fullWidth 
+//                 margin="normal" 
+//                 error={!!errors[field.name]}
+//                 disabled={isSubmitting}
+//               >
+//                 <InputLabel>{field.label || field.name}</InputLabel>
+//                 <Select
+//                   onChange={onChange}
+//                   onBlur={onBlur}
+//                   value={value || ""}
+//                   inputRef={ref}
+//                   label={field.label || field.name}
+//                 >
+//                   {(field.options || []).map((option) => (
+//                     <MenuItem key={option} value={option}>
+//                       {option}
+//                     </MenuItem>
+//                   ))}
+//                 </Select>
+//                 {(errors[field.name]?.message || field.description) && (
+//                   <FormHelperText error={!!errors[field.name]}>
+//                     {errors[field.name]?.message || field.description}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'multiselect':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || []}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value = [], ref } }) => (
+//               <FormControl 
+//                 fullWidth 
+//                 margin="normal" 
+//                 error={!!errors[field.name]}
+//                 disabled={isSubmitting}
+//               >
+//                 <InputLabel>{field.label || field.name}</InputLabel>
+//                 <Select
+//                   multiple
+//                   onChange={onChange}
+//                   onBlur={onBlur}
+//                   value={value || []}
+//                   inputRef={ref}
+//                   label={field.label || field.name}
+//                 >
+//                   {(field.options || []).map((option) => (
+//                     <MenuItem key={option} value={option}>
+//                       {option}
+//                     </MenuItem>
+//                   ))}
+//                 </Select>
+//                 {(errors[field.name]?.message || field.description) && (
+//                   <FormHelperText error={!!errors[field.name]}>
+//                     {errors[field.name]?.message || field.description}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'checkbox':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || false}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <FormControl 
+//                 fullWidth 
+//                 margin="normal" 
+//                 error={!!errors[field.name]}
+//               >
+//                 <FormControlLabel
+//                   control={
+//                     <Checkbox
+//                       checked={!!value}
+//                       onChange={onChange}
+//                       onBlur={onBlur}
+//                       inputRef={ref}
+//                       disabled={isSubmitting}
+//                     />
+//                   }
+//                   label={field.label || field.name}
+//                 />
+//                 {errors[field.name]?.message && (
+//                   <FormHelperText error>
+//                     {errors[field.name].message}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'radio':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <FormControl 
+//                 component="fieldset" 
+//                 margin="normal"
+//                 error={!!errors[field.name]}
+//                 disabled={isSubmitting}
+//                 fullWidth
+//               >
+//                 <FormLabel component="legend">{field.label || field.name}</FormLabel>
+//                 <RadioGroup
+//                   onChange={onChange}
+//                   onBlur={onBlur}
+//                   value={value || ""}
+//                   ref={ref}
+//                 >
+//                   {(field.options || []).map((option) => (
+//                     <FormControlLabel
+//                       key={option}
+//                       value={option}
+//                       control={<Radio />}
+//                       label={option}
+//                     />
+//                   ))}
+//                 </RadioGroup>
+//                 {(errors[field.name]?.message || field.description) && (
+//                   <FormHelperText error={!!errors[field.name]}>
+//                     {errors[field.name]?.message || field.description}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'date':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             rules={validationRules}
+//             render={({ field: { onChange, value } }) => (
+//               <FormControl
+//                 fullWidth
+//                 margin="normal"
+//                 error={!!errors[field.name]}
+//               >
+//                 <DatePicker
+//                   label={field.label || field.name}
+//                   value={value}
+//                   onChange={onChange}
+//                   renderInput={(params) => (
+//                     <TextField
+//                       {...params}
+//                       fullWidth
+//                       error={!!errors[field.name]}
+//                       helperText={errors[field.name]?.message || field.description || ''}
+//                     />
+//                   )}
+//                 />
+//                 {errors[field.name] && (
+//                   <FormHelperText error>
+//                     {errors[field.name].message}
+//                   </FormHelperText>
+//                 )}
+//               </FormControl>
+//             )}
+//           />
+//         );
+        
+//       case 'datetime-local':
+//       case 'time':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             defaultValue={field.defaultValue || ""}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <TextField
+//                 {...fieldProps}
+//                 type={field.type}
+//                 onChange={onChange}
+//                 onBlur={onBlur}
+//                 value={value || ""}
+//                 inputRef={ref}
+//                 InputLabelProps={{ shrink: true }}
+//               />
+//             )}
+//           />
+//         );
+        
+//       case 'file':
+//         return (
+//           <Controller
+//             key={field.id}
+//             name={field.name}
+//             control={control}
+//             rules={validationRules}
+//             render={({ field: { onChange, onBlur, value, ref } }) => (
+//               <FileUpload
+//                 value={value} // Pass the value directly as received from the form
+//                 onChange={onChange}
+//                 onBlur={onBlur}
+//                 error={!!errors[field.name]}
+//                 helperText={errors[field.name]?.message || field.description}
+//                 multiple={field.maxFiles > 1}
+//                 accept={field.accept || "*"}
+//                 maxSize={field.maxSize || 5 * 1024 * 1024}
+//                 maxFiles={field.maxFiles || 1}
+//                 label={field.label || field.name}
+//                 fileServiceType={field.fileServiceType || "SERVICE_FILE"}
+//                 disabled={isSubmitting}
+//               />
+//             )}
+//           />
+//         );
+        
+//       default:
+//         return null;
+//     }
+//   };
+
+//   return (
+//     <Paper 
+//       className="p-6 relative" 
+//       elevation={0} 
+//       sx={{ 
+//         maxWidth: '100%', 
+//         margin: '0 auto', 
+//         backgroundColor: '#fafafa',
+//         position: 'relative' 
+//       }}
+//     >
+//       {/* Success animation */}
+//       <Fade in={showSuccess}>
+//         <Box
+//           sx={{
+//             position: 'absolute',
+//             top: 0,
+//             left: 0,
+//             right: 0,
+//             bottom: 0,
+//             display: 'flex',
+//             flexDirection: 'column',
+//             alignItems: 'center',
+//             justifyContent: 'center',
+//             backgroundColor: 'rgba(255, 255, 255, 0.8)',
+//             zIndex: 10,
+//             backdropFilter: 'blur(2px)'
+//           }}
+//         >
+//           <motion.div
+//             initial={{ scale: 0.5, opacity: 0 }}
+//             animate={{ scale: 1, opacity: 1 }}
+//             transition={{ duration: 0.5, type: 'spring' }}
+//           >
+//             <CheckCircleIcon 
+//               color="success" 
+//               sx={{ fontSize: 80, mb: 2 }} 
+//             />
+//           </motion.div>
+//           <Typography variant="h5" color="success.main" gutterBottom>
+//             فرم با موفقیت ارسال شد
+//           </Typography>
+//         </Box>
+//       </Fade>
+      
+//       {formTitle && (
+//         <Typography variant="h6" gutterBottom>
+//           {formTitle}
+//         </Typography>
+//       )}
+      
+//       {formDescription && (
+//         <Typography 
+//           variant="body2" 
+//           color="textSecondary" 
+//           paragraph
+//           sx={{ mb: 3 }}
+//         >
+//           {formDescription}
+//         </Typography>
+//       )}
+      
+//       {(formTitle || formDescription) && (
+//         <Divider sx={{ mb: 3 }} />
+//       )}
+      
+//       <form onSubmit={handleSubmit(onSubmit)}>
+//         <Grid container spacing={2}>
+//           {fields.map(field => (
+//             <Grid item xs={12} sm={field.column === 6 ? 6 : 12} key={field.id}>
+//               {renderField(field)}
+//             </Grid>
+//           ))}
+//         </Grid>
+        
+//         {!hideSubmitButton && (
+//           <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
+//             <Button
+//               variant="outlined"
+//               onClick={handleReset}
+//               disabled={isSubmitting}
+//             >
+//               پاک کردن فرم
+//             </Button>
+            
+//             <Button
+//               type="submit"
+//               variant="contained"
+//               color="primary"
+//               disabled={isSubmitting}
+//               startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
+//             >
+//               {isSubmitting ? 'در حال ارسال...' : submitButtonLabel}
+//             </Button>
+//           </Box>
+//         )}
+//       </form>
+      
+//       {/* Show submitted data for debugging */}
+//       {submittedData && !showSuccess && !hideSubmitButton && (
+//         <Collapse in={!!submittedData}>
+//           <Paper 
+//             elevation={2} 
+//             sx={{ mt: 4, p: 2, backgroundColor: '#f0f8ff' }}
+//           >
+//             <Typography variant="subtitle1" gutterBottom>
+//               داده‌های ارسال شده:
+//             </Typography>
+//             <pre
+//               style={{
+//                 direction: 'ltr',
+//                 textAlign: 'left',
+//                 overflow: 'auto',
+//                 maxHeight: '300px',
+//                 padding: '12px',
+//                 backgroundColor: '#f5f5f5',
+//                 borderRadius: '4px',
+//                 fontSize: '0.875rem'
+//               }}
+//             >
+//               {JSON.stringify(submittedData, null, 2)}
+//             </pre>
+//           </Paper>
+//         </Collapse>
+//       )}
+//     </Paper>
+//   );
+// }
+
+// export default FormPreview;

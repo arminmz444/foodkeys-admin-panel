@@ -45,22 +45,22 @@ export const serviceApi = api
           { type: "service", id: serviceId },
         ],
       }),
-      createService: build.mutation({
-        query: (newService) => ({
-          url: `/service`,
-          method: "POST",
-          data: newService,
-        }),
-        invalidatesTags: [{ type: "service", id: "LIST" }],
-      }),
-      updateService: build.mutation({
-        query: ({ id, service }) => ({
-          url: `/service/${id}`,
-          method: "PUT",
-          data: service,
-        }),
-        invalidatesTags: (result, error, { id }) => [{ type: "service", id }, {type: "service", id: "LIST"}],
-      }),
+      // createService: build.mutation({
+      //   query: (newService) => ({
+      //     url: `/service`,
+      //     method: "POST",
+      //     data: newService,
+      //   }),
+      //   invalidatesTags: [{ type: "service", id: "LIST" }],
+      // }),
+      // updateService: build.mutation({
+      //   query: ({ id, service }) => ({
+      //     url: `/service/${id}`,
+      //     method: "PUT",
+      //     data: service,
+      //   }),
+      //   invalidatesTags: (result, error, { id }) => [{ type: "service", id }, {type: "service", id: "LIST"}],
+      // }),
       deleteService: build.mutation({
         query: (id) => ({
           url: `/service/${id}`,
@@ -77,8 +77,78 @@ export const serviceApi = api
         query: () => `/subcategory/options`,
         providesTags: ["subcategoryOptions"],
       }),
+  
+    // getServices: build.query({
+    //   query: ({ page = 0, size = 10, categoryId = null, subCategoryId = null }) => {
+    //     let queryParams = `?page=${page}&pageSize=${size}`;
+    //     if (categoryId) queryParams += `&categoryId=${categoryId}`;
+    //     if (subCategoryId) queryParams += `&subCategoryId=${subCategoryId}`;
+    //     return `service${queryParams}`;
+    //   },
+    //   transformResponse: (response) => response.data,
+    //   providesTags: ['Services']
+    // }),
+    
+    // Get service by ID
+    // getServiceById: build.query({
+    //   query: (id) => `service/${id}`,
+    //   transformResponse: (response) => response.data,
+    //   providesTags: (result, error, id) => [{ type: 'Services', id }]
+    // }),
+    
+    // Create new service
+    createService: build.mutation({
+      query: (newService) => ({
+        url: 'service',
+        method: 'POST',
+        body: newService
+      }),
+      invalidatesTags: ['Services']
+    }),
+    
+    // Update service
+    updateService: build.mutation({
+      query: ({ id, service }) => ({
+        url: `service/${id}`,
+        method: 'PUT',
+        data: service
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Services', id }, 'Services']
+    }),
+    
+    // // Delete service
+    // deleteService: build.mutation({
+    //   query: (id) => ({
+    //     url: `service/${id}`,
+    //     method: 'DELETE'
+    //   }),
+    //   invalidatesTags: ['Services']
+    // }),
+    
+    // // Get subcategory options
+    // getSubcategoryOptions: build.query({
+    //   query: () => 'subcategory/options?categoryId=4&pageSize=100',
+    //   transformResponse: (response) => response.data,
+    //   providesTags: ['ServiceCategories']
+    // }),
+    
+    // Get subcategory schema
+    getSubcategorySchema: build.query({
+      query: (subCategoryId) => `subcategory/${subCategoryId}/schema`,
+      transformResponse: (response) => response.data,
+      providesTags: (result, error, id) => [{ type: 'ServiceSchemas', id }]
+    }),
+    
+    // Publish service
+    publishService: build.mutation({
+      query: (serviceId) => ({
+        url: `service/${serviceId}/publish/`,
+        method: 'POST'
+      }),
+      invalidatesTags: (result, error, id) => [{ type: 'Services', id }, 'Services']
     }),
     overrideExisting: false,
+  })
   });
 
 export const {
