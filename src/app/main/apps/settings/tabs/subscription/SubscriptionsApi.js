@@ -1,5 +1,4 @@
 import { apiService as api } from "app/store/apiService";
-// import ProductModel from '../users/product/models/ProductModel';
 
 // Tag types for subscription
 const addTagTypes = ["Subscription"];
@@ -24,12 +23,12 @@ const SubscriptionsApi = api.enhanceEndpoints({ addTagTypes }).injectEndpoints({
         return data;
       },
       providesTags: (result) =>
-        (result && result.data && Array.isArray(result.data))
-          ? [
-              ...result.data.map(({ id }) => ({ type: "Subscription", id })),
-              { type: "Subscription", id: "LIST" },
-            ]
-          : [{ type: "Subscription", id: "LIST" }],
+          (result && result.data && Array.isArray(result.data))
+              ? [
+                ...result.data.map(({ id }) => ({ type: "Subscription", id })),
+                { type: "Subscription", id: "LIST" },
+              ]
+              : [{ type: "Subscription", id: "LIST" }],
       keepUnusedDataFor: 3600,
     }),
     getSubscription: builder.query({
@@ -44,20 +43,21 @@ const SubscriptionsApi = api.enhanceEndpoints({ addTagTypes }).injectEndpoints({
       query: (body) => ({
         url: "/subscription/",
         method: "POST",
-        body,
+        data: body,
       }),
-      transformResponse: (response) => response,
+      transformResponse: (response) => response?.data,
       invalidatesTags: [{ type: "Subscription", id: "LIST" }],
     }),
     updateSubscription: builder.mutation({
       query: ({ id, ...body }) => ({
         url: `/subscription/${id}`,
         method: "PUT",
-        body,
+        data: body,
       }),
       transformResponse: (response) => response?.data,
       invalidatesTags: (result, error, { id }) => [
         { type: "Subscription", id },
+        { type: "Subscription", id: "LIST" },
       ],
     }),
     deleteSubscription: builder.mutation({
@@ -66,8 +66,56 @@ const SubscriptionsApi = api.enhanceEndpoints({ addTagTypes }).injectEndpoints({
         method: "DELETE",
       }),
       transformResponse: (response) => response?.data,
+      invalidatesTags: (result, error, id) => [
+        { type: "Subscription", id },
+        { type: "Subscription", id: "LIST" },
+      ],
+    }),
+    // New endpoints for subscription management
+    acceptOrDenySubscription: builder.mutation({
+      query: ({ id, status }) => ({
+        url: `/subscription/${id}/status`,
+        method: "PUT",
+        data: { status },
+      }),
+      transformResponse: (response) => response?.data,
       invalidatesTags: (result, error, { id }) => [
         { type: "Subscription", id },
+        { type: "Subscription", id: "LIST" },
+      ],
+    }),
+    enableSubscription: builder.mutation({
+      query: (id) => ({
+        url: `/subscription/${id}/enable`,
+        method: "PUT",
+      }),
+      transformResponse: (response) => response?.data,
+      invalidatesTags: (result, error, id) => [
+        { type: "Subscription", id },
+        { type: "Subscription", id: "LIST" },
+      ],
+    }),
+    disableSubscription: builder.mutation({
+      query: (id) => ({
+        url: `/subscription/${id}/disable`,
+        method: "PUT",
+      }),
+      transformResponse: (response) => response?.data,
+      invalidatesTags: (result, error, id) => [
+        { type: "Subscription", id },
+        { type: "Subscription", id: "LIST" },
+      ],
+    }),
+    extendSubscription: builder.mutation({
+      query: ({ id, monthsToExtend, reason }) => ({
+        url: `/subscription/${id}/extend`,
+        method: "PUT",
+        data: { monthsToExtend, reason },
+      }),
+      transformResponse: (response) => response?.data,
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Subscription", id },
+        { type: "Subscription", id: "LIST" },
       ],
     }),
   }),
@@ -82,4 +130,8 @@ export const {
   useCreateSubscriptionMutation,
   useUpdateSubscriptionMutation,
   useDeleteSubscriptionMutation,
+  useAcceptOrDenySubscriptionMutation,
+  useEnableSubscriptionMutation,
+  useDisableSubscriptionMutation,
+  useExtendSubscriptionMutation,
 } = SubscriptionsApi;
