@@ -80,6 +80,7 @@ function BundleListWithFilter({ subCategoryId }) {
     // Show success message
     enqueueSnackbar('پلن با موفقیت ویرایش شد', {
       variant: 'success',
+      style: { fontSize: 'medium' }
     });
   };
 
@@ -90,6 +91,7 @@ function BundleListWithFilter({ subCategoryId }) {
       // Show success message
       enqueueSnackbar('پلن با موفقیت حذف شد', {
         variant: 'success',
+        style: { fontSize: 'medium' }
       });
     } catch (err) {
       console.error('Error deleting bundle:', err);
