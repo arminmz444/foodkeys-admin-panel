@@ -139,4 +139,4 @@ function MessagingApp() {
   )
 }
 
-export default withReducer("messagingApp", reducer)(MessagingApp)
+export default MessagingApp;

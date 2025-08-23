@@ -1,11 +1,7 @@
-// src/store/index.js
-import { configureStore } from '@reduxjs/toolkit';
-import excelTemplateReducer from './excelTemplateSlice';
+import templatesReducer from './excelTemplateSlice';
 
-export const store = configureStore({
-  reducer: {
-    excelTemplate: excelTemplateReducer,
-  },
-});
+const reducer = {
+  templates: templatesReducer
+};
 
-export default store;
+export default reducer;

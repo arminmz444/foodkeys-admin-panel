@@ -1,11 +1,12 @@
 import GrapesEditor from 'app/shared-components/GrapesEditor.jsx';
+import EnhancedGrapesJSEditor from "app/shared-components/enhanced-grapes-js/EnhancedGrapesJSEditor.jsx";
 
 /**
  * The PageBuilder app.
  */
 function PageBuilderApp() {
 	return (
-		<GrapesEditor />
+		<EnhancedGrapesJSEditor />
 	);
 }
 

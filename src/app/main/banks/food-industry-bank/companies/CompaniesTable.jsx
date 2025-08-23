@@ -140,6 +140,7 @@ function CompaniesTable() {
 						saveToStore={false}
 						enableRowAction={false}
 						enableEditing={false}
+						enableBuiltInEditing={false}
 						serviceIdentifier="foodCompanyList"
 					/>
 				</Paper>

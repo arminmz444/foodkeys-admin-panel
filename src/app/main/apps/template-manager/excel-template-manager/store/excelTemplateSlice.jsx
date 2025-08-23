@@ -1,10 +1,11 @@
-// src/store/slices/excelTemplateSlice.js
+// src/app/excel-templates/store/templatesSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import * as excelTemplateService from '../../services/excelTemplateService';
+import { rootReducer } from 'app/store/lazyLoadedSlices';
+import * as excelTemplateService from '../services/excelTemplateService';
 
-// Async thunks for API calls
+// Async thunks
 export const fetchTemplates = createAsyncThunk(
-  'excelTemplate/fetchTemplates',
+  'excelTemplates/templates/fetchTemplates',
   async (_, { rejectWithValue }) => {
     try {
       return await excelTemplateService.getAllTemplates();
@@ -14,8 +15,19 @@ export const fetchTemplates = createAsyncThunk(
   }
 );
 
+export const getTemplateById = createAsyncThunk(
+  'excelTemplates/templates/getTemplateById',
+  async (id, { rejectWithValue }) => {
+    try {
+      return await excelTemplateService.getTemplateById(id);
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 export const addTemplate = createAsyncThunk(
-  'excelTemplate/addTemplate',
+  'excelTemplates/templates/addTemplate',
   async ({ file, data }, { rejectWithValue }) => {
     try {
       return await excelTemplateService.uploadTemplate(file, data);
@@ -26,7 +38,7 @@ export const addTemplate = createAsyncThunk(
 );
 
 export const updateTemplateInfo = createAsyncThunk(
-  'excelTemplate/updateTemplate',
+  'excelTemplates/templates/updateTemplate',
   async ({ id, data }, { rejectWithValue }) => {
     try {
       return await excelTemplateService.updateTemplate(id, data);
@@ -37,7 +49,7 @@ export const updateTemplateInfo = createAsyncThunk(
 );
 
 export const removeTemplate = createAsyncThunk(
-  'excelTemplate/removeTemplate',
+  'excelTemplates/templates/removeTemplate',
   async (id, { rejectWithValue }) => {
     try {
       await excelTemplateService.deleteTemplate(id);
@@ -48,20 +60,8 @@ export const removeTemplate = createAsyncThunk(
   }
 );
 
-export const downloadTemplateFile = createAsyncThunk(
-  'excelTemplate/downloadTemplate',
-  async (id, { rejectWithValue }) => {
-    try {
-      const blob = await excelTemplateService.downloadTemplate(id);
-      return { id, blob };
-    } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
-    }
-  }
-);
-
 export const generateExcelFromTemplate = createAsyncThunk(
-  'excelTemplate/generateExcel',
+  'excelTemplates/templates/generateExcel',
   async ({ templateId, data }, { rejectWithValue }) => {
     try {
       const blob = await excelTemplateService.generateExcel(templateId, data);
@@ -72,17 +72,19 @@ export const generateExcelFromTemplate = createAsyncThunk(
   }
 );
 
+const initialState = {
+  templates: [],
+  loading: false,
+  generating: false,
+  error: null,
+  currentTemplate: null,
+  generatedFile: null
+};
+
 // Slice definition
-const excelTemplateSlice = createSlice({
-  name: 'excelTemplate',
-  initialState: {
-    templates: [],
-    loading: false,
-    generating: false,
-    error: null,
-    currentTemplate: null,
-    generatedFile: null
-  },
+export const templatesSlice = createSlice({
+  name: 'excelTemplates/templates',
+  initialState,
   reducers: {
     // Synchronous reducers
     setCurrentTemplate: (state, action) => {
@@ -112,6 +114,26 @@ const excelTemplateSlice = createSlice({
       .addCase(fetchTemplates.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Failed to fetch templates';
+      })
+      
+      // Get template by ID
+      .addCase(getTemplateById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getTemplateById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentTemplate = action.payload;
+        
+        // Update the template in the list if it exists
+        const index = state.templates.findIndex(t => t.id === action.payload.id);
+        if (index !== -1) {
+          state.templates[index] = action.payload;
+        }
+      })
+      .addCase(getTemplateById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to fetch template';
       })
       
       // Add template
@@ -165,20 +187,6 @@ const excelTemplateSlice = createSlice({
         state.error = action.payload || 'Failed to delete template';
       })
       
-      // Download template
-      .addCase(downloadTemplateFile.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(downloadTemplateFile.fulfilled, (state) => {
-        state.loading = false;
-        // We don't update state for downloads as they're handled by the browser
-      })
-      .addCase(downloadTemplateFile.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || 'Failed to download template';
-      })
-      
       // Generate Excel
       .addCase(generateExcelFromTemplate.pending, (state) => {
         state.generating = true;
@@ -195,15 +203,38 @@ const excelTemplateSlice = createSlice({
       .addCase(generateExcelFromTemplate.rejected, (state, action) => {
         state.generating = false;
         state.error = action.payload || 'Failed to generate Excel file';
-      });
+      })
+  },
+  selectors: {
+    selectTemplates: (state) => state.templates,
+    selectCurrentTemplate: (state) => state.currentTemplate,
+    selectLoading: (state) => state.loading,
+    selectGenerating: (state) => state.generating,
+    selectError: (state) => state.error,
+    selectGeneratedFile: (state) => state.generatedFile
   }
 });
+
+/**
+ * Lazy load
+ * */
+rootReducer.inject(templatesSlice);
+const injectedSlice = templatesSlice.injectInto(rootReducer);
 
 export const { 
   setCurrentTemplate, 
   clearCurrentTemplate, 
   clearError,
   clearGeneratedFile
-} = excelTemplateSlice.actions;
+} = templatesSlice.actions;
 
-export default excelTemplateSlice.reducer;
+export const { 
+  selectTemplates, 
+  selectCurrentTemplate, 
+  selectLoading, 
+  selectGenerating, 
+  selectError,
+  selectGeneratedFile
+} = injectedSlice.selectors;
+
+export default templatesSlice.reducer;

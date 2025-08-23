@@ -124,4 +124,4 @@ function UsersApp() {
   );
 }
 
-export default withReducer("usersApp", usersAppSlice)(UsersApp);
+export default UsersApp;

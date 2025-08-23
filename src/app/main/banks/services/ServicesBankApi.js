@@ -1,7 +1,7 @@
 // src/app/services/ServiceApi.js
 import { apiService as api } from "app/store/apiService.js";
 
-const addTagTypes = ["service"];
+const addTagTypes = ["Services", "ServiceSchemas"];
 
 export const serviceApi = api
   .enhanceEndpoints({ addTagTypes })
@@ -15,7 +15,7 @@ export const serviceApi = api
         }),
         providesTags: [
           {
-            type: "service",
+            type: "Services",
             id: "SERVICE_SUBCATEGORIES_BY_CATEGORY_ID_" + "4",
           },
         ],
@@ -26,7 +26,7 @@ export const serviceApi = api
           transformResponse: (response) => response?.data,
           params: { pageNumber, pageSize },
         }),
-        providesTags: [{ type: "service", id: "SERVICE_ALL_SUBCATEGORIES" }],
+        providesTags: [{ type: "Services", id: "SERVICE_ALL_SUBCATEGORIES" }],
       }),
       getServices: build.query({
         query: ({ pageNumber = 0, pageSize = 10 }) => ({
@@ -34,7 +34,7 @@ export const serviceApi = api
           transformResponse: (response) => response?.data,
           params: { pageNumber, pageSize },
         }),
-        providesTags: [{ type: "service", id: "LIST" }],
+        providesTags: [{ type: "Services", id: "LIST" }],
       }),
       getServiceById: build.query({
         query: (serviceId) => ({
@@ -42,7 +42,7 @@ export const serviceApi = api
         }),
         transformResponse: (response) => response?.data,
         providesTags: (result, error, serviceId) => [
-          { type: "service", id: serviceId },
+          { type: "Services", id: serviceId },
         ],
       }),
       // createService: build.mutation({
@@ -71,7 +71,7 @@ export const serviceApi = api
       getServiceSchemas: build.query({
         query: ({ pageSize, pageNumber }) =>
           `/service/schema?pageSize=${pageSize}&pageNumber=${pageNumber}`,
-        providesTags: ["serviceSchemas"],
+        providesTags: ["ServiceSchemas"],
       }),
       getSubcategoryOptions: build.query({
         query: () => `/subcategory/options`,
@@ -101,7 +101,7 @@ export const serviceApi = api
       query: (newService) => ({
         url: 'service',
         method: 'POST',
-        body: newService
+        data: newService
       }),
       invalidatesTags: ['Services']
     }),

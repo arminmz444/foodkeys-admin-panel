@@ -526,7 +526,493 @@
 //   return schemaCode;
 // }
 
-// src/app/shared-components/form-builder/SchemaGenerator.js
+
+////////////************ BEST ************/////////////
+// // src/app/shared-components/form-builder/SchemaGenerator.js
+// import { z } from 'zod';
+//
+// // Helper to convert fields to JSON Schema
+// export const generateJsonSchema = (fields, title, description) => {
+//   const properties = {};
+//   const required = [];
+//
+//   fields.forEach(field => {
+//     // Add to required array if field is required
+//     if (field.required) {
+//       required.push(field.name);
+//     }
+//
+//     // Create property based on field type
+//     properties[field.name] = createJsonProperty(field);
+//   });
+//
+//   return {
+//     $schema: "http://json-schema.org/draft-07/schema#",
+//     title: title || "Service Form",
+//     description: description || "",
+//     type: "object",
+//     properties,
+//     required: required.length > 0 ? required : undefined
+//   };
+// };
+//
+// // Helper to create JSON schema property for a field
+// const createJsonProperty = (field) => {
+//   const property = {
+//     title: field.label || field.name,
+//     description: field.description || ""
+//   };
+//
+//   switch (field.type) {
+//     case "text":
+//     case "password":
+//     case "textarea":
+//     case "email":
+//     case "url":
+//     case "tel":
+//       property.type = "string";
+//       if (field.minLength) property.minLength = parseInt(field.minLength, 10);
+//       if (field.maxLength) property.maxLength = parseInt(field.maxLength, 10);
+//       if (field.pattern) property.pattern = field.pattern;
+//       if (field.placeholder) property.examples = [field.placeholder];
+//       if (field.defaultValue) property.default = field.defaultValue;
+//       break;
+//
+//     case "number":
+//     case "range":
+//       property.type = "number";
+//       if (field.min !== undefined && field.min !== "") property.minimum = parseFloat(field.min);
+//       if (field.max !== undefined && field.max !== "") property.maximum = parseFloat(field.max);
+//       if (field.step) property.multipleOf = parseFloat(field.step);
+//       if (field.defaultValue) property.default = parseFloat(field.defaultValue);
+//       break;
+//
+//     case "select":
+//       property.type = "string";
+//       property.enum = field.options || [];
+//       if (field.defaultValue) property.default = field.defaultValue;
+//       break;
+//
+//     case "multiselect":
+//       property.type = "array";
+//       property.items = {
+//         type: "string",
+//         enum: field.options || []
+//       };
+//       if (field.defaultValue) property.default = Array.isArray(field.defaultValue) ? field.defaultValue : [field.defaultValue];
+//       break;
+//
+//     case "checkbox":
+//       property.type = "boolean";
+//       if (field.defaultValue !== undefined) property.default = field.defaultValue === true || field.defaultValue === "true";
+//       break;
+//
+//     case "radio":
+//       property.type = "string";
+//       property.enum = field.options || [];
+//       if (field.defaultValue) property.default = field.defaultValue;
+//       break;
+//
+//     case "date":
+//       property.type = "string";
+//       property.format = "date";
+//       if (field.defaultValue) property.default = field.defaultValue;
+//       break;
+//
+//     case "time":
+//       property.type = "string";
+//       property.format = "time";
+//       if (field.defaultValue) property.default = field.defaultValue;
+//       break;
+//
+//     case "datetime-local":
+//       property.type = "string";
+//       property.format = "date-time";
+//       if (field.defaultValue) property.default = field.defaultValue;
+//       break;
+//
+//     case "file":
+//       if (field.maxFiles > 1) {
+//         property.type = "array";
+//         property.items = {
+//           type: "string",
+//           format: "uri"
+//         };
+//         property.maxItems = field.maxFiles;
+//       } else {
+//         property.type = "string";
+//         property.format = "uri";
+//       }
+//       property.contentMediaType = field.accept || "*/*";
+//       property.fileServiceType = field.fileServiceType || "SERVICE_FILE";
+//       property.maxSize = field.maxSize || 5 * 1024 * 1024; // 5MB default
+//       break;
+//
+//     case "object":
+//       property.type = "object";
+//       property.properties = {};
+//       property.required = [];
+//       break;
+//
+//     case "array":
+//       property.type = "array";
+//       property.items = field.items || { type: "string" };
+//       break;
+//
+//     case "hidden":
+//       property.type = "string";
+//       property.hidden = true;
+//       if (field.defaultValue) property.default = field.defaultValue;
+//       break;
+//
+//     default:
+//       property.type = "string";
+//   }
+//
+//   // Add display conditions if present
+//   if (field.depends && field.displayCondition) {
+//     property.dependencies = {
+//       [field.depends]: {
+//         oneOf: [
+//           {
+//             properties: {
+//               [field.depends]: {
+//                 enum: Array.isArray(field.displayCondition)
+//                   ? field.displayCondition
+//                   : [field.displayCondition]
+//               }
+//             }
+//           }
+//         ]
+//       }
+//     };
+//   }
+//
+//   // Add client display info
+//   if (field.clientDisplay && field.clientDisplay.length > 0) {
+//     property.clientDisplay = field.clientDisplay;
+//   }
+//
+//   // Add search and list display info
+//   if (field.isSearchable) {
+//     property.isSearchable = true;
+//   }
+//
+//   if (field.showInList) {
+//     property.showInList = true;
+//   }
+//
+//   return property;
+// };
+//
+// // Convert JSON Schema to string
+// export const generateJsonSchemaString = (fields, title, description) => {
+//   const schema = generateJsonSchema(fields, title, description);
+//   return JSON.stringify(schema, null, 2);
+// };
+//
+// // Build Zod schema for validation
+// export const buildZodSchema = (fields) => {
+//   const schemaObj = {};
+//
+//   fields.forEach(field => {
+//     schemaObj[field.name] = createZodValidator(field);
+//   });
+//
+//   return z.object(schemaObj);
+// };
+//
+// // Helper to create a Zod validator for a field
+// const createZodValidator = (field) => {
+//   let validator;
+//
+//   switch (field.type) {
+//     case "text":
+//     case "password":
+//     case "textarea":
+//     case "tel":
+//     case "hidden":
+//       validator = z.string();
+//       if (field.minLength) validator = validator.min(parseInt(field.minLength, 10));
+//       if (field.maxLength) validator = validator.max(parseInt(field.maxLength, 10));
+//       if (field.pattern) validator = validator.regex(new RegExp(field.pattern));
+//       break;
+//
+//     case "email":
+//       validator = z.string().email();
+//       if (field.minLength) validator = validator.min(parseInt(field.minLength, 10));
+//       if (field.maxLength) validator = validator.max(parseInt(field.maxLength, 10));
+//       break;
+//
+//     case "url":
+//       validator = z.string().url();
+//       if (field.minLength) validator = validator.min(parseInt(field.minLength, 10));
+//       if (field.maxLength) validator = validator.max(parseInt(field.maxLength, 10));
+//       break;
+//
+//     case "number":
+//     case "range":
+//       validator = z.number();
+//       if (field.min !== undefined && field.min !== "") validator = validator.min(parseFloat(field.min));
+//       if (field.max !== undefined && field.max !== "") validator = validator.max(parseFloat(field.max));
+//       break;
+//
+//     case "select":
+//     case "radio":
+//       if (field.options && field.options.length > 0) {
+//         validator = z.enum(field.options);
+//       } else {
+//         validator = z.string();
+//       }
+//       break;
+//
+//     case "multiselect":
+//       if (field.options && field.options.length > 0) {
+//         validator = z.array(z.enum(field.options));
+//       } else {
+//         validator = z.array(z.string());
+//       }
+//       break;
+//
+//     case "checkbox":
+//       validator = z.boolean();
+//       break;
+//
+//     case "date":
+//       validator = z.union([z.string(), z.date()]);
+//       break;
+//
+//     case "time":
+//     case "datetime-local":
+//       validator = z.string();
+//       break;
+//
+//     case "file":
+//       if (field.maxFiles > 1) {
+//         // Array of file paths
+//         validator = z.array(z.string()).max(field.maxFiles || 1);
+//       } else {
+//         // Single file path
+//         validator = z.string();
+//       }
+//       break;
+//
+//     case "object":
+//       validator = z.object({});
+//       break;
+//
+//     case "array":
+//       validator = z.array(z.string());
+//       break;
+//
+//     default:
+//       validator = z.string();
+//   }
+//
+//   // Make optional if not required
+//   if (!field.required) {
+//     validator = validator.optional();
+//   }
+//
+//   return validator;
+// };
+//
+// // Generate Zod schema string for validation
+// export const generateZodSchemaString = (fields, title) => {
+//   let schemaString = `import { z } from 'zod';\n\n`;
+//   schemaString += `// Schema for ${title}\n`;
+//   schemaString += `export const ${title.replace(/\s+/g, '')}Schema = z.object({\n`;
+//
+//   fields.forEach((field, index) => {
+//     schemaString += `  ${field.name}: ${generateZodFieldString(field)}${index < fields.length - 1 ? ',' : ''}\n`;
+//   });
+//
+//   schemaString += `});\n`;
+//   return schemaString;
+// };
+//
+// // Helper to generate Zod field validation as string
+// const generateZodFieldString = (field) => {
+//   let validatorString = '';
+//
+//   switch (field.type) {
+//     case "text":
+//     case "password":
+//     case "textarea":
+//     case "tel":
+//     case "hidden":
+//       validatorString = `z.string()`;
+//       if (field.minLength) validatorString += `.min(${field.minLength})`;
+//       if (field.maxLength) validatorString += `.max(${field.maxLength})`;
+//       if (field.pattern) validatorString += `.regex(/${field.pattern}/)`;
+//       break;
+//
+//     case "email":
+//       validatorString = `z.string().email()`;
+//       if (field.minLength) validatorString += `.min(${field.minLength})`;
+//       if (field.maxLength) validatorString += `.max(${field.maxLength})`;
+//       break;
+//
+//     case "url":
+//       validatorString = `z.string().url()`;
+//       if (field.minLength) validatorString += `.min(${field.minLength})`;
+//       if (field.maxLength) validatorString += `.max(${field.maxLength})`;
+//       break;
+//
+//     case "number":
+//     case "range":
+//       validatorString = `z.number()`;
+//       if (field.min !== undefined && field.min !== "") validatorString += `.min(${field.min})`;
+//       if (field.max !== undefined && field.max !== "") validatorString += `.max(${field.max})`;
+//       break;
+//
+//     case "select":
+//     case "radio":
+//       if (field.options && field.options.length > 0) {
+//         validatorString = `z.enum([${field.options.map(opt => `"${opt}"`).join(', ')}])`;
+//       } else {
+//         validatorString = `z.string()`;
+//       }
+//       break;
+//
+//     case "multiselect":
+//       if (field.options && field.options.length > 0) {
+//         validatorString = `z.array(z.enum([${field.options.map(opt => `"${opt}"`).join(', ')}]))`;
+//       } else {
+//         validatorString = `z.array(z.string())`;
+//       }
+//       break;
+//
+//     case "checkbox":
+//       validatorString = `z.boolean()`;
+//       break;
+//
+//     case "date":
+//       validatorString = `z.union([z.string(), z.date()])`;
+//       break;
+//
+//     case "time":
+//     case "datetime-local":
+//       validatorString = `z.string()`;
+//       break;
+//
+//     case "file":
+//       if (field.maxFiles > 1) {
+//         validatorString = `z.array(z.string()).max(${field.maxFiles})`;
+//       } else {
+//         validatorString = `z.string()`;
+//       }
+//       break;
+//
+//     case "object":
+//       validatorString = `z.object({})`;
+//       break;
+//
+//     case "array":
+//       validatorString = `z.array(z.string())`;
+//       break;
+//
+//     default:
+//       validatorString = `z.string()`;
+//   }
+//
+//   // Add descriptions
+//   if (field.description) {
+//     validatorString += `.describe("${field.description}")`;
+//   }
+//
+//   // Make optional if not required
+//   if (!field.required) {
+//     validatorString += `.optional()`;
+//   }
+//
+//   return validatorString;
+// };
+//
+// // Generate Uniforms-compatible schema
+// export const generateUniformsZodSchemaString = (fields, title) => {
+//   let schemaString = `import { z } from 'zod';\n\n`;
+//   schemaString += `// Uniforms Schema for ${title}\n`;
+//   schemaString += `export const ${title.replace(/\s+/g, '')}Schema = z.object({\n`;
+//
+//   fields.forEach((field, index) => {
+//     schemaString += `  ${field.name}: ${generateUniformsZodFieldString(field)}${index < fields.length - 1 ? ',' : ''}\n`;
+//   });
+//
+//   schemaString += `});\n`;
+//   return schemaString;
+// };
+//
+// // Helper to generate Uniforms-compatible Zod field
+// const generateUniformsZodFieldString = (field) => {
+//   let validatorString = generateZodFieldString(field);
+//
+//   // Add Uniforms specific metadata
+//   const meta = [];
+//
+//   if (field.label) meta.push(`label: "${field.label}"`);
+//   if (field.placeholder) meta.push(`placeholder: "${field.placeholder}"`);
+//
+//   // Add field specific metadata
+//   switch (field.type) {
+//     case "select":
+//     case "radio":
+//     case "multiselect":
+//       if (field.options && field.options.length > 0) {
+//         meta.push(`options: [${field.options.map(opt => `{ label: "${opt}", value: "${opt}" }`).join(', ')}]`);
+//       }
+//       break;
+//
+//     case "textarea":
+//       meta.push(`component: "textarea"`);
+//       break;
+//
+//     case "date":
+//       meta.push(`component: "datepicker"`);
+//       break;
+//
+//     case "file":
+//       meta.push(`component: "fileupload"`);
+//       meta.push(`accept: "${field.accept || '*'}"`);
+//       meta.push(`maxFiles: ${field.maxFiles || 1}`);
+//       meta.push(`maxSize: ${field.maxSize || 5 * 1024 * 1024}`);
+//       meta.push(`fileServiceType: "${field.fileServiceType || 'SERVICE_FILE'}"`);
+//       break;
+//   }
+//
+//   // Add show in list metadata
+//   if (field.showInList) {
+//     meta.push(`showInList: true`);
+//   }
+//
+//   // Add is searchable metadata
+//   if (field.isSearchable) {
+//     meta.push(`isSearchable: true`);
+//   }
+//
+//   // Add client display metadata
+//   if (field.clientDisplay && field.clientDisplay.length > 0) {
+//     meta.push(`clientDisplay: [${field.clientDisplay.map(client => `"${client}"`).join(', ')}]`);
+//   }
+//
+//   // Add layout metadata if available
+//   if (field.column && field.column < 12) {
+//     meta.push(`column: ${field.column}`);
+//   }
+//
+//   // Add dependency conditions if present
+//   if (field.depends && field.displayCondition) {
+//     meta.push(`depends: "${field.depends}"`);
+//     meta.push(`displayCondition: "${field.displayCondition}"`);
+//   }
+//
+//   // Add metadata to validator
+//   if (meta.length > 0) {
+//     validatorString += `.meta({ ${meta.join(', ')} })`;
+//   }
+//
+//   return validatorString;
+// };
 import { z } from 'zod';
 
 // Helper to convert fields to JSON Schema
@@ -561,10 +1047,12 @@ const createJsonProperty = (field) => {
     description: field.description || ""
   };
 
+  // Add uniforms metadata
+  const uniforms = {};
+
   switch (field.type) {
     case "text":
     case "password":
-    case "textarea":
     case "email":
     case "url":
     case "tel":
@@ -572,8 +1060,25 @@ const createJsonProperty = (field) => {
       if (field.minLength) property.minLength = parseInt(field.minLength, 10);
       if (field.maxLength) property.maxLength = parseInt(field.maxLength, 10);
       if (field.pattern) property.pattern = field.pattern;
-      if (field.placeholder) property.examples = [field.placeholder];
+      if (field.placeholder) {
+        property.examples = [field.placeholder];
+        uniforms.placeholder = field.placeholder;
+      }
       if (field.defaultValue) property.default = field.defaultValue;
+      break;
+
+    case "textarea":
+      property.type = "string";
+      if (field.minLength) property.minLength = parseInt(field.minLength, 10);
+      if (field.maxLength) property.maxLength = parseInt(field.maxLength, 10);
+      if (field.pattern) property.pattern = field.pattern;
+      if (field.placeholder) {
+        property.examples = [field.placeholder];
+        uniforms.placeholder = field.placeholder;
+      }
+      if (field.defaultValue) property.default = field.defaultValue;
+      // Add uniforms component for textarea
+      uniforms.component = "LongTextField";
       break;
 
     case "number":
@@ -609,6 +1114,8 @@ const createJsonProperty = (field) => {
       property.type = "string";
       property.enum = field.options || [];
       if (field.defaultValue) property.default = field.defaultValue;
+      // Add uniforms checkboxes flag for radio
+      uniforms.checkboxes = true;
       break;
 
     case "date":
@@ -644,6 +1151,8 @@ const createJsonProperty = (field) => {
       property.contentMediaType = field.accept || "*/*";
       property.fileServiceType = field.fileServiceType || "SERVICE_FILE";
       property.maxSize = field.maxSize || 5 * 1024 * 1024; // 5MB default
+      // Add uniforms component for file
+      uniforms.component = "FileUpload";
       break;
 
     case "object":
@@ -674,10 +1183,10 @@ const createJsonProperty = (field) => {
         oneOf: [
           {
             properties: {
-              [field.depends]: { 
-                enum: Array.isArray(field.displayCondition) 
-                  ? field.displayCondition 
-                  : [field.displayCondition] 
+              [field.depends]: {
+                enum: Array.isArray(field.displayCondition)
+                    ? field.displayCondition
+                    : [field.displayCondition]
               }
             }
           }
@@ -686,12 +1195,34 @@ const createJsonProperty = (field) => {
     };
   }
 
-  // Add client display info
+  // Add uniforms metadata if any
+  if (field.isSearchable) {
+    uniforms.isSearchable = true;
+  }
+
+  if (field.showInList) {
+    uniforms.showInList = true;
+  }
+
+  if (field.clientDisplay && field.clientDisplay.length > 0) {
+    uniforms.clientDisplay = field.clientDisplay;
+  }
+
+  if (field.column && field.column < 12) {
+    uniforms.column = field.column;
+  }
+
+  // Only add uniforms object if it has properties
+  if (Object.keys(uniforms).length > 0) {
+    property.uniforms = uniforms;
+  }
+
+  // Add client display info at root level for backward compatibility
   if (field.clientDisplay && field.clientDisplay.length > 0) {
     property.clientDisplay = field.clientDisplay;
   }
 
-  // Add search and list display info
+  // Add search and list display info at root level for backward compatibility
   if (field.isSearchable) {
     property.isSearchable = true;
   }
@@ -944,13 +1475,13 @@ export const generateUniformsZodSchemaString = (fields, title) => {
 // Helper to generate Uniforms-compatible Zod field
 const generateUniformsZodFieldString = (field) => {
   let validatorString = generateZodFieldString(field);
-  
+
   // Add Uniforms specific metadata
   const meta = [];
-  
+
   if (field.label) meta.push(`label: "${field.label}"`);
   if (field.placeholder) meta.push(`placeholder: "${field.placeholder}"`);
-  
+
   // Add field specific metadata
   switch (field.type) {
     case "select":
@@ -960,15 +1491,15 @@ const generateUniformsZodFieldString = (field) => {
         meta.push(`options: [${field.options.map(opt => `{ label: "${opt}", value: "${opt}" }`).join(', ')}]`);
       }
       break;
-      
+
     case "textarea":
       meta.push(`component: "textarea"`);
       break;
-      
+
     case "date":
       meta.push(`component: "datepicker"`);
       break;
-      
+
     case "file":
       meta.push(`component: "fileupload"`);
       meta.push(`accept: "${field.accept || '*'}"`);
@@ -977,37 +1508,37 @@ const generateUniformsZodFieldString = (field) => {
       meta.push(`fileServiceType: "${field.fileServiceType || 'SERVICE_FILE'}"`);
       break;
   }
-  
+
   // Add show in list metadata
   if (field.showInList) {
     meta.push(`showInList: true`);
   }
-  
+
   // Add is searchable metadata
   if (field.isSearchable) {
     meta.push(`isSearchable: true`);
   }
-  
+
   // Add client display metadata
   if (field.clientDisplay && field.clientDisplay.length > 0) {
     meta.push(`clientDisplay: [${field.clientDisplay.map(client => `"${client}"`).join(', ')}]`);
   }
-  
+
   // Add layout metadata if available
   if (field.column && field.column < 12) {
     meta.push(`column: ${field.column}`);
   }
-  
+
   // Add dependency conditions if present
   if (field.depends && field.displayCondition) {
     meta.push(`depends: "${field.depends}"`);
     meta.push(`displayCondition: "${field.displayCondition}"`);
   }
-  
+
   // Add metadata to validator
   if (meta.length > 0) {
     validatorString += `.meta({ ${meta.join(', ')} })`;
   }
-  
+
   return validatorString;
 };

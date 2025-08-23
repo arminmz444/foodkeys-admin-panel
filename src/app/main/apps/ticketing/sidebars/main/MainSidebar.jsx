@@ -141,7 +141,7 @@ function MainSidebar() {
 					</FuseSvgIcon>
 
 					<Input
-						placeholder="Search tickets..."
+						placeholder="جستجو تیکت ..."
 						className="flex flex-1 px-8"
 						disableUnderline
 						fullWidth

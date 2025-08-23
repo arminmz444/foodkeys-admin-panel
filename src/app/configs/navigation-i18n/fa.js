@@ -6,6 +6,7 @@ const locale = {
   ACCESS_MANAGER: "مدیریت دسترسی‌ها",
   CREDIT_MANAGER: "مدیریت اعتبار‌ها",
   ANNOUNCEMENT_BUILDER: "اعلان‌ساز",
+  EXCEL_TEMPLATE_MANAGER: "مدیریت قالب‌های اکسل",
   FORM_BUILDER: "فرم‌ساز",
   BUNDLE: "مدیریت پلن‌ها",
   PAGE_BUILDER: "صفحه‌ساز",

@@ -12,7 +12,7 @@ import { Input } from "@mui/material";
 
 function Services() {
   const { data: responseData, isLoading } = useGetServicesQuery({
-    pageSize: 12,
+    pageSize: 999,
     pageNumber: 1,
   });
   const apiServices = responseData?.data || [];

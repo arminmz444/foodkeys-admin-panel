@@ -30,7 +30,7 @@ import TodosAppConfig from './todos/TodosAppConfig'
 import UserAppConfig from "./users/UserAppConfig";
 import ArchiveAppConfig from "./archive/ArchiveAppConfig";
 import ArchiveTaskAppConfig from "./archive/ArchiveTaskAppConfig";
-
+import ExcelTemplateAppConfig from "./template-manager/excel-template-manager/ExcelTemplateAppConfig.jsx";
 /**
  * The payments of application configurations.
  */
@@ -66,6 +66,7 @@ const appsConfigs = [
   TodosAppConfig,
   UserAppConfig,
   ArchiveAppConfig,
-  ArchiveTaskAppConfig
+  ArchiveTaskAppConfig,
+  ExcelTemplateAppConfig
 ];
 export default appsConfigs;

@@ -8,19 +8,19 @@ import {
   TextField, 
   Typography, 
   Paper, 
-  Grid,
-  IconButton
+  IconButton,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import { 
   CloudUpload as CloudUploadIcon,
   Close as CloseIcon,
   ArrowBack as ArrowBackIcon
 } from '@mui/icons-material';
-import { toast } from 'react-toastify';
 
 import { addTemplate } from '../../store/slices/excelTemplateSlice';
 
-const TemplateUpload = ({ onCancel, onSuccess, isMobile }) => {
+function TemplateUpload({ onCancel, onSuccess, isMobile }) {
   const dispatch = useDispatch();
   const { loading } = useSelector(state => state.excelTemplate);
   
@@ -28,6 +28,23 @@ const TemplateUpload = ({ onCancel, onSuccess, isMobile }) => {
   const [description, setDescription] = useState('');
   const [file, setFile] = useState(null);
   const [fileError, setFileError] = useState('');
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'info'
+  });
+  
+  const handleShowSnackbar = (message, severity = 'info') => {
+    setSnackbar({
+      open: true,
+      message,
+      severity
+    });
+  };
+  
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
   
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -46,7 +63,7 @@ const TemplateUpload = ({ onCancel, onSuccess, isMobile }) => {
     
     if (!validTypes.includes(fileType)) {
       setFile(null);
-      setFileError('Please select a valid Excel file (.xls or .xlsx)');
+      setFileError('لطفا یک فایل اکسل معتبر انتخاب کنید (.xls یا .xlsx)');
       return;
     }
     
@@ -64,12 +81,12 @@ const TemplateUpload = ({ onCancel, onSuccess, isMobile }) => {
     e.preventDefault();
     
     if (!file) {
-      setFileError('Please select an Excel file');
+      setFileError('لطفا یک فایل اکسل انتخاب کنید');
       return;
     }
     
     if (!name.trim()) {
-      toast.error('Please enter a template name');
+      handleShowSnackbar('لطفا نام قالب را وارد کنید', 'error');
       return;
     }
     
@@ -81,11 +98,11 @@ const TemplateUpload = ({ onCancel, onSuccess, isMobile }) => {
     dispatch(addTemplate({ file, data: formData }))
       .unwrap()
       .then(() => {
-        toast.success('Template uploaded successfully');
+        handleShowSnackbar('قالب با موفقیت آپلود شد', 'success');
         onSuccess();
       })
       .catch((err) => {
-        toast.error(`Failed to upload template: ${err.message || err}`);
+        handleShowSnackbar(`خطا در آپلود قالب: ${err.message || err}`, 'error');
       });
   };
   
@@ -100,7 +117,7 @@ const TemplateUpload = ({ onCancel, onSuccess, isMobile }) => {
         <IconButton onClick={onCancel} sx={{ mr: 1 }}>
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant={isMobile ? 'h5' : 'h4'}>Upload New Template</Typography>
+        <Typography variant={isMobile ? 'h5' : 'h4'}>آپلود قالب جدید</Typography>
       </Box>
       
       <motion.form 
@@ -112,7 +129,7 @@ const TemplateUpload = ({ onCancel, onSuccess, isMobile }) => {
         <motion.div variants={inputMotion}>
           <TextField
             fullWidth
-            label="Template Name"
+            label="نام قالب"
             value={name}
             onChange={(e) => setName(e.target.value)}
             margin="normal"
@@ -124,7 +141,7 @@ const TemplateUpload = ({ onCancel, onSuccess, isMobile }) => {
         <motion.div variants={inputMotion}>
           <TextField
             fullWidth
-            label="Description"
+            label="توضیحات"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             margin="normal"
@@ -159,10 +176,10 @@ const TemplateUpload = ({ onCancel, onSuccess, isMobile }) => {
                 >
                   <CloudUploadIcon color="primary" sx={{ fontSize: 48, mb: 1 }} />
                   <Typography variant="h6" gutterBottom>
-                    {file ? file.name : 'Select or Drop Excel Template'}
+                    {file ? file.name : 'انتخاب یا رها کردن قالب اکسل'}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Only .xls or .xlsx files are allowed
+                    فقط فایل‌های .xls یا .xlsx مجاز هستند
                   </Typography>
                   {fileError && (
                     <Typography variant="body2" color="error" sx={{ mt: 1 }}>
@@ -184,7 +201,7 @@ const TemplateUpload = ({ onCancel, onSuccess, isMobile }) => {
               startIcon={<CloseIcon />}
               disabled={loading}
             >
-              Cancel
+              انصراف
             </Button>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button 
@@ -194,14 +211,25 @@ const TemplateUpload = ({ onCancel, onSuccess, isMobile }) => {
                 disabled={!file || loading}
                 startIcon={<CloudUploadIcon />}
               >
-                {loading ? 'Uploading...' : 'Upload Template'}
+                {loading ? 'در حال آپلود...' : 'آپلود قالب'}
               </Button>
             </motion.div>
           </Box>
         </motion.div>
       </motion.form>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
-};
+}
 
 export default TemplateUpload;

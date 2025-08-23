@@ -11,7 +11,9 @@ import {
   Paper,
   Divider,
   Grid,
-  Chip
+  Chip,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import { 
   Edit as EditIcon, 
@@ -22,7 +24,6 @@ import {
   Delete as DeleteIcon
 } from '@mui/icons-material';
 import { format } from 'date-fns';
-import { toast } from 'react-toastify';
 
 import { 
   updateTemplateInfo, 
@@ -39,6 +40,23 @@ const TemplateDetails = ({ onBack, isMobile }) => {
   const [name, setName] = useState(currentTemplate?.name || '');
   const [description, setDescription] = useState(currentTemplate?.description || '');
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'info'
+  });
+  
+  const handleShowSnackbar = (message, severity = 'info') => {
+    setSnackbar({
+      open: true,
+      message,
+      severity
+    });
+  };
+  
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
   
   const handleEditToggle = () => {
     if (isEditing) {
@@ -51,7 +69,7 @@ const TemplateDetails = ({ onBack, isMobile }) => {
   
   const handleSave = () => {
     if (!name.trim()) {
-      toast.error('Template name cannot be empty');
+      handleShowSnackbar('نام قالب نمی‌تواند خالی باشد', 'error');
       return;
     }
     
@@ -62,10 +80,10 @@ const TemplateDetails = ({ onBack, isMobile }) => {
       .unwrap()
       .then(() => {
         setIsEditing(false);
-        toast.success('Template updated successfully');
+        handleShowSnackbar('قالب با موفقیت بروزرسانی شد', 'success');
       })
       .catch((err) => {
-        toast.error(`Failed to update template: ${err.message || err}`);
+        handleShowSnackbar(`خطا در بروزرسانی قالب: ${err.message || err}`, 'error');
       });
   };
   
@@ -77,28 +95,44 @@ const TemplateDetails = ({ onBack, isMobile }) => {
     dispatch(removeTemplate(currentTemplate.id))
       .unwrap()
       .then(() => {
-        toast.success('Template deleted successfully');
+        handleShowSnackbar('قالب با موفقیت حذف شد', 'success');
         onBack();
       })
       .catch((err) => {
-        toast.error(`Failed to delete template: ${err.message || err}`);
+        handleShowSnackbar(`خطا در حذف قالب: ${err.message || err}`, 'error');
       });
     setDeleteConfirmOpen(false);
   };
   
   const handleDownload = async () => {
     try {
-      const blob = await downloadTemplate(currentTemplate.id);
+      const response = await downloadTemplate(currentTemplate.id);
+      
+      // Create a blob from the response data
+      const blob = new Blob([response], { 
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+      });
+      
+      // Create a URL for the blob
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = currentTemplate.originalFilename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+      
+      // Create a temporary link element
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = currentTemplate.originalFilename || 'template.xlsx';
+      
+      // Append to body, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      
+      // Clean up
+      document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+      
+      handleShowSnackbar('قالب با موفقیت دانلود شد', 'success');
     } catch (error) {
-      toast.error('Failed to download template');
+      console.error('Download error:', error);
+      handleShowSnackbar('خطا در دانلود قالب', 'error');
     }
   };
   
@@ -242,6 +276,17 @@ const TemplateDetails = ({ onBack, isMobile }) => {
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteConfirmOpen(false)}
       />
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

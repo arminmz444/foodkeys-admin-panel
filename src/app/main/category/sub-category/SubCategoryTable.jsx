@@ -148,6 +148,7 @@ import CustomUniformsAsyncPaginateSelect from "app/shared-components/dynamic-fie
 import CustomUniformsAsyncSelect from "app/shared-components/dynamic-field-generator/CustomUniformsAsyncSelect";
 import axios from "axios";
 import _ from "lodash";
+import {useUpdateCategoryMutation} from "@/app/main/category/CategoriesApi.js";
 
 const citiesList = [
   "صنایع غذایی",
@@ -246,6 +247,7 @@ const loadCategories = async () => {
 
 function SubCategoryTable() {
   const [createSubCategory] = useCreateSubCategoryMutation();
+  const [updateSubCategory] = useUpdateSubCategoryMutation();
   const categoryStatusSelectOptionsMapper = {
     1: "فعال",
     2: "غیرفعال",
@@ -393,9 +395,46 @@ function SubCategoryTable() {
     await createSubCategory(data);
     return true;
   };
-  const createItemProps = {
-    zodSchema: z.object({
-      name: z
+  const handleUpdate = async (vals) => {
+    const data = _.clone(vals);
+    // data.categoryStatus = vals.categoryStatus === 'فعال' ? 1 : 2;
+    data.updatedAt = null;
+    data.createdAt = null;
+    await updateSubCategory(data);
+    return true;
+  };
+  const getEditDefaultValues = (rowData) => {
+    console.log("Row Data for editing:", rowData);
+
+    const editValues = {
+      ...rowData,
+      categoryId: rowData?.categoryId,
+      createdAt: undefined,
+      updatedAt: undefined,
+      category: undefined,
+    };
+
+    console.log("Edit values:", editValues);
+    return editValues;
+  };
+  // const getEditDefaultValues = (rowData) => {
+  //   console.log("Row Data")
+  //   const category = { label: rowData?.category, value: rowData?.categoryId }
+  //   console.log({
+  //     ...rowData,
+  //     category,
+  //     categoryId: category
+  //     // categoryStatus: rowData.categoryStatus === 1 ? 'فعال' : 'غیرفعال'
+  //   })
+  //   return {
+  //     ...rowData,
+  //     category,
+  //     categoryId: category
+  //     // categoryStatus: rowData.categoryStatus === 1 ? 'فعال' : 'غیرفعال'
+  //   };
+  // };
+  const subCategorySchema = z.object({
+    name: z
         .string({
           invalid_type_error: "فرمت داده ورودی اشتباه است",
           required_error: "این فیلد الزامی است",
@@ -406,7 +445,7 @@ function SubCategoryTable() {
           label: "نام زیرشاخه",
           placeholder: "نام زیرشاخه را وارد کنید",
         }),
-      nameEn: z
+    nameEn: z
         .string({
           invalid_type_error: "فرمت داده ورودی اشتباه است",
           required_error: "این فیلد الزامی است",
@@ -417,7 +456,7 @@ function SubCategoryTable() {
           label: "نام انگلیسی زیرشاخه",
           placeholder: "نام انگلیسی زیرشاخه را وارد کنید",
         }),
-        displayName: z
+    displayName: z
         .string({
           invalid_type_error: "فرمت داده ورودی اشتباه است",
           required_error: "این فیلد الزامی است",
@@ -428,7 +467,7 @@ function SubCategoryTable() {
           label: "نام نمایشی زیرشاخه",
           placeholder: "نام نمایشی زیرشاخه را وارد کنید",
         }),
-      categoryId: z
+    categoryId: z
         .number({
           required_error: "این فیلد الزامی است",
           invalid_type_error: "فرمت داده ورودی اشتباه است",
@@ -441,7 +480,7 @@ function SubCategoryTable() {
           loadOptions: loadCategories,
           component: CustomUniformsAsyncSelect,
         }),
-      pageOrder: z
+    pageOrder: z
         .number({
           invalid_type_error: "فرمت داده ورودی اشتباه است",
           required_error: "این فیلد الزامی است",
@@ -452,14 +491,88 @@ function SubCategoryTable() {
           label: "ترتیب صفحه زیرشاخه",
           placeholder: "اولویت نمایش زیرشاخه در سایت اصلی را انتخاب کنید",
         }),
-      hasDetailsPage: z
+    hasDetailsPage: z
         .boolean({ description: "صفحه اختصاصی دارد؟" })
         .optional()
         .uniforms({
           displayName: "ایجاد صفحه اختصاصی",
           label: "ایجاد صفحه اختصاصی",
         }),
-    }),
+  });
+  const formFieldsInputTypes = {
+    name: {
+      label: "نام",
+      inputType: "TextField",
+      renderCustomInput: false,
+      classes: "mt-10",
+      styles: null,
+      props: {
+        fullWidth: true,
+      },
+    },
+    nameEn: {
+      label: "نام انگلیسی",
+      inputType: "TextField",
+      renderCustomInput: false,
+      classes: "mt-10",
+      styles: null,
+      props: {
+        fullWidth: true,
+      },
+    },
+    displayName: {
+      label: "نام نمایشی",
+      inputType: "TextField",
+      renderCustomInput: false,
+      classes: "mt-10",
+      styles: null,
+      props: {
+        fullWidth: true,
+      },
+    },
+    categoryId: {
+      label: "دسته‌بندی",
+      inputType: "Select",
+      renderCustomInput: false,
+      classes: "mt-10",
+      styles: null,
+      props: {
+        fullWidth: true,
+      },
+    },
+    // description: {
+    // 	label: "توضیحات",
+    // 	inputType: "TextField",
+    // 	renderCustomInput: false,
+    // 	classes: "mt-10",
+    // 	styles: null,
+    // 	props: {
+    // 		fullWidth: true,
+    // 	}
+    // },
+    pageOrder: {
+      label: "ترتیب صفحه",
+      inputType: "TextField",
+      renderCustomInput: false,
+      classes: "mt-10",
+      styles: null,
+      props: {
+        fullWidth: true,
+      },
+    },
+    hasDetailsPage: {
+      label: "صفحه اختصاصی دارد؟",
+      inputType: "CheckBox",
+      renderCustomInput: false,
+      classes: "mt-10",
+      styles: null,
+      props: {
+        fullWidth: true,
+      },
+    },
+  }
+  const createItemProps = {
+    zodSchema: subCategorySchema,
     defaultValues: {
       name: "",
       nameEn: "",
@@ -472,83 +585,24 @@ function SubCategoryTable() {
     formValidationStruct: "ZOD_SCHEMA",
     formGenerationType: "MANUAL",
     hideSubmitField: false,
-    formFieldsInputTypes: {
-      name: {
-        label: "نام",
-        inputType: "TextField",
-        renderCustomInput: false,
-        classes: "mt-10",
-        styles: null,
-        props: {
-          fullWidth: true,
-        },
-      },
-      nameEn: {
-        label: "نام انگلیسی",
-        inputType: "TextField",
-        renderCustomInput: false,
-        classes: "mt-10",
-        styles: null,
-        props: {
-          fullWidth: true,
-        },
-      },
-      displayName: {
-        label: "نام نمایشی",
-        inputType: "TextField",
-        renderCustomInput: false,
-        classes: "mt-10",
-        styles: null,
-        props: {
-          fullWidth: true,
-        },
-      },
-      categoryId: {
-        label: "دسته‌بندی",
-        inputType: "Select",
-        renderCustomInput: false,
-        classes: "mt-10",
-        styles: null,
-        props: {
-          fullWidth: true,
-        },
-      },
-      // description: {
-      // 	label: "توضیحات",
-      // 	inputType: "TextField",
-      // 	renderCustomInput: false,
-      // 	classes: "mt-10",
-      // 	styles: null,
-      // 	props: {
-      // 		fullWidth: true,
-      // 	}
-      // },
-      pageOrder: {
-        label: "ترتیب صفحه",
-        inputType: "TextField",
-        renderCustomInput: false,
-        classes: "mt-10",
-        styles: null,
-        props: {
-          fullWidth: true,
-        },
-      },
-      hasDetailsPage: {
-        label: "صفحه اختصاصی دارد؟",
-        inputType: "CheckBox",
-        renderCustomInput: false,
-        classes: "mt-10",
-        styles: null,
-        props: {
-          fullWidth: true,
-        },
-      },
-    },
+    formFieldsInputTypes,
     onCreate: async (vals) => handleCreate(vals),
     buttonLabel: "افزودن زیرشاخه جدید",
     dialogTitle: "ایجاد زیرشاخه جدید",
   };
 
+  const editItemProps = {
+    zodSchema: subCategorySchema,
+    formHeaderTitle: 'ویرایش زیرشاخه',
+    formEngine: 'UNIFORMS',
+    formValidationStruct: 'ZOD_SCHEMA',
+    formGenerationType: 'MANUAL',
+    hideSubmitField: false,
+    formFieldsInputTypes,
+    onUpdate: handleUpdate,
+    getDefaultValues: getEditDefaultValues,
+    dialogTitle: 'ویرایش دسته‌بندی'
+  };
   return (
     <GenericCrudTable
       columns={columns}
@@ -558,6 +612,8 @@ function SubCategoryTable() {
       useDeleteMutationHook={useDeleteSubCategoryMutation} // delete
       rowActions={rowActions}
       createItemProps={createItemProps}
+      editItemProps={editItemProps}
+      enableBuiltInEditing={false}
       renderTopToolbarCustomActionsClasses="flex justify-start px-8 py-16"
       // renderTopToolbarCustomActions={() => (
       // <Button

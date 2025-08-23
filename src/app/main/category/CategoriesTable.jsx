@@ -229,6 +229,7 @@ import GenericCrudTable from '../../shared-components/data-table/GenericCrudTabl
 
 function CategoryTable() {
 	const [createCategory] = useCreateCategoryMutation();
+	const [updateCategory] = useUpdateCategoryMutation();
 	const [loading, setLoading] = useState(false);
 	const categoryStatusSelectOptionsMapper = {
 		1: 'فعال',
@@ -356,48 +357,149 @@ function CategoryTable() {
 		// setLoading(false);
 		// alert(`Create: ${JSON.stringify(data)}`);
 	};
+
+	const handleUpdate = async (vals) => {
+		const data = _.clone(vals);
+		data.categoryStatus = vals.categoryStatus === 'فعال' ? 1 : 2;
+		await updateCategory(data);
+		return true;
+	};
+	const getEditDefaultValues = (rowData) => {
+		return {
+			...rowData,
+			categoryStatus: rowData?.categoryStatus === 1 ? 'فعال' : 'غیرفعال'
+		};
+	};
+	const categorySchema = z.object({
+		name: z
+			.string({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
+			.min(1, { message: 'این فیلد الزامی است' })
+			.uniforms({
+				displayName: 'نام',
+				label: 'نام دسته‌بندی',
+				placeholder: 'نام دسته‌بندی را وارد کنید'
+			}),
+		nameEn: z
+			.string({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
+			.min(1, { message: 'این فیلد الزامی است' })
+			.uniforms({
+				displayName: 'نام انگلیسی',
+				label: 'نام انگلیسی دسته‌بندی',
+				placeholder: 'نام انگلیسی دسته‌بندی را وارد کنید'
+			}),
+		categoryStatus: z
+			.enum(['فعال', 'غیرفعال'], {
+				required_error: 'این فیلد الزامی است',
+				invalid_type_error: 'فرمت داده ورودی اشتباه است',
+				message: 'مقدار انتخاب شده معتبر نیست'
+			})
+			.uniforms({
+				displayName: 'وضعیت دسته‌بندی',
+				label: 'وضعیت دسته‌بندی',
+				placeholder: 'وضعیت دسته‌بندی را انتخاب کنید'
+			}),
+		pageOrder: z
+			.number({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
+			.min(1, { message: 'حداقل مقدار برای این فیلد ۱ است' })
+			.uniforms({
+				displayName: 'ترتیب صفحه',
+				label: 'ترتیب صفحه دسته‌بندی',
+				placeholder: 'اولویت نمایش دسته‌بندی در سایت اصلی را انتخاب کنید'
+			})
+	});
+
+	const formFieldsInputTypes = {
+		name: {
+			label: 'نام',
+			inputType: 'TextField',
+			renderCustomInput: false,
+			classes: 'mt-10',
+			styles: null,
+			props: {
+				fullWidth: true
+			}
+		},
+		nameEn: {
+			label: 'نام انگلیسی',
+			inputType: 'TextField',
+			renderCustomInput: false,
+			classes: 'mt-10',
+			styles: null,
+			props: {
+				fullWidth: true
+			}
+		},
+		categoryStatus: {
+			label: 'وضعیت',
+			inputType: 'Select',
+			renderCustomInput: false,
+			classes: 'mt-10',
+			styles: null,
+			options: [
+				{ label: 'فعال', value: 'فعال' },
+				{ label: 'غیرفعال', value: 'غیرفعال' }
+			],
+			props: {
+				fullWidth: true
+			}
+		},
+		pageOrder: {
+			label: 'ترتیب صفحه',
+			inputType: 'TextField',
+			renderCustomInput: false,
+			classes: 'mt-10',
+			styles: null,
+			props: {
+				fullWidth: true,
+				type: 'number'
+			}
+		}
+	};
+
+
 	const createItemProps = {
-		zodSchema: z.object({
-			name: z
-				.string({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
-				.min(1, { message: 'این فیلد الزامی است' })
-				.uniforms({
-					displayName: 'نام',
-					label: 'نام دسته‌بندی',
-					placeholder: 'نام دسته‌بندی را وارد کنید'
-				}),
-			nameEn: z
-				.string({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
-				.min(1, { message: 'این فیلد الزامی است' })
-				.uniforms({
-					displayName: 'نام انگلیسی',
-					label: 'نام انگلیسی دسته‌بندی',
-					placeholder: 'نام انگلیسی دسته‌بندی را وارد کنید'
-				}),
-			categoryStatus: z
-				.enum(['فعال', 'غیرفعال'], {
-					required_error: 'این فیلد الزامی است',
-					invalid_type_error: 'فرمت داده ورودی اشتباه است',
-					message: 'مقدار انتخاب شده معتبر نیست'
-				})
-				.uniforms({
-					displayName: 'وضعیت دسته‌بندی',
-					label: 'وضعیت دسته‌بندی',
-					placeholder: 'وضعیت دسته‌بندی را انتخاب کنید'
-				}),
-			pageOrder: z
-				.number({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
-				.min(1, { message: 'حداقل مقدار برای این فیلد ۱ است' })
-				.uniforms({
-					displayName: 'ترتیب صفحه',
-					label: 'ترتیب صفحه دسته‌بندی',
-					placeholder: 'اولویت نمایش دسته‌بندی در سایت اصلی را انتخاب کنید'
-				})
-			// name: z
-			// 	.string( { errorMap: () => ( { message: 'Name must be between 3 to 20 characters' } ) } )
-			// 	.min( 3 )
-			// 	.max( 20 )
-		}),
+		// zodSchema: z.object({
+		// 	name: z
+		// 		.string({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
+		// 		.min(1, { message: 'این فیلد الزامی است' })
+		// 		.uniforms({
+		// 			displayName: 'نام',
+		// 			label: 'نام دسته‌بندی',
+		// 			placeholder: 'نام دسته‌بندی را وارد کنید'
+		// 		}),
+		// 	nameEn: z
+		// 		.string({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
+		// 		.min(1, { message: 'این فیلد الزامی است' })
+		// 		.uniforms({
+		// 			displayName: 'نام انگلیسی',
+		// 			label: 'نام انگلیسی دسته‌بندی',
+		// 			placeholder: 'نام انگلیسی دسته‌بندی را وارد کنید'
+		// 		}),
+		// 	categoryStatus: z
+		// 		.enum(['فعال', 'غیرفعال'], {
+		// 			required_error: 'این فیلد الزامی است',
+		// 			invalid_type_error: 'فرمت داده ورودی اشتباه است',
+		// 			message: 'مقدار انتخاب شده معتبر نیست'
+		// 		})
+		// 		.uniforms({
+		// 			displayName: 'وضعیت دسته‌بندی',
+		// 			label: 'وضعیت دسته‌بندی',
+		// 			placeholder: 'وضعیت دسته‌بندی را انتخاب کنید'
+		// 		}),
+		// 	pageOrder: z
+		// 		.number({ invalid_type_error: 'فرمت داده ورودی اشتباه است', required_error: 'این فیلد الزامی است' })
+		// 		.min(1, { message: 'حداقل مقدار برای این فیلد ۱ است' })
+		// 		.uniforms({
+		// 			displayName: 'ترتیب صفحه',
+		// 			label: 'ترتیب صفحه دسته‌بندی',
+		// 			placeholder: 'اولویت نمایش دسته‌بندی در سایت اصلی را انتخاب کنید'
+		// 		})
+		// 	// name: z
+		// 	// 	.string( { errorMap: () => ( { message: 'Name must be between 3 to 20 characters' } ) } )
+		// 	// 	.min( 3 )
+		// 	// 	.max( 20 )
+		// }),
+		zodSchema: categorySchema,
 		jsonSchema: {
 			title: 'دسته‌بندی',
 			type: 'object',
@@ -506,83 +608,96 @@ function CategoryTable() {
 		formValidationStruct: 'ZOD_SCHEMA',
 		formGenerationType: 'MANUAL',
 		hideSubmitField: false,
-		formFieldsInputTypes: {
-			name: {
-				label: 'نام',
-				inputType: 'TextField',
-				renderCustomInput: false,
-				classes: 'mt-10',
-				styles: null,
-				props: {
-					fullWidth: true
-				}
-			},
-			nameEn: {
-				label: 'نام انگلیسی',
-				inputType: 'TextField',
-				renderCustomInput: false,
-				classes: 'mt-10',
-				styles: null,
-				props: {
-					fullWidth: true
-				}
-			},
-			categoryStatus: {
-				label: 'وضعیت',
-				inputType: 'Select',
-				renderCustomInput: false,
-				classes: 'mt-10',
-				styles: null,
-				options: [
-					{
-						label: 'Developer',
-						value: 'developer'
-					},
-					{
-						label: 'Tester',
-						value: 'tester'
-					},
-					{
-						label: 'Product owner',
-						value: 'product-owner'
-					},
-					{
-						label: 'Project manager',
-						value: 'project-manager'
-					},
-					{
-						label: 'Businessman',
-						value: 'businessman'
-					}
-				],
-				props: {
-					fullWidth: true
-				}
-			},
-			// description: {
-			// 	label: "توضیحات",
-			// 	inputType: "TextField",
-			// 	renderCustomInput: false,
-			// 	classes: "mt-10",
-			// 	styles: null,
-			// 	props: {
-			// 		fullWidth: true,
-			// 	}
-			// },
-			pageOrder: {
-				label: 'ترتیب صفحه',
-				inputType: 'TextField',
-				renderCustomInput: false,
-				classes: 'mt-10',
-				styles: null,
-				props: {
-					fullWidth: true
-				}
-			}
-		},
+		// formFieldsInputTypes: {
+		// 	name: {
+		// 		label: 'نام',
+		// 		inputType: 'TextField',
+		// 		renderCustomInput: false,
+		// 		classes: 'mt-10',
+		// 		styles: null,
+		// 		props: {
+		// 			fullWidth: true
+		// 		}
+		// 	},
+		// 	nameEn: {
+		// 		label: 'نام انگلیسی',
+		// 		inputType: 'TextField',
+		// 		renderCustomInput: false,
+		// 		classes: 'mt-10',
+		// 		styles: null,
+		// 		props: {
+		// 			fullWidth: true
+		// 		}
+		// 	},
+		// 	categoryStatus: {
+		// 		label: 'وضعیت',
+		// 		inputType: 'Select',
+		// 		renderCustomInput: false,
+		// 		classes: 'mt-10',
+		// 		styles: null,
+		// 		options: [
+		// 			{
+		// 				label: 'Developer',
+		// 				value: 'developer'
+		// 			},
+		// 			{
+		// 				label: 'Tester',
+		// 				value: 'tester'
+		// 			},
+		// 			{
+		// 				label: 'Product owner',
+		// 				value: 'product-owner'
+		// 			},
+		// 			{
+		// 				label: 'Project manager',
+		// 				value: 'project-manager'
+		// 			},
+		// 			{
+		// 				label: 'Businessman',
+		// 				value: 'businessman'
+		// 			}
+		// 		],
+		// 		props: {
+		// 			fullWidth: true
+		// 		}
+		// 	},
+		// 	// description: {
+		// 	// 	label: "توضیحات",
+		// 	// 	inputType: "TextField",
+		// 	// 	renderCustomInput: false,
+		// 	// 	classes: "mt-10",
+		// 	// 	styles: null,
+		// 	// 	props: {
+		// 	// 		fullWidth: true,
+		// 	// 	}
+		// 	// },
+		// 	pageOrder: {
+		// 		label: 'ترتیب صفحه',
+		// 		inputType: 'TextField',
+		// 		renderCustomInput: false,
+		// 		classes: 'mt-10',
+		// 		styles: null,
+		// 		props: {
+		// 			fullWidth: true
+		// 		}
+		// 	}
+		// },
+		formFieldsInputTypes,
 		onCreate: async (vals) => handleCreate(vals),
 		buttonLabel: 'افزودن دسته‌بندی جدید',
 		dialogTitle: 'ایجاد دسته‌بندی جدید'
+	};
+	const editItemProps = {
+		zodSchema: categorySchema,
+		formHeaderTitle: 'ویرایش دسته‌بندی',
+		formEngine: 'UNIFORMS',
+		formValidationStruct: 'ZOD_SCHEMA',
+		formGenerationType: 'MANUAL',
+		hideSubmitField: false,
+		formFieldsInputTypes,
+		onUpdate: handleUpdate,
+		getDefaultValues: getEditDefaultValues,
+		dialogTitle: 'ویرایش دسته‌بندی'
 	};
 
 	return (
@@ -594,8 +709,10 @@ function CategoryTable() {
 			useDeleteMutationHook={useDeleteCategoryMutation} // delete
 			rowActions={rowActions}
 			createItemProps={createItemProps}
+			editItemProps={editItemProps}
 			renderTopToolbarCustomActionsClasses="flex justify-start px-8 py-16"
 			isSubmitting={loading}
+			enableBuiltInEditing={false}
 			renderTopToolbarCustomActions={() => (
 				// <Button
 				// 	color="primary"

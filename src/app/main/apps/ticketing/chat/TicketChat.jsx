@@ -1,317 +1,9 @@
-// import { lighten, styled } from '@mui/material/styles';
-// import IconButton from '@mui/material/IconButton';
-// import Typography from '@mui/material/Typography';
-// import clsx from 'clsx';
-// import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
-// import { useContext, useEffect, useRef, useState } from 'react';
-// import InputBase from '@mui/material/InputBase';
-// import Paper from '@mui/material/Paper';
-// import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-// import Toolbar from '@mui/material/Toolbar';
-// import { useParams } from 'react-router-dom';
-// import Box from '@mui/material/Box';
-// import UserAvatar from '../UserAvatar';
-// import ChatMoreMenu from './ChatMoreMenu';
-// import { ChatAppContext } from '../TicketingApp.jsx';
-// import Error404Page from '../../../404/Error404Page';
-// import {
-// 	useGetTicketingChatQuery,
-// 	useGetTicketingContactQuery,
-// 	useGetTicketingUserProfileQuery,
-// 	useSendTicketingMessageMutation
-// } from '../TicketingApi.js';
-
-// const StyledMessageRow = styled('div')(({ theme }) => ({
-// 	'&.contact': {
-// 		'& .bubble': {
-// 			backgroundColor: lighten(theme.palette.secondary.main, 0.1),
-// 			color: theme.palette.secondary.contrastText,
-// 			borderTopLeftRadius: 5,
-// 			borderBottomLeftRadius: 5,
-// 			borderTopRightRadius: 20,
-// 			borderBottomRightRadius: 20,
-// 			'& .time': {
-// 				marginLeft: 12
-// 			}
-// 		},
-// 		'&.first-of-group': {
-// 			'& .bubble': {
-// 				borderTopLeftRadius: 20
-// 			}
-// 		},
-// 		'&.last-of-group': {
-// 			'& .bubble': {
-// 				borderBottomLeftRadius: 20
-// 			}
-// 		}
-// 	},
-// 	'&.me': {
-// 		paddingLeft: 40,
-// 		'& .bubble': {
-// 			marginLeft: 'auto',
-// 			backgroundColor: lighten(theme.palette.primary.main, 0.1),
-// 			color: theme.palette.primary.contrastText,
-// 			borderTopLeftRadius: 20,
-// 			borderBottomLeftRadius: 20,
-// 			borderTopRightRadius: 5,
-// 			borderBottomRightRadius: 5,
-// 			'& .time': {
-// 				justifyContent: 'flex-end',
-// 				right: 0,
-// 				marginRight: 12
-// 			}
-// 		},
-// 		'&.first-of-group': {
-// 			'& .bubble': {
-// 				borderTopRightRadius: 20
-// 			}
-// 		},
-// 		'&.last-of-group': {
-// 			'& .bubble': {
-// 				borderBottomRightRadius: 20
-// 			}
-// 		}
-// 	},
-// 	'&.contact + .me, &.me + .contact': {
-// 		paddingTop: 20,
-// 		marginTop: 20
-// 	},
-// 	'&.first-of-group': {
-// 		'& .bubble': {
-// 			borderTopLeftRadius: 20,
-// 			paddingTop: 13
-// 		}
-// 	},
-// 	'&.last-of-group': {
-// 		'& .bubble': {
-// 			borderBottomLeftRadius: 20,
-// 			paddingBottom: 13,
-// 			'& .time': {
-// 				display: 'flex'
-// 			}
-// 		}
-// 	}
-// }));
-
-// /**
-//  * The Chat App.
-//  */
-// function Chat(props) {
-// 	const { className } = props;
-// 	const { setMainSidebarOpen, setContactSidebarOpen } = useContext(ChatAppContext);
-// 	const chatRef = useRef(null);
-// 	const [message, setMessage] = useState('');
-// 	const routeParams = useParams();
-// 	const contactId = routeParams.id;
-// 	const { data: user } = useGetTicketingUserProfileQuery();
-// 	const { data: chat } = useGetTicketingChatQuery(contactId, {
-// 		skip: !contactId
-// 	});
-// 	const { data: selectedContact } = useGetTicketingContactQuery(contactId, {
-// 		skip: !contactId
-// 	});
-// 	const [sendMessage] = useSendTicketingMessageMutation();
-// 	useEffect(() => {
-// 		if (chat) {
-// 			setTimeout(scrollToBottom);
-// 		}
-// 	}, [chat]);
-
-// 	function scrollToBottom() {
-// 		if (!chatRef.current) {
-// 			return;
-// 		}
-
-// 		chatRef.current.scrollTo({
-// 			top: chatRef.current.scrollHeight,
-// 			behavior: 'smooth'
-// 		});
-// 	}
-
-// 	function isFirstMessageOfGroup(item, i) {
-// 		return i === 0 || (chat[i - 1] && chat[i - 1].contactId !== item.contactId);
-// 	}
-
-// 	function isLastMessageOfGroup(item, i) {
-// 		return i === chat.length - 1 || (chat[i + 1] && chat[i + 1].contactId !== item.contactId);
-// 	}
-
-// 	function onInputChange(ev) {
-// 		setMessage(ev.target.value);
-// 	}
-
-// 	function onMessageSubmit(ev) {
-// 		ev.preventDefault();
-
-// 		if (message === '') {
-// 			return;
-// 		}
-
-// 		sendMessage({
-// 			message,
-// 			contactId
-// 		});
-// 		setMessage('');
-// 	}
-
-// 	if (!user || !chat || !selectedContact) {
-// 		return <Error404Page />;
-// 	}
-
-// 	return (
-// 		<>
-// 			<Box
-// 				className="w-full border-b-1"
-// 				sx={{
-// 					backgroundColor: (theme) =>
-// 						theme.palette.mode === 'light'
-// 							? lighten(theme.palette.background.default, 0.4)
-// 							: lighten(theme.palette.background.default, 0.02)
-// 				}}
-// 			>
-// 				<Toolbar className="flex items-center justify-between px-16 w-full">
-// 					<div className="flex items-center">
-// 						<IconButton
-// 							aria-label="Open drawer"
-// 							onClick={() => setMainSidebarOpen(true)}
-// 							className="flex lg:hidden"
-// 							size="large"
-// 						>
-// 							<FuseSvgIcon>heroicons-outline:chat</FuseSvgIcon>
-// 						</IconButton>
-// 						<div
-// 							className="flex items-center cursor-pointer"
-// 							onClick={() => {
-// 								setContactSidebarOpen(true);
-// 							}}
-// 							onKeyDown={() => setContactSidebarOpen(true)}
-// 							role="button"
-// 							tabIndex={0}
-// 						>
-// 							<UserAvatar
-// 								className="relative mx-8"
-// 								user={selectedContact}
-// 							/>
-// 							<Typography
-// 								color="inherit"
-// 								className="text-16 font-semibold px-4"
-// 							>
-// 								{selectedContact.name}
-// 							</Typography>
-// 						</div>
-// 					</div>
-// 					<ChatMoreMenu className="-mx-8" />
-// 				</Toolbar>
-// 			</Box>
-
-// 			<div className="flex flex-auto h-full min-h-0 w-full">
-// 				<div className={clsx('flex flex-1 z-10 flex-col relative', className)}>
-// 					<div
-// 						ref={chatRef}
-// 						className="flex flex-1 flex-col overflow-y-auto"
-// 					>
-// 						{chat?.length > 0 && (
-// 							<div className="flex flex-col pt-16 px-16 pb-40">
-// 								{chat.map((item, i) => {
-// 									return (
-// 										<StyledMessageRow
-// 											key={i}
-// 											className={clsx(
-// 												'flex flex-col grow-0 shrink-0 items-start justify-end relative px-16 pb-4',
-// 												item.contactId === user.id ? 'me' : 'contact',
-// 												{ 'first-of-group': isFirstMessageOfGroup(item, i) },
-// 												{ 'last-of-group': isLastMessageOfGroup(item, i) },
-// 												i + 1 === chat.length && 'pb-96'
-// 											)}
-// 										>
-// 											<div className="bubble flex relative items-center justify-center p-12 max-w-full">
-// 												<div className="leading-tight whitespace-pre-wrap">{item.value}</div>
-// 												<Typography
-// 													className="time absolute hidden w-full text-11 mt-8 -mb-24 ltr:left-0 rtl:right-0 bottom-0 whitespace-nowrap"
-// 													color="text.secondary"
-// 												>
-// 													{formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}
-// 												</Typography>
-// 											</div>
-// 										</StyledMessageRow>
-// 									);
-// 								})}
-// 							</div>
-// 						)}
-// 					</div>
-// 					{chat && (
-// 						<Paper
-// 							square
-// 							component="form"
-// 							onSubmit={onMessageSubmit}
-// 							className="absolute border-t-1 bottom-0 right-0 left-0 py-16 px-16"
-// 							sx={{
-// 								backgroundColor: (theme) =>
-// 									theme.palette.mode === 'light'
-// 										? lighten(theme.palette.background.default, 0.4)
-// 										: lighten(theme.palette.background.default, 0.02)
-// 							}}
-// 						>
-// 							<div className="flex items-center relative">
-// 								<IconButton
-// 									type="submit"
-// 									size="large"
-// 								>
-// 									<FuseSvgIcon
-// 										className="text-24"
-// 										color="action"
-// 									>
-// 										heroicons-outline:emoji-happy
-// 									</FuseSvgIcon>
-// 								</IconButton>
-
-// 								<IconButton
-// 									type="submit"
-// 									size="large"
-// 								>
-// 									<FuseSvgIcon
-// 										className="text-24"
-// 										color="action"
-// 									>
-// 										heroicons-outline:paper-clip
-// 									</FuseSvgIcon>
-// 								</IconButton>
-
-// 								<InputBase
-// 									autoFocus={false}
-// 									id="message-input"
-// 									className="flex-1 flex grow shrink-0 h-44 mx-8 px-16 border-2 rounded-full"
-// 									placeholder="Type your message"
-// 									onChange={onInputChange}
-// 									value={message}
-// 									sx={{ backgroundColor: 'background.paper' }}
-// 								/>
-// 								<IconButton
-// 									type="submit"
-// 									size="large"
-// 								>
-// 									<FuseSvgIcon
-// 										className="rotate-90"
-// 										color="action"
-// 									>
-// 										heroicons-outline:paper-airplane
-// 									</FuseSvgIcon>
-// 								</IconButton>
-// 							</div>
-// 						</Paper>
-// 					)}
-// 				</div>
-// 			</div>
-// 		</>
-// 	);
-// }
-
-// export default Chat;
 import { lighten, styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import clsx from 'clsx';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
+import { faIR } from 'date-fns/locale';
 import { useContext, useEffect, useRef, useState } from 'react';
 import InputBase from '@mui/material/InputBase';
 import Paper from '@mui/material/Paper';
@@ -328,13 +20,24 @@ import {
   useSendTicketMessageMutation,
   useUpdateTicketStatusMutation
 } from '../TicketingApi';
-import { Button, Chip, CircularProgress } from '@mui/material';
+import { Button, Chip, CircularProgress, Avatar } from '@mui/material';
 import AttachmentUploader from './AttachmentUploader';
 import TicketAttachment from './TicketAttachment';
 import { motion } from 'framer-motion';
+import { getServerFile } from 'src/utils/string-utils.js';
 
+// Fixed StyledMessageRow component with improved styling for RTL support
 const StyledMessageRow = styled('div')(({ theme }) => ({
+  position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+  paddingBottom: 8,
+  marginBottom: 8,
+  maxWidth: '100%',
+  
+  // Contact (other person) message styles
   '&.contact': {
+    alignItems: 'flex-start',
     '& .bubble': {
       backgroundColor: lighten(theme.palette.secondary.main, 0.1),
       color: theme.palette.secondary.contrastText,
@@ -342,6 +45,7 @@ const StyledMessageRow = styled('div')(({ theme }) => ({
       borderBottomLeftRadius: 5,
       borderTopRightRadius: 20,
       borderBottomRightRadius: 20,
+      marginRight: 'auto',
       '& .time': {
         marginLeft: 12
       }
@@ -357,16 +61,18 @@ const StyledMessageRow = styled('div')(({ theme }) => ({
       }
     }
   },
+  
+  // Me (current user) message styles
   '&.me': {
-    paddingLeft: 40,
+    alignItems: 'flex-end',
     '& .bubble': {
-      marginLeft: 'auto',
       backgroundColor: lighten(theme.palette.primary.main, 0.1),
       color: theme.palette.primary.contrastText,
       borderTopLeftRadius: 20,
       borderBottomLeftRadius: 20,
       borderTopRightRadius: 5,
       borderBottomRightRadius: 5,
+      marginLeft: 'auto',
       '& .time': {
         justifyContent: 'flex-end',
         right: 0,
@@ -384,16 +90,21 @@ const StyledMessageRow = styled('div')(({ theme }) => ({
       }
     }
   },
+  
+  // Add spacing between different message groups
   '&.contact + .me, &.me + .contact': {
-    paddingTop: 20,
-    marginTop: 20
+    marginTop: 24,
   },
+  
+  // First message in a group styling
   '&.first-of-group': {
     '& .bubble': {
       borderTopLeftRadius: 20,
       paddingTop: 13
     }
   },
+  
+  // Last message in a group styling
   '&.last-of-group': {
     '& .bubble': {
       borderBottomLeftRadius: 20,
@@ -401,7 +112,8 @@ const StyledMessageRow = styled('div')(({ theme }) => ({
       '& .time': {
         display: 'flex'
       }
-    }
+    },
+    marginBottom: 24 // Increased space after the last message in a group
   }
 }));
 
@@ -443,6 +155,7 @@ function TicketChat() {
   const [sendMessage] = useSendTicketMessageMutation();
   const [updateTicketStatus] = useUpdateTicketStatusMutation();
 
+  // Scroll to bottom when messages change
   useEffect(() => {
     if (messages) {
       setTimeout(scrollToBottom);
@@ -575,7 +288,7 @@ function TicketChat() {
 
   return (
     <motion.div 
-      className="flex flex-col h-full"
+      className="flex flex-col h-full w-full"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { delay: 0.1 } }}
     >
@@ -643,49 +356,86 @@ function TicketChat() {
         <div className="flex flex-1 z-10 flex-col relative w-full">
           <div
             ref={chatRef}
-            className="flex flex-1 flex-col overflow-y-auto"
+            className="flex flex-1 flex-col overflow-y-auto px-16"
+            dir="rtl" // Add RTL direction for Persian language
           >
             {messages?.length > 0 ? (
-              <div className="flex flex-col pt-16 px-16 pb-40">
+              <div className="flex flex-col pt-16 pb-40 max-w-3xl mx-auto w-full">
                 {messages.map((item, i) => {
                   const isMe = item.senderId === user.id;
                   return (
                     <StyledMessageRow
                       key={item.id}
                       className={clsx(
-                        'flex flex-col grow-0 shrink-0 items-start justify-end relative px-16 pb-4',
+                        'flex flex-col grow-0 shrink-0 px-16 py-4',
                         isMe ? 'me' : 'contact',
                         { 'first-of-group': isFirstMessageOfGroup(item, i) },
                         { 'last-of-group': isLastMessageOfGroup(item, i) },
-                        i + 1 === messages.length && 'pb-96'
+                        i + 1 === messages.length && 'mb-96 pb-24' // Extra space at the bottom of the chat
                       )}
                     >
-                      <div className="bubble flex relative flex-col items-start justify-center p-12 max-w-full">
-                        {!isMe && isFirstMessageOfGroup(item, i) && (
-                          <Typography className="text-12 font-semibold mb-4">
-                            {item.senderName || 'Unknown User'}
-                          </Typography>
-                        )}
-                        <div className="leading-tight whitespace-pre-wrap">{item.messageContent}</div>
-                        
-                        {/* Render attachments if any */}
-                        {item.attachments && item.attachments.length > 0 && (
-                          <div className="flex flex-wrap gap-8 mt-8">
-                            {item.attachments.map((attachment) => (
-                              <TicketAttachment 
-                                key={attachment.id} 
-                                attachment={attachment} 
-                              />
-                            ))}
-                          </div>
-                        )}
-                        
-                        <Typography
-                          className="time absolute hidden w-full text-11 mt-8 -mb-24 ltr:left-0 rtl:right-0 bottom-0 whitespace-nowrap"
-                          color="text.secondary"
+                      {/* Message container with avatar and bubble */}
+                      <div className={clsx(
+                        'flex items-start mb-4',
+                        isMe ? 'flex-row-reverse' : 'flex-row'
+                      )}>
+                        {/* Avatar */}
+                        <Avatar
+                          src={item.senderAvatar ? getServerFile(item.senderAvatar) : undefined}
+                          alt={item.senderUsername}
+                          className={clsx("w-32 h-32", isMe ? "mr-8" : "ml-8")}
                         >
-                          {formatDistanceToNow(new Date(item.createdAtStr || item.createdAt), { addSuffix: true })}
-                        </Typography>
+                          {item.senderUsername?.charAt(0)}
+                        </Avatar>
+                        
+                        {/* Message content */}
+                        <div className="flex flex-col max-w-3/4" dir="rtl">
+                          {/* Sender info - only shown for first message in group */}
+                          {isFirstMessageOfGroup(item, i) && (
+                            <div className={clsx(
+                              "flex items-center mb-4",
+                              isMe ? "justify-end" : "justify-start"
+                            )}>
+                              <Typography className="text-12 font-semibold">
+                                {item.senderName || 'Unknown User'}
+                              </Typography>
+                              <Typography className="text-11 text-gray-500 mx-4">
+                                @{item.senderUsername}
+                              </Typography>
+                            </div>
+                          )}
+                          
+                          {/* Message bubble */}
+                          <div className="bubble flex relative flex-col p-12 max-w-xs sm:max-w-md break-words">
+                            <div 
+                              className="leading-tight"
+                              dangerouslySetInnerHTML={{ __html: item.messageContent }}
+                            />
+                            
+                            {/* Attachments */}
+                            {item.attachments && item.attachments.length > 0 && (
+                              <div className="flex flex-wrap gap-8 mt-8">
+                                {item.attachments.map((attachment) => (
+                                  <TicketAttachment 
+                                    key={attachment.id} 
+                                    attachment={attachment} 
+                                  />
+                                ))}
+                              </div>
+                            )}
+                            
+                            {/* Timestamp - now visible below each message */}
+                            <Typography
+                              className="text-11 mt-4 text-right text-grey-400"
+                              // color="text.secondary"
+                            >
+                              {formatDistanceToNow(new Date(item.createdAt), { 
+                                addSuffix: true,
+                                locale: faIR 
+                              })}
+                            </Typography>
+                          </div>
+                        </div>
                       </div>
                     </StyledMessageRow>
                   );
@@ -703,12 +453,13 @@ function TicketChat() {
                   className="px-16 pb-24 mt-24 text-center"
                   color="text.secondary"
                 >
-                  Start the conversation by sending your first message.
+                  با ارسال پیام گفتگو را شروع کنید
                 </Typography>
               </div>
             )}
           </div>
           
+          {/* Message input area */}
           <Paper
             square
             component="form"
@@ -723,7 +474,7 @@ function TicketChat() {
           >
             {/* Display attached files */}
             {attachments.length > 0 && (
-              <div className="flex flex-wrap gap-8 mb-12">
+              <div className="flex flex-wrap gap-8 mb-12 max-w-3xl mx-auto" dir="rtl">
                 {attachments.map((file, index) => (
                   <Chip
                     key={index}
@@ -735,19 +486,20 @@ function TicketChat() {
               </div>
             )}
             
-            <div className="flex items-center relative">
+            <div className="flex items-center relative max-w-3xl mx-auto" dir="rtl">
               <AttachmentUploader onFileSelected={handleAttachmentAdd} />
 
               <InputBase
                 autoFocus={false}
                 id="message-input"
                 className="flex-1 flex grow shrink-0 h-44 mx-8 px-16 border-2 rounded-full"
-                placeholder="Type your message"
+                placeholder="پیام خود را بنویسید"
                 onChange={onInputChange}
                 value={message}
                 sx={{ backgroundColor: 'background.paper' }}
                 multiline
                 maxRows={3}
+                dir="rtl"
               />
               
               <IconButton

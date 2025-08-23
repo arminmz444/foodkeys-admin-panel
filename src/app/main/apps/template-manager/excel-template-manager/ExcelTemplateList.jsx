@@ -16,35 +16,50 @@ import {
   IconButton, 
   Tooltip,
   CircularProgress,
-  Grid,
   Card,
   CardContent,
-  CardActions
+  CardActions,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import { 
   Add as AddIcon, 
   Delete as DeleteIcon, 
-  Edit as EditIcon, 
   Download as DownloadIcon,
   Visibility as VisibilityIcon
 } from '@mui/icons-material';
 import { format } from 'date-fns';
-import { toast } from 'react-toastify';
 
 import { 
   removeTemplate, 
-  setCurrentTemplate, 
-  downloadTemplate 
+  setCurrentTemplate
 } from '../../store/slices/excelTemplateSlice';
 import ConfirmDialog from '../common/ConfirmDialog';
 import { downloadTemplate as downloadTemplateApi } from '../../services/excelTemplateService';
 
-const ExcelTemplateList = ({ onUpload, onViewDetails, isMobile, isTablet }) => {
+function ExcelTemplateList({ onUpload, onViewDetails, isMobile, isTablet }) {
   const dispatch = useDispatch();
   const { templates, loading } = useSelector(state => state.excelTemplate);
   
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [templateToDelete, setTemplateToDelete] = useState(null);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'info'
+  });
+
+  const handleShowSnackbar = (message, severity = 'info') => {
+    setSnackbar({
+      open: true,
+      message,
+      severity
+    });
+  };
+  
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
 
   const handleViewDetails = (template) => {
     dispatch(setCurrentTemplate(template));
@@ -61,10 +76,10 @@ const ExcelTemplateList = ({ onUpload, onViewDetails, isMobile, isTablet }) => {
       dispatch(removeTemplate(templateToDelete.id))
         .unwrap()
         .then(() => {
-          toast.success('Template deleted successfully');
+          handleShowSnackbar('قالب با موفقیت حذف شد', 'success');
         })
         .catch((err) => {
-          toast.error(`Failed to delete template: ${err.message || err}`);
+          handleShowSnackbar(`خطا در حذف قالب: ${err.message || err}`, 'error');
         });
     }
     setDeleteConfirmOpen(false);
@@ -82,7 +97,7 @@ const ExcelTemplateList = ({ onUpload, onViewDetails, isMobile, isTablet }) => {
       a.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      toast.error('Failed to download template');
+      handleShowSnackbar('خطا در دانلود قالب', 'error');
     }
   };
 
@@ -113,10 +128,155 @@ const ExcelTemplateList = ({ onUpload, onViewDetails, isMobile, isTablet }) => {
     );
   }
 
+  const renderEmptyState = () => (
+    <Box sx={{ textAlign: 'center', mt: 8 }}>
+      <Typography variant="h6" color="text.secondary" gutterBottom>
+        هیچ قالبی یافت نشد
+      </Typography>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+        برای شروع، اولین قالب اکسل خود را آپلود کنید
+      </Typography>
+      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+        <Button
+          variant="outlined"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={onUpload}
+        >
+          آپلود قالب
+        </Button>
+      </motion.div>
+    </Box>
+  );
+
+  const renderMobileList = () => (
+    <motion.div
+      variants={listVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {templates.map(template => (
+        <motion.div key={template.id} variants={itemVariants}>
+          <Card sx={{ mb: 2 }} elevation={2}>
+            <CardContent>
+              <Typography variant="h6" noWrap>{template.name}</Typography>
+              <Typography variant="body2" color="text.secondary" noWrap>
+                {template.originalFilename}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                آخرین بروزرسانی: {format(new Date(template.updatedAt), 'MMM d, yyyy')}
+              </Typography>
+            </CardContent>
+            <CardActions sx={{ justifyContent: 'flex-end' }}>
+              <IconButton 
+                size="small" 
+                onClick={() => handleDownload(template.id, template.originalFilename)}
+              >
+                <DownloadIcon />
+              </IconButton>
+              <IconButton 
+                size="small" 
+                color="primary" 
+                onClick={() => handleViewDetails(template)}
+              >
+                <VisibilityIcon />
+              </IconButton>
+              <IconButton 
+                size="small" 
+                color="error" 
+                onClick={() => handleDeleteClick(template)}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </CardActions>
+          </Card>
+        </motion.div>
+      ))}
+    </motion.div>
+  );
+
+  const renderDesktopTable = () => (
+    <TableContainer component={Paper} elevation={0}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>نام</TableCell>
+            {!isTablet && <TableCell>نام فایل اصلی</TableCell>}
+            <TableCell>آخرین بروزرسانی</TableCell>
+            <TableCell align="right">عملیات</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <motion.div
+            variants={listVariants}
+            initial="hidden"
+            animate="visible"
+            component="tbody"
+          >
+            {templates.map(template => (
+              <motion.tr
+                key={template.id}
+                variants={itemVariants}
+                component={TableRow}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell component="td">{template.name}</TableCell>
+                {!isTablet && <TableCell>{template.originalFilename}</TableCell>}
+                <TableCell>
+                  {format(new Date(template.updatedAt), 'MMM d, yyyy HH:mm')}
+                </TableCell>
+                <TableCell align="right">
+                  <Tooltip title="دانلود">
+                    <IconButton 
+                      size="small" 
+                      onClick={() => handleDownload(template.id, template.originalFilename)}
+                    >
+                      <DownloadIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="مشاهده جزئیات">
+                    <IconButton 
+                      size="small" 
+                      color="primary" 
+                      onClick={() => handleViewDetails(template)}
+                    >
+                      <VisibilityIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="حذف">
+                    <IconButton 
+                      size="small" 
+                      color="error" 
+                      onClick={() => handleDeleteClick(template)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
+                </TableCell>
+              </motion.tr>
+            ))}
+          </motion.div>
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+
+  const renderContent = () => {
+    if (templates.length === 0) {
+      return renderEmptyState();
+    }
+    
+    if (isMobile) {
+      return renderMobileList();
+    }
+    
+    return renderDesktopTable();
+  };
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant={isMobile ? 'h5' : 'h4'}>Excel Templates</Typography>
+        <Typography variant={isMobile ? 'h5' : 'h4'}>قالب‌های اکسل</Typography>
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <Button
             variant="contained"
@@ -125,149 +285,33 @@ const ExcelTemplateList = ({ onUpload, onViewDetails, isMobile, isTablet }) => {
             onClick={onUpload}
             size={isMobile ? 'small' : 'medium'}
           >
-            Upload New
+            آپلود جدید
           </Button>
         </motion.div>
       </Box>
 
-      {templates.length === 0 ? (
-        <Box sx={{ textAlign: 'center', mt: 8 }}>
-          <Typography variant="h6" color="text.secondary" gutterBottom>
-            No templates found
-          </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-            Upload your first Excel template to get started
-          </Typography>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button
-              variant="outlined"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={onUpload}
-            >
-              Upload Template
-            </Button>
-          </motion.div>
-        </Box>
-      ) : isMobile ? (
-        <motion.div
-          variants={listVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {templates.map(template => (
-            <motion.div key={template.id} variants={itemVariants}>
-              <Card sx={{ mb: 2 }} elevation={2}>
-                <CardContent>
-                  <Typography variant="h6" noWrap>{template.name}</Typography>
-                  <Typography variant="body2" color="text.secondary" noWrap>
-                    {template.originalFilename}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Updated: {format(new Date(template.updatedAt), 'MMM d, yyyy')}
-                  </Typography>
-                </CardContent>
-                <CardActions sx={{ justifyContent: 'flex-end' }}>
-                  <IconButton 
-                    size="small" 
-                    onClick={() => handleDownload(template.id, template.originalFilename)}
-                  >
-                    <DownloadIcon />
-                  </IconButton>
-                  <IconButton 
-                    size="small" 
-                    color="primary" 
-                    onClick={() => handleViewDetails(template)}
-                  >
-                    <VisibilityIcon />
-                  </IconButton>
-                  <IconButton 
-                    size="small" 
-                    color="error" 
-                    onClick={() => handleDeleteClick(template)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </CardActions>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-      ) : (
-        <TableContainer component={Paper} elevation={0}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                {!isTablet && <TableCell>Original Filename</TableCell>}
-                <TableCell>Last Updated</TableCell>
-                <TableCell align="right">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <motion.div
-                variants={listVariants}
-                initial="hidden"
-                animate="visible"
-                component="tbody"
-              >
-                {templates.map(template => (
-                  <motion.tr
-                    key={template.id}
-                    variants={itemVariants}
-                    component={TableRow}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="td">{template.name}</TableCell>
-                    {!isTablet && <TableCell>{template.originalFilename}</TableCell>}
-                    <TableCell>
-                      {format(new Date(template.updatedAt), 'MMM d, yyyy HH:mm')}
-                    </TableCell>
-                    <TableCell align="right">
-                      <Tooltip title="Download">
-                        <IconButton 
-                          size="small" 
-                          onClick={() => handleDownload(template.id, template.originalFilename)}
-                        >
-                          <DownloadIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="View Details">
-                        <IconButton 
-                          size="small" 
-                          color="primary" 
-                          onClick={() => handleViewDetails(template)}
-                        >
-                          <VisibilityIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete">
-                        <IconButton 
-                          size="small" 
-                          color="error" 
-                          onClick={() => handleDeleteClick(template)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </motion.tr>
-                ))}
-              </motion.div>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+      {renderContent()}
 
       <ConfirmDialog
         open={deleteConfirmOpen}
-        title="Delete Template"
-        message={`Are you sure you want to delete the template "${templateToDelete?.name}"?`}
+        title="حذف قالب"
+        message={`آیا از حذف قالب "${templateToDelete?.name}" اطمینان دارید؟ این عملیات غیرقابل بازگشت است.`}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteConfirmOpen(false)}
       />
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
-};
+}
 
 export default ExcelTemplateList;

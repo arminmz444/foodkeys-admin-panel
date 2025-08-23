@@ -5,7 +5,7 @@ import {
 	useMaterialReactTable,
 } from "material-react-table";
 import _ from "lodash";
-import { useMemo, useEffect, useState, useCallback } from "react";
+import {useMemo, useEffect, useState, useCallback, isValidElement, cloneElement} from "react";
 import FuseSvgIcon from "@fuse/core/FuseSvgIcon";
 import { MRT_Localization_FA } from "material-react-table/locales/fa";
 import Divider from "@mui/material/Divider";
@@ -135,6 +135,8 @@ function GenericCrudTable(props) {
 		isSubmitting = false,
 		enableRowActions = true,
 		enableRowSelection = false,
+		editItemProps = null,
+		enableBuiltInEditing = true,
 		// serviceIdentifier = "",
 		// requiredQueryParams,
 		// requiredPathVariables,
@@ -146,6 +148,8 @@ function GenericCrudTable(props) {
 	const [columnFilters, setColumnFilters] = useState([]);
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [sorting, setSorting] = useState([]);
+	const [editDialogOpen, setEditDialogOpen] = useState(false);
+	const [editingRow, setEditingRow] = useState(null);
 	const [showGlobalFilter, setShowGlobalFilter] = useState(true);
 	const [searchValue, setSearchValue] = useState("");
 	// const handleGlobalFilterChange = useCallback(
@@ -246,12 +250,44 @@ function GenericCrudTable(props) {
 
 	if (createItemProps?.zodSchema) {
 		const { zodSchema, defaultValues, onCreate } = createItemProps;
-		// create a local form instance
 		createItemForm = useForm({
 			resolver: zodResolver(zodSchema),
 			defaultValues: defaultValues || {},
 		});
 	}
+	let editItemForm;
+	if (editItemProps?.zodSchema) {
+		const { zodSchema } = editItemProps;
+		editItemForm = useForm({ resolver: zodResolver(zodSchema) });
+	}
+
+	const openEditDialog = (row) => {
+		setEditingRow(row);
+		if (editItemForm && editItemProps?.getDefaultValues) {
+			editItemForm.reset(editItemProps.getDefaultValues(row.original));
+		} else if (editItemForm) {
+			editItemForm.reset(row.original);
+		}
+		setEditDialogOpen(true);
+	};
+	const closeEditDialog = () => {
+		setEditDialogOpen(false);
+		setEditingRow(null);
+	};
+	const handleEditSubmit = async (vals) => {
+		try {
+			const payload = { ...vals, id: editingRow.original.id };
+			if (editItemProps?.onUpdate) {
+				await editItemProps.onUpdate(payload);
+			} else {
+				await updateMutation(payload).unwrap();
+			}
+			closeEditDialog();
+			refetchList?.();
+		} catch (err) {
+			console.error("Update item error", err);
+		}
+	};
 
 	const openCreateDialog = () => {
 		if (createItemForm && createItemProps?.defaultValues) {
@@ -302,20 +338,68 @@ function GenericCrudTable(props) {
 			// 	}}
 			// 	table={table}
 			// />
+			...(editItemProps && !enableBuiltInEditing
+				? [
+					<MRT_ActionMenuItem
+						key="action-edit"
+						icon={<FuseSvgIcon size={20}>heroicons-outline:pencil</FuseSvgIcon>}
+						label="ویرایش"
+						onClick={() => {
+							closeMenu();
+							openEditDialog(row);
+						}}
+						table={table}
+					/>,
+				]
+				: [])
 		];
 
-		const userActionItems = rowActions.map((action, idx) => (
-			<MRT_ActionMenuItem
-				key={`rowAction-${idx}`}
-				icon={action.icon}
-				label={action.label}
-				onClick={async () => {
-					closeMenu();
-					await action.onClick?.(row, table, refetchList);
-				}}
-				table={table}
-			/>
-		));
+		const resolved = typeof rowActions === 'function'
+			? (rowActions({ row, table, refetchList }) || [])
+			: (Array.isArray(rowActions) ? rowActions : []);
+
+		const visible = resolved.filter((a) => {
+			if (!a) return false;
+			if (typeof a.show === 'function') return a.show(row, table);
+			if (typeof a.show === 'boolean') return a.show;
+			return true;
+		});
+
+		const userActionItems = visible.map((action, idx) => {
+			if (isValidElement(action)) {
+				return cloneElement(action, { key: action.key ?? `rowAction-${idx}` });
+			}
+
+			const label =
+				typeof action.label === 'function' ? action.label(row, table) : action.label;
+			const icon =
+				typeof action.icon === 'function' ? action.icon(row, table) : action.icon;
+
+			return (
+				<MRT_ActionMenuItem
+					key={action.key ?? `rowAction-${idx}`}
+					icon={icon}
+					label={label}
+					onClick={async () => {
+						closeMenu();
+						await action.onClick?.(row, table, refetchList);
+					}}
+					table={table}
+				/>
+			);
+		});
+		// const userActionItems = rowActions.map((action, idx) => (
+		// 	<MRT_ActionMenuItem
+		// 		key={`rowAction-${idx}`}
+		// 		icon={action.icon}
+		// 		label={action.label}
+		// 		onClick={async () => {
+		// 			closeMenu();
+		// 			await action.onClick?.(row, table, refetchList);
+		// 		}}
+		// 		table={table}
+		// 	/>
+		// ));
 
 		return [...defaultItems, <Divider key="divider-2" />, ...userActionItems];
 	};
@@ -402,7 +486,7 @@ function GenericCrudTable(props) {
 				textAlign: "right",
 				enableCellActions: true,
 				enableClickToCopy: "context-menu",
-				enableEditing: true,
+				enableEditing: enableBuiltInEditing,
 				enableStickyBody: true,
 
 				// editDisplayMode: 'cell',
@@ -842,6 +926,38 @@ function GenericCrudTable(props) {
 					{/* </DialogActions> */}
 				</Dialog>
 			)}
+			{editItemProps && (
+				<Dialog
+					open={editDialogOpen}
+					onClose={closeEditDialog}
+					fullWidth
+					maxWidth="sm"
+				>
+					<DialogContent sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+						<EditItemForm
+							schema={
+								editItemProps.formValidationStruct === "ZOD_SCHEMA"
+									? editItemProps.zodSchema
+									: editItemProps.jsonSchema
+							}
+							defaultValues={
+								editItemProps.getDefaultValues
+									? editItemProps.getDefaultValues(editingRow?.original)
+									: editingRow?.original || {}
+							}
+							formEngine={editItemProps.formEngine || "DEFAULT"}
+							formFieldsInputTypes={editItemProps.formFieldsInputTypes || {}}
+							formHeaderTitle={editItemProps.formHeaderTitle || "ویرایش آیتم"}
+							formValidationStruct={editItemProps.formValidationStruct}
+							formGenerationType={editItemProps.formGenerationType}
+							hideSubmitField={editItemProps.hideSubmitField}
+							setEditDialogOpen={setEditDialogOpen}
+							editingRow={editingRow}
+							onSubmit={handleEditSubmit}
+						/>
+					</DialogContent>
+				</Dialog>
+			)}
 		</div>
 	);
 }
@@ -996,6 +1112,159 @@ function CreateItemForm({
 					variant="contained"
 				>
 					ثبت
+				</Button>
+			</DialogActions>
+		</form>
+	);
+}
+function EditItemForm({
+						  schema,
+						  defaultValues,
+						  onSubmit,
+						  formFieldsInputTypes = {},
+						  formEngine = "DEFAULT",
+						  formValidationStruct,
+						  formHeaderTitle = "ویرایش آیتم",
+						  formGenerationType = "AUTO",
+						  setEditDialogOpen,
+						  hideSubmitField,
+						  editingRow,
+					  }) {
+	const form = useForm({
+		resolver: schema ? zodResolver(schema) : undefined,
+		defaultValues: defaultValues || {},
+	});
+	const { register, handleSubmit, formState, reset } = form;
+	useEffect(() => {
+		if (defaultValues) reset(defaultValues);
+	}, [defaultValues, reset]);
+	const handleFormSubmit = async (data) => await onSubmit(data);
+
+	if (formEngine === "UNIFORMS") {
+		return (
+			<DynamicFormGenerator
+				initialData={defaultValues}
+				onSubmit={onSubmit}
+				formHeaderTitle={formHeaderTitle}
+				schema={schema || {}}
+				formValidationStruct={formValidationStruct}
+				formFieldsInputTypes={
+					(formFieldsInputTypes && Object.keys(formFieldsInputTypes)) || null
+				}
+				formGenerationType={formGenerationType}
+				hideSubmitField={hideSubmitField}
+				setCreateDialogOpen={setEditDialogOpen}
+				isSubmitting={false}
+			/>
+		);
+	}
+
+	return (
+		<form className="space-y-16" onSubmit={handleSubmit(handleFormSubmit)}>
+			<Typography variant="h6" className="mb-16">
+				{formHeaderTitle}
+			</Typography>
+			{Object.entries(formFieldsInputTypes).map(([key, cfg], idx) => {
+				if (cfg.renderCustomInput) {
+					return (
+						<Box
+							key={key + idx}
+							className={cfg.classes || ""}
+							sx={cfg.styles || {}}
+						>
+							{typeof cfg.renderCustomInput === "function"
+								? cfg.renderCustomInput(key, cfg, form)
+								: null}
+						</Box>
+					);
+				}
+
+				if (cfg.inputType === "Select") {
+					return (
+						<TextField
+							key={key + idx}
+							select
+							label={cfg?.label || key}
+							variant={cfg?.variant || "outlined"}
+							className={cfg?.classes || ""}
+							{...register(key)}
+							error={!!formState.errors[key]}
+							helperText={formState.errors[key]?.message}
+							{...(cfg.props || {})}
+						/>
+					);
+				}
+
+				if (cfg.inputType === "Checkbox") {
+					return (
+						<Box
+							key={key + idx}
+							className={cfg.classes || ""}
+							sx={cfg.styles || {}}
+						>
+							<label>
+								<input type="checkbox" {...register(key)} />
+								{cfg.label || key}
+							</label>
+							{formState.errors[key]?.message && (
+								<Typography style={{ color: "red" }}>
+									{formState.errors[key]?.message}
+								</Typography>
+							)}
+						</Box>
+					);
+				}
+
+				if (cfg.inputType === "Date") {
+					if (cfg?.overrideCustomDatePicker) {
+						return (
+							<Box
+								key={key + idx}
+								className={cfg.classes || ""}
+								sx={cfg.styles || {}}
+							>
+								{cfg.overrideCustomDatePicker(key, cfg, form)}
+							</Box>
+						);
+					}
+
+					return (
+						<TextField
+							key={key + idx}
+							type="date"
+							label={cfg?.label || key}
+							variant={cfg?.variant || "outlined"}
+							className={cfg?.classes || ""}
+							{...register(key)}
+							error={!!formState.errors[key]}
+							helperText={formState.errors[key]?.message}
+							{...(cfg.props || {})}
+						/>
+					);
+				}
+
+				return (
+					<TextField
+						key={key + idx}
+						label={cfg?.label || key}
+						variant={cfg?.variant || "outlined"}
+						className={cfg?.classes || ""}
+						{...register(key)}
+						error={!!formState.errors[key]}
+						helperText={formState.errors[key]?.message}
+						{...(cfg.props || {})}
+					/>
+				);
+			})}
+			<DialogActions>
+				<Button onClick={() => {
+					reset(defaultValues);
+					setEditDialogOpen(false);
+				}}>
+					انصراف
+				</Button>
+				<Button onClick={handleSubmit(handleFormSubmit)} color="primary" variant="contained">
+					بروزرسانی
 				</Button>
 			</DialogActions>
 		</form>

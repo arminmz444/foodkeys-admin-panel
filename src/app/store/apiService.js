@@ -63,8 +63,9 @@ const axiosBaseQuery =
 				// 	variant: 'error'
 				// });
 				enqueueSnackbar(message, {
-					anchorOrigin: { horizontal: 'left', vertical: 'bottom' },
-					style: { backgroundColor: 'red', fontSize: 'medium' }
+					variant: 'error',
+					// anchorOrigin: { horizontal: 'left', vertical: 'bottom' },
+					style: { fontSize: 'medium' }
 				});
 
 				if (responseData && statusCode >= 400 && statusCode < 500)

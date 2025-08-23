@@ -1,6 +1,6 @@
 // src/components/ExcelTemplateManager/TemplateProcessor.jsx
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { 
   Box, 
@@ -15,97 +15,60 @@ import {
   MenuItem,
   Select,
   FormControl,
-  InputLabel
+  InputLabel,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import { 
   ArrowBack as ArrowBackIcon,
   Add as AddIcon,
   Remove as RemoveIcon,
-  FileDownload as FileDownloadIcon
+  FileDownload as FileDownloadIcon,
+  Refresh as RefreshIcon
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
-
-import { generateExcel } from '../../services/excelTemplateService';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { processTemplate } from '../store/templateSlice';
+import { selectCurrentTemplate } from '../store/templateSlice';
 
 const TemplateProcessor = ({ onBack, isMobile }) => {
-  const { templates, loading } = useSelector(state => state.excelTemplate);
+  const dispatch = useDispatch();
+  const theme = useTheme();
+  const currentTemplate = useSelector(selectCurrentTemplate);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'info',
+  });
   
-  const [selectedTemplateId, setSelectedTemplateId] = useState('');
-  const [templateVariables, setTemplateVariables] = useState([
-    { key: '', value: '' }
-  ]);
-  const [processing, setProcessing] = useState(false);
-  
-  const handleTemplateChange = (e) => {
-    setSelectedTemplateId(e.target.value);
+  const handleShowSnackbar = (message, severity = 'info') => {
+    setSnackbar({
+      open: true,
+      message,
+      severity,
+    });
   };
   
-  const handleAddVariable = () => {
-    setTemplateVariables([...templateVariables, { key: '', value: '' }]);
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
   };
   
-  const handleRemoveVariable = (index) => {
-    const newVariables = [...templateVariables];
-    newVariables.splice(index, 1);
-    setTemplateVariables(newVariables);
-  };
-  
-  const handleVariableChange = (index, field, value) => {
-    const newVariables = [...templateVariables];
-    newVariables[index][field] = value;
-    setTemplateVariables(newVariables);
-  };
-  
-  const handleGenerateExcel = async () => {
-    // Validate form
-    if (!selectedTemplateId) {
-      toast.error('Please select a template');
+  const handleProcess = async () => {
+    if (!currentTemplate) {
+      handleShowSnackbar('لطفا ابتدا یک قالب را انتخاب کنید', 'error');
       return;
     }
-    
-    // Check if we have at least one valid key-value pair
-    const validVariables = templateVariables.filter(v => v.key.trim() && v.key.startsWith('${') && v.key.endsWith('}'));
-    
-    if (validVariables.length === 0) {
-      toast.error('Please add at least one valid variable (format: ${VARIABLE_NAME})');
-      return;
-    }
-    
-    // Convert array of variables to object with keys and values
-    const data = {};
-    for (const variable of templateVariables) {
-      if (variable.key.trim()) {
-        // Extract the variable name without ${ }
-        const key = variable.key.trim().replace(/^\${/, '').replace(/}$/, '');
-        data[key] = variable.value;
-      }
-    }
-    
-    setProcessing(true);
-    
+
+    setIsProcessing(true);
     try {
-      const blob = await generateExcel(selectedTemplateId, data);
-      
-      // Download the generated file
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      
-      // Get template name for the file
-      const template = templates.find(t => t.id === parseInt(selectedTemplateId));
-      const filename = `generated_${template?.originalFilename || 'excel_report.xlsx'}`;
-      
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-      
-      toast.success('Excel file generated successfully!');
+      await dispatch(processTemplate(currentTemplate.id)).unwrap();
+      handleShowSnackbar('قالب با موفقیت پردازش شد', 'success');
     } catch (error) {
-      toast.error(`Failed to generate Excel: ${error.message || 'Unknown error'}`);
+      handleShowSnackbar('خطا در پردازش قالب', 'error');
     } finally {
-      setProcessing(false);
+      setIsProcessing(false);
     }
   };
   
@@ -130,128 +93,58 @@ const TemplateProcessor = ({ onBack, isMobile }) => {
     }
   };
   
+  if (!currentTemplate) {
+    return (
+      <Box sx={{ p: 3, textAlign: 'center' }}>
+        <Typography variant="h6" color="text.secondary">
+          لطفا یک قالب را برای پردازش انتخاب کنید
+        </Typography>
+      </Box>
+    );
+  }
+  
   return (
     <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-        <IconButton onClick={onBack} sx={{ mr: 1 }}>
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography variant={isMobile ? 'h5' : 'h4'}>Process Excel Template</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant={isMobile ? 'h5' : 'h4'}>پردازش قالب</Typography>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<RefreshIcon />}
+            onClick={handleProcess}
+            disabled={isProcessing}
+            size={isMobile ? 'small' : 'medium'}
+          >
+            {isProcessing ? 'در حال پردازش...' : 'پردازش قالب'}
+          </Button>
+        </motion.div>
       </Box>
       
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
+      {isProcessing && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+          <CircularProgress />
+        </Box>
+      )}
+      
+      <Paper sx={{ p: 3 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Typography variant="h6">نام قالب: {currentTemplate.name}</Typography>
+          <Typography variant="body1">توضیحات: {currentTemplate.description}</Typography>
+          <Typography variant="body1">وضعیت: {currentTemplate.status === 'processed' ? 'پردازش شده' : 'پردازش نشده'}</Typography>
+        </Box>
+      </Paper>
+      
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Paper elevation={2} sx={{ p: 3 }}>
-          <motion.div variants={itemVariants}>
-            <Typography variant="h6" gutterBottom>
-              Select a template and fill in variables
-            </Typography>
-            
-            <FormControl fullWidth sx={{ mb: 4, mt: 2 }}>
-              <InputLabel id="template-select-label">Excel Template</InputLabel>
-              <Select
-                labelId="template-select-label"
-                value={selectedTemplateId}
-                onChange={handleTemplateChange}
-                label="Excel Template"
-                disabled={loading || processing}
-              >
-                {templates.map(template => (
-                  <MenuItem key={template.id} value={template.id.toString()}>
-                    {template.name} ({template.originalFilename})
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </motion.div>
-          
-          <Divider sx={{ mb: 3 }} />
-          
-          <motion.div variants={itemVariants}>
-            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="h6">Template Variables</Typography>
-              <Button
-                startIcon={<AddIcon />}
-                onClick={handleAddVariable}
-                variant="outlined"
-                size="small"
-                disabled={processing}
-              >
-                Add Variable
-              </Button>
-            </Box>
-            
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Add variables in the format ${VARIABLE_NAME} to match placeholders in your Excel template.
-            </Typography>
-            
-            {templateVariables.map((variable, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Grid container spacing={2} sx={{ mb: 2 }} alignItems="center">
-                  <Grid item xs={12} sm={5}>
-                    <TextField
-                      fullWidth
-                      label="Variable Name"
-                      placeholder="${VARIABLE_NAME}"
-                      value={variable.key}
-                      onChange={(e) => handleVariableChange(index, 'key', e.target.value)}
-                      disabled={processing}
-                      variant="outlined"
-                      size="small"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={5}>
-                    <TextField
-                      fullWidth
-                      label="Value"
-                      value={variable.value}
-                      onChange={(e) => handleVariableChange(index, 'value', e.target.value)}
-                      disabled={processing}
-                      variant="outlined"
-                      size="small"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={2} sx={{ textAlign: 'center' }}>
-                    <IconButton
-                      color="error"
-                      onClick={() => handleRemoveVariable(index)}
-                      disabled={processing || templateVariables.length <= 1}
-                    >
-                      <RemoveIcon />
-                    </IconButton>
-                  </Grid>
-                </Grid>
-              </motion.div>
-            ))}
-          </motion.div>
-          
-          <motion.div variants={itemVariants} sx={{ mt: 4 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={processing ? <CircularProgress size={20} color="inherit" /> : <FileDownloadIcon />}
-                  onClick={handleGenerateExcel}
-                  disabled={processing || !selectedTemplateId}
-                >
-                  {processing ? 'Generating...' : 'Generate Excel'}
-                </Button>
-              </motion.div>
-            </Box>
-          </motion.div>
-        </Paper>
-      </motion.div>
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

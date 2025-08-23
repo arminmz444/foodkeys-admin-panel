@@ -6,7 +6,7 @@ export function registerJsonSchema(schemaUri, schemaObject) {
 		validate: true,
 		schemas: [
 			{
-				uri: schemaUri, // "https://foodkeys-api-dev.liara.run/service/schema/23"
+				uri: schemaUri, // "http://localhost:8080/service/schema/23"
 				fileMatch: ['*'], // TODO: match only json files
 				schema: schemaObject
 			}

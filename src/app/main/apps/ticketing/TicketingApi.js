@@ -67,6 +67,7 @@ const TicketsApi = api
           url: `/ticket/${ticketId}/messages`,
           params,
         }),
+        transformResponse: (response) => response?.data,
         providesTags: (result, error, { ticketId }) => [
           { type: "ticket_messages", id: ticketId },
         ],
@@ -113,7 +114,7 @@ const TicketsApi = api
         providesTags: ["ticket_priorities"],
       }),
       getUserProfile: build.query({
-        query: () => ({ url: `/user/profile` }),
+        query: () => ({ url: `/user/me` }),
         providesTags: ["user_profile"],
       }),
     }),
