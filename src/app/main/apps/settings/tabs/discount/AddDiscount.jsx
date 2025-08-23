@@ -1,10 +1,14 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+import {zodResolver} from "@hookform/resolvers/zod";
 import {
-  Autocomplete,
-  InputAdornment,
-  ListSubheader,
-  TextField,
-  Typography,
+    Autocomplete,
+    InputAdornment,
+    ListSubheader,
+    TextField,
+    Typography,
+    FormControlLabel,
+    Checkbox,
+    Chip,
+    Box, CircularProgress,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -17,348 +21,630 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Slide from "@mui/material/Slide";
-import { useTheme } from "@mui/material/styles";
+import {useTheme} from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as React from "react";
-import { Controller, useForm } from "react-hook-form";
-import { CiTextAlignJustify } from "react-icons/ci";
-import { GrMoney } from "react-icons/gr";
-import { IoMdAddCircle } from "react-icons/io";
-import { MdOutlineTitle } from "react-icons/md";
-import { NumericFormat } from "react-number-format";
+import {Controller, useForm} from "react-hook-form";
+import {CiTextAlignJustify} from "react-icons/ci";
+import {GrMoney} from "react-icons/gr";
+import {IoMdAddCircle} from "react-icons/io";
+import {MdOutlineTitle} from "react-icons/md";
+import {NumericFormat} from "react-number-format";
 import z from "zod";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import { formatISO } from "date-fns/formatISO";
+import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
+import {formatISO} from "date-fns/formatISO";
 import axios from "axios";
+import {showMessage} from "@fuse/core/FuseMessage/fuseMessageSlice";
+import {useDispatch} from "react-redux";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
+    return <Slide direction="up" ref={ref} {...props} />;
 });
+
 const defaultValues = {
-    title: "",
-    price: "",
     name: "",
-    username: "",
-    company: "",
-    about: "",
-    start: formatISO(new Date()),
-    end: formatISO(new Date()),
-    email: "",
-    phone: "",
-    country: "",
-    language: "",
+    displayName: "",
+    percentage: "",
     description: "",
-    color: "",
-    isButtonRequired: "",
-    buttonName: "",
-    buttonLink: "",
-    images: [],
+    startDateTime: formatISO(new Date()),
+    expireDateTime: formatISO(new Date()),
+    status: "ACTIVE",
+    maxUses: null,
+    maxUsesPerUser: 1,
+    includedUsers: [],
+    excludedUsers: [],
+    includedBundles: [],
+    excludedBundles: [],
+    constraintMode: "all", // all, includeOnly, excludeOnly
 };
+const requiredNumber = (msg, shape) =>
+    z.preprocess(
+        v => (v === '' || v === null || v === undefined ? undefined : v),
+        (shape ? shape(z.coerce.number({required_error: msg}))
+            : z.coerce.number({required_error: msg}))
+            .finite()
+    );
+
+const optionalNullableInt = () =>
+    z.preprocess(
+        v => (v === '' || v === undefined ? null : v),
+        z.union([
+            z.coerce.number().int().positive(),
+            z.literal(null),
+        ])
+    );
 const schema = z.object({
-  name: z.string().nonempty("Name is required"),
-  description: z.string().nonempty("توضیحات الزامی می‌باشد."),
-  title: z.string().nonempty("عنوان الزامی می‌باشد."),
-  price: z.string().nonempty("مبلغ الزامی می‌باشد."),
-  color: z.string().nonempty("انتخاب رنگ پس زمینه الزامی می‌باشد."),
-  start: z.string().nonempty("تاریخ شروع الزامیست."),
-  end: z.string().nonempty("تاریخ پایان الزامیست."),
-  bank: z.string().nonempty("انتخاب بانک الزامیست."),
-  username: z.string().nonempty("Username is required"),
-  company: z.string().nonempty("Company is required"),
-  about: z.string().nonempty("About is required"),
-  email: z.string().email("Invalid email").nonempty("Email is required"),
-  phone: z.string().nonempty("Phone is required"),
-  country: z.string().nonempty("Country is required"),
-  language: z.string().nonempty("Language is required"),
+    name: z.string().nonempty("کد تخفیف الزامی می‌باشد."),
+    displayName: z.string().nonempty("عنوان نمایشی الزامی می‌باشد."),
+    percentage: requiredNumber("درصد تخفیف الزامی می‌باشد.", s => s.min(0).max(100)),
+    description: z.string().optional(),
+    startDateTime: z.string().nonempty("تاریخ شروع الزامیست."),
+    expireDateTime: z.string().nonempty("تاریخ پایان الزامیست."),
+    status: z.string(),
+    maxUses: z.number().optional().nullable(),
+    maxUsesPerUser: requiredNumber("حداکثر استفاده برای هر کاربر الزامیست.", s => s.int().min(1)),
 });
 
-const users = [
-  { name: "امیرحسین نوری", phone: "09124631193" },
-  { name: "آرمین مظفری", phone: "09144226139" },
-];
+function AddDiscount({open, setOpen, handleClickOpen, handleClose, discountId = null, onSuccess}) {
+    const dispatch = useDispatch();
+    const [loading, setLoading] = React.useState(false);
+    const [users, setUsers] = React.useState([]);
+    const [bundles, setBundles] = React.useState([]);
+    const theme = useTheme();
+    const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+    const [isFetching, setIsFetching] = React.useState(false);
+    const [isSaving, setIsSaving] = React.useState(false);
 
-function AddDiscount({ open, setOpen, handleClickOpen, handleClose }) {
-  const [loading, setLoading] = React.useState(false);
-  const theme = useTheme();
-  // React.useEffect(async () => {
-  //   const fetchDiscount = async () => {
-  //     setLoading(true);
-  //     // axios.get('/bundle/')
-  //     setLoading(false);
-  //   };
-  //   if (id) fetchDiscount();
-  // }, [id]);
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-  const [value, setValue] = React.useState(null);
-  const [duration, setDuration] = React.useState(null);
-  const [bundle, setBundle] = React.useState(null);
-  const [term, setTerm] = React.useState(null);
-  const { control, watch, reset, handleSubmit, formState } = useForm({
-    defaultValues,
-    mode: "all",
-    resolver: zodResolver(schema),
-  });
+    const {control, watch, reset, handleSubmit, formState, setValue} = useForm({
+        defaultValues,
+        mode: "all",
+        resolver: zodResolver(schema),
+    });
 
-  const start = watch("start");
-  const end = watch("end");
-  const { isValid, dirtyFields, errors } = formState;
+    const start = watch("startDateTime");
+    const end = watch("expireDateTime");
+    const constraintMode = watch("constraintMode");
+    const {isValid, dirtyFields, errors} = formState;
+    const now = new Date();
+    const startDate = start ? new Date(start) : null;
+    const endDate = end ? new Date(end) : null;
+    const isExpired = endDate && endDate < now;
+    const notStarted = startDate && startDate > now;
+    const effectiveStatus = (isExpired || notStarted) ? "INACTIVE" : "ACTIVE";
 
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
-  const [isActive, setActive] = React.useState("فعال");
+    React.useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if (discountId) setIsFetching(true);
+                setLoading(true);
 
-  const handleActiveChange = (event) => {
-    setActive(event.target.value);
-  };
-  const handleDurationChange = (event) => {
-    setDuration(event.target.value);
-  };
-  const handleBundleChange = (event) => {
-    setBundle(event.target.value);
-  };
-  const handleTermChange = (event) => {
-    setTerm(event.target.value);
-  };
-  return (
-    <>
-      <Button
-        variant="contained"
-        color="primary"
-        className="w-1/2 sm:w-1/4 flex items-center gap-5 group text-sm sm:text-base"
-        onClick={handleClickOpen}
-      >
-        تخفیف جدید
-        <IoMdAddCircle
-          size={20}
-          className="group-hover:scale-110 transition-all group-active:scale-90"
-        />
-      </Button>
-      <Dialog
-        open={open}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={handleClose}
-        aria-describedby="alert-dialog-slide-description"
-        fullScreen={fullScreen}
-      >
-        <DialogTitle variant="h5" className="font-800">
-          مشخصات تخفیف جدید
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText
-            className="w-auto max-w-4xl"
-            id="alert-dialog-slide-description"
-          >
-            <form className="w-full">
-              <div className="flex flex-col gap-20 w-512 mt-10">
-                <Controller
-                  control={control}
-                  name="title"
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="عنوان"
-                      placeholder="عنوان تخفیف را بنویسید"
-                      id="title"
-                      error={!!errors.title}
-                      helperText={errors?.title?.message}
-                      variant="outlined"
-                      required
-                      fullWidth
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <MdOutlineTitle size={20} />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  )}
+                // Fetch users
+                // const usersResponse = await axios.get('/user/all');
+                // setUsers(usersResponse.data.data || []);
+                setUsers([]);
+                // const bundlesResponse = await axios.get('/bundle');
+                // setBundles(bundlesResponse.data.data || []);
+                setBundles([]);
+
+                // If editing, fetch discount details
+                if (discountId) {
+                    const discountResponse = await axios.get(`/discount/${discountId}`);
+                    const discount = discountResponse.data.data;
+
+                    // Populate form with discount data
+                    Object.keys(discount).forEach(key => {
+                        if (defaultValues.hasOwnProperty(key)) {
+                            setValue(key, discount[key]);
+                        }
+                    });
+
+                    // Set constraint users and bundles
+                    if (discount.includedUserIds) {
+                        const includedUsers = users.filter(u => discount.includedUserIds.includes(u.id));
+                        setValue("includedUsers", includedUsers);
+                    }
+                    if (discount.excludedUserIds) {
+                        const excludedUsers = users.filter(u => discount.excludedUserIds.includes(u.id));
+                        setValue("excludedUsers", excludedUsers);
+                    }
+                    if (discount.includedBundleIds) {
+                        const includedBundles = bundles.filter(b => discount.includedBundleIds.includes(b.id));
+                        setValue("includedBundles", includedBundles);
+                    }
+                    if (discount.excludedBundleIds) {
+                        const excludedBundles = bundles.filter(b => discount.excludedBundleIds.includes(b.id));
+                        setValue("excludedBundles", excludedBundles);
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                dispatch(showMessage({
+                    message: "خطا در دریافت اطلاعات",
+                    severity: "error",
+                    autoHideDuration: 3000,
+                }));
+            } finally {
+                setLoading(false);
+                if (discountId) setIsFetching(false);
+            }
+        };
+
+        if (open) {
+            fetchData();
+        }
+    }, [open, discountId]);
+
+    const onSubmit = async (data) => {
+        try {
+            setIsSaving(true);
+            setLoading(true);
+
+            // Prepare the DTO
+            const discountDTO = {
+                name: data.name,
+                displayName: data.displayName,
+                percentage: parseFloat(data.percentage),
+                description: data.description,
+                startDateTime: data.startDateTime,
+                expireDateTime: data.expireDateTime,
+                status: data.status,
+                maxUses: data.maxUses,
+                maxUsesPerUser: data.maxUsesPerUser,
+                includedUserIds: data.includedUsers?.map(u => u.id),
+                excludedUserIds: data.excludedUsers?.map(u => u.id),
+                includedBundleIds: data.includedBundles?.map(b => b.id),
+                excludedBundleIds: data.excludedBundles?.map(b => b.id),
+            };
+
+            if (discountId) {
+                // Update existing discount
+                await axios.put(`/discount/${discountId}`, discountDTO);
+                dispatch(showMessage({
+                    message: "تخفیف با موفقیت بروزرسانی شد",
+                    severity: "success",
+                    autoHideDuration: 3000,
+                }));
+            } else {
+                // Create new discount
+                await axios.post('/discount', discountDTO);
+                dispatch(showMessage({
+                    message: "تخفیف با موفقیت ایجاد شد",
+                    severity: "success",
+                    autoHideDuration: 3000,
+                }));
+            }
+
+            reset();
+            handleClose();
+            if (onSuccess) onSuccess();
+
+        } catch (error) {
+            console.error("Error saving discount:", error);
+            dispatch(showMessage({
+                message: error.response?.data?.message || "خطا در ذخیره تخفیف",
+                severity: "error",
+                autoHideDuration: 3000,
+            }));
+        } finally {
+            setIsSaving(false);
+            setLoading(false);
+        }
+    };
+
+    return (
+        <>
+            <Button
+                variant="contained"
+                color="primary"
+                className="w-1/2 sm:w-1/4 flex items-center gap-5 group text-sm sm:text-base"
+                onClick={handleClickOpen}
+            >
+                تخفیف جدید
+                <IoMdAddCircle
+                    size={20}
+                    className="group-hover:scale-110 transition-all group-active:scale-90"
                 />
+            </Button>
 
-                <Controller
-                  control={control}
-                  name="price"
-                  render={({ field }) => (
-                    <NumericFormat
-                      id="price"
-                      value={value}
-                      onChange={handleChange}
-                      customInput={TextField}
-                      thousandSeparator
-                      valueIsNumericString
-                      suffix="تومان"
-                      variant="outlined"
-                      label="مبلغ"
-                      required
-                      placeholder="مبلغ تخفیف را بنویسید"
-                      helperText={errors?.price?.message}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <GrMoney size={20} />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  )}
-                />
-                <div className="flex flex-column sm:flex-row w-full items-center gap-16">
-                  <Controller
-                    name="start"
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <DateTimePicker
-                        className="mt-8 mb-16 w-full"
-                        value={new Date(value)}
-                        onChange={(val) => {
-                          onChange(val.toISOString());
-                        }}
-                        helperText={errors?.start?.message}
-                        slotProps={{
-                          textField: {
-                            label: "تاریخ شروع",
-                            variant: "outlined",
-                          },
-                        }}
-                        maxDate={new Date(end)}
-                      />
-                    )}
-                  />
+            <Dialog
+                open={open}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleClose}
+                aria-describedby="alert-dialog-slide-description"
+                fullScreen={fullScreen}
+                maxWidth="md"
+                fullWidth
+            >
+                <DialogTitle variant="h5" className="font-800">
+                    {discountId ? "ویرایش تخفیف" : "مشخصات تخفیف جدید"}
+                </DialogTitle>
+                <DialogContent>
+                    {discountId && isFetching ? (
+                        <Box display="flex" justifyContent="center" alignItems="center" py={6} minHeight={200}>
+                            <CircularProgress/>
+                        </Box>
+                    ) : (
+                        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+                            <div className="flex flex-col gap-20 mt-10">
+                                {/* Basic Information */}
+                                <Typography variant="h6" className="mt-20">اطلاعات پایه</Typography>
 
-                  <Controller
-                    name="end"
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <DateTimePicker
-                        className="mt-8 mb-16 w-full"
-                        value={new Date(value)}
-                        onChange={(val) => {
-                          onChange(val.toISOString());
-                        }}
-                        helperText={errors?.end?.message}
-                        slotProps={{
-                          textField: {
-                            label: "تاریخ پایان",
-                            variant: "outlined",
-                          },
-                        }}
-                        minDate={new Date(start)}
-                      />
-                    )}
-                  />
-                </div>
+                                <div className="flex flex-col sm:flex-row gap-16">
+                                    <Controller
+                                        control={control}
+                                        name="name"
+                                        render={({field}) => (
+                                            <TextField
+                                                {...field}
+                                                label="کد تخفیف"
+                                                placeholder="مثال: NEWYEAR2024"
+                                                error={!!errors.name}
+                                                helperText={errors?.name?.message}
+                                                variant="outlined"
+                                                required
+                                                fullWidth
+                                                disabled={discountId !== null}
+                                                InputProps={{
+                                                    startAdornment: (
+                                                        <InputAdornment position="start">
+                                                            <MdOutlineTitle size={20}/>
+                                                        </InputAdornment>
+                                                    ),
+                                                }}
+                                            />
+                                        )}
+                                    />
 
-                <div className="flex justify-center items-center w-full">
-                  <Controller
-                    control={control}
-                    name="bank"
-                    render={({ field }) => (
-                      <FormControl
-                        className="w-full"
-                        sx={{ m: 1, minWidth: 80 }}
-                      >
-                        <InputLabel htmlFor="bank">
-                          بانک مورد نظر را انتخاب کنید
-                        </InputLabel>
-                        <Select
-                          id="bank"
-                          value={duration}
-                          onChange={handleDurationChange}
-                          variant="outlined"
-                          label="بانک مورد نظر را انتخاب کنید"
-                          placeholder="بانک مورد نظر را انتخاب کنید"
-                          helperText={errors?.bank?.message}
-                        >
-                          <ListSubheader>
-                            بانک اطلاعات صنایع غذایی
-                          </ListSubheader>
-                          <MenuItem value={1}>تولیدکنندگان</MenuItem>
-                          <MenuItem value={2}>ماشین آلات</MenuItem>
-                          <MenuItem value={2}>همه بانک ها</MenuItem>
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
+                                    <Controller
+                                        control={control}
+                                        name="displayName"
+                                        render={({field}) => (
+                                            <TextField
+                                                {...field}
+                                                label="عنوان نمایشی"
+                                                placeholder="تخفیف ویژه سال نو"
+                                                error={!!errors.displayName}
+                                                helperText={errors?.displayName?.message}
+                                                variant="outlined"
+                                                required
+                                                fullWidth
+                                            />
+                                        )}
+                                    />
+                                </div>
 
-                  <Controller
-                    control={control}
-                    name="bundle"
-                    render={({ field }) => (
-                      <FormControl
-                        className="w-full"
-                        sx={{ m: 1, minWidth: 80 }}
-                      >
-                        <InputLabel htmlFor="bundle">
-                          پلن مورد نظر را انتخاب کنید
-                        </InputLabel>
-                        <Select
-                          id="bundle"
-                          value={bundle}
-                          onChange={handleBundleChange}
-                          variant="outlined"
-                          label="پلن مورد نظر را انتخاب کنید"
-                          placeholder="پلن مورد نظر را انتخاب کنید"
-                        >
-                          <MenuItem value={1}>پلن استاندارد</MenuItem>
-                          <MenuItem value={2}>پلن پیشرفته</MenuItem>
-                          <MenuItem value={3}>همه</MenuItem>
-                        </Select>
-                      </FormControl>
+                                <div className="flex flex-col sm:flex-row gap-16">
+                                    <Controller
+                                        control={control}
+                                        name="percentage"
+                                        render={({field}) => (
+                                            <TextField
+                                                {...field}
+                                                type="number"
+                                                label="درصد تخفیف"
+                                                placeholder="20"
+                                                error={!!errors.percentage}
+                                                helperText={errors?.percentage?.message}
+                                                variant="outlined"
+                                                required
+                                                fullWidth
+                                                InputProps={{
+                                                    endAdornment: (
+                                                        <InputAdornment position="end">%</InputAdornment>
+                                                    ),
+                                                }}
+                                            />
+                                        )}
+                                    />
+
+                                    <Controller
+                                        control={control}
+                                        name="status"
+                                        disabled
+                                        render={({field}) => (
+                                            <FormControl fullWidth>
+                                                <InputLabel>وضعیت</InputLabel>
+                                                <Select
+                                                    {...field}
+                                                    value={effectiveStatus}
+                                                    label="وضعیت"
+                                                >
+                                                    <MenuItem value="ACTIVE">فعال</MenuItem>
+                                                    <MenuItem value="INACTIVE">غیرفعال</MenuItem>
+                                                </Select>
+                                            </FormControl>
+                                        )}
+                                    />
+                                </div>
+
+                                {/* Date Range */}
+                                <Typography variant="h6" className="mt-20">زمان‌بندی</Typography>
+
+                                <div className="flex flex-col sm:flex-row gap-16">
+                                    <Controller
+                                        name="startDateTime"
+                                        control={control}
+                                        render={({field: {onChange, value}}) => (
+                                            <DateTimePicker
+                                                className="w-full"
+                                                value={new Date(value)}
+                                                onChange={(val) => {
+                                                    onChange(val.toISOString());
+                                                }}
+                                                slotProps={{
+                                                    textField: {
+                                                        label: "تاریخ شروع",
+                                                        variant: "outlined",
+                                                        error: !!errors.startDateTime,
+                                                        helperText: errors?.startDateTime?.message,
+                                                    },
+                                                }}
+                                                maxDate={new Date(end)}
+                                            />
+                                        )}
+                                    />
+
+                                    <Controller
+                                        name="expireDateTime"
+                                        control={control}
+                                        render={({field: {onChange, value}}) => (
+                                            <DateTimePicker
+                                                className="w-full"
+                                                value={new Date(value)}
+                                                onChange={(val) => {
+                                                    onChange(val.toISOString());
+                                                }}
+                                                slotProps={{
+                                                    textField: {
+                                                        label: "تاریخ پایان",
+                                                        variant: "outlined",
+                                                        error: !!errors.expireDateTime,
+                                                        helperText: errors?.expireDateTime?.message,
+                                                    },
+                                                }}
+                                                minDate={new Date(start)}
+                                            />
+                                        )}
+                                    />
+                                </div>
+
+                                {/* Usage Limits */}
+                                <Typography variant="h6" className="mt-20">محدودیت‌های استفاده</Typography>
+
+                                <div className="flex flex-col sm:flex-row gap-16">
+                                    <Controller
+                                        control={control}
+                                        name="maxUses"
+                                        render={({field}) => (
+                                            <TextField
+                                                {...field}
+                                                type="number"
+                                                label="حداکثر تعداد استفاده (کل)"
+                                                placeholder="100"
+                                                helperText="خالی = نامحدود"
+                                                variant="outlined"
+                                                fullWidth
+                                            />
+                                        )}
+                                    />
+
+                                    <Controller
+                                        control={control}
+                                        name="maxUsesPerUser"
+                                        render={({field}) => (
+                                            <TextField
+                                                {...field}
+                                                type="number"
+                                                label="حداکثر استفاده برای هر کاربر"
+                                                placeholder="1"
+                                                error={!!errors.maxUsesPerUser}
+                                                helperText={errors?.maxUsesPerUser?.message}
+                                                variant="outlined"
+                                                required
+                                                fullWidth
+                                                value={field.value ?? ''}
+                                            />
+                                        )}
+                                    />
+                                </div>
+
+                                {/* Constraints */}
+                                <Typography variant="h6" className="mt-20">محدودیت‌های اعمال</Typography>
+
+                                <Controller
+                                    control={control}
+                                    name="constraintMode"
+                                    render={({field}) => (
+                                        <FormControl fullWidth>
+                                            <InputLabel>نوع محدودیت</InputLabel>
+                                            <Select
+                                                {...field}
+                                                label="نوع محدودیت"
+                                            >
+                                                <MenuItem value="all">قابل استفاده برای همه</MenuItem>
+                                                <MenuItem value="includeOnly">فقط برای موارد انتخابی</MenuItem>
+                                                <MenuItem value="excludeOnly">برای همه بجز موارد انتخابی</MenuItem>
+                                                <MenuItem value="custom">سفارشی</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    )}
+                                />
+
+                                {/* User Constraints */}
+                                {(constraintMode === "includeOnly" || constraintMode === "custom") && (
+                                    <Controller
+                                        control={control}
+                                        name="includedUsers"
+                                        render={({field}) => (
+                                            <Autocomplete
+                                                {...field}
+                                                multiple
+                                                options={users}
+                                                getOptionLabel={(option) => `${option.name || option.username} (${option.phone || option.email})`}
+                                                renderTags={(value, getTagProps) =>
+                                                    value.map((option, index) => (
+                                                        <Chip
+                                                            variant="outlined"
+                                                            label={option.name || option.username}
+                                                            {...getTagProps({index})}
+                                                        />
+                                                    ))
+                                                }
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        label="کاربران مجاز"
+                                                        placeholder="انتخاب کاربران مجاز به استفاده از این تخفیف"
+                                                    />
+                                                )}
+                                                onChange={(e, value) => field.onChange(value)}
+                                            />
+                                        )}
+                                    />
+                                )}
+
+                                {(constraintMode === "excludeOnly" || constraintMode === "custom") && (
+                                    <Controller
+                                        control={control}
+                                        name="excludedUsers"
+                                        render={({field}) => (
+                                            <Autocomplete
+                                                {...field}
+                                                multiple
+                                                options={users}
+                                                getOptionLabel={(option) => `${option.name || option.username} (${option.phone || option.email})`}
+                                                renderTags={(value, getTagProps) =>
+                                                    value.map((option, index) => (
+                                                        <Chip
+                                                            variant="outlined"
+                                                            color="error"
+                                                            label={option.name || option.username}
+                                                            {...getTagProps({index})}
+                                                        />
+                                                    ))
+                                                }
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        label="کاربران محروم"
+                                                        placeholder="انتخاب کاربرانی که نمی‌توانند از این تخفیف استفاده کنند"
+                                                    />
+                                                )}
+                                                onChange={(e, value) => field.onChange(value)}
+                                            />
+                                        )}
+                                    />
+                                )}
+
+                                {/* Bundle Constraints */}
+                                {(constraintMode === "includeOnly" || constraintMode === "custom") && (
+                                    <Controller
+                                        control={control}
+                                        name="includedBundles"
+                                        render={({field}) => (
+                                            <Autocomplete
+                                                {...field}
+                                                multiple
+                                                options={bundles}
+                                                getOptionLabel={(option) => option.title}
+                                                renderTags={(value, getTagProps) =>
+                                                    value.map((option, index) => (
+                                                        <Chip
+                                                            variant="outlined"
+                                                            label={option.title}
+                                                            {...getTagProps({index})}
+                                                        />
+                                                    ))
+                                                }
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        label="پلن‌های مجاز"
+                                                        placeholder="انتخاب پلن‌هایی که این تخفیف روی آنها اعمال می‌شود"
+                                                    />
+                                                )}
+                                                onChange={(e, value) => field.onChange(value)}
+                                            />
+                                        )}
+                                    />
+                                )}
+
+                                {(constraintMode === "excludeOnly" || constraintMode === "custom") && (
+                                    <Controller
+                                        control={control}
+                                        name="excludedBundles"
+                                        render={({field}) => (
+                                            <Autocomplete
+                                                {...field}
+                                                multiple
+                                                options={bundles}
+                                                getOptionLabel={(option) => option.title}
+                                                renderTags={(value, getTagProps) =>
+                                                    value.map((option, index) => (
+                                                        <Chip
+                                                            variant="outlined"
+                                                            color="error"
+                                                            label={option.title}
+                                                            {...getTagProps({index})}
+                                                        />
+                                                    ))
+                                                }
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        label="پلن‌های محروم"
+                                                        placeholder="انتخاب پلن‌هایی که این تخفیف روی آنها اعمال نمی‌شود"
+                                                    />
+                                                )}
+                                                onChange={(e, value) => field.onChange(value)}
+                                            />
+                                        )}
+                                    />
+                                )}
+
+                                {/* Description */}
+                                <Controller
+                                    control={control}
+                                    name="description"
+                                    render={({field}) => (
+                                        <TextField
+                                            {...field}
+                                            label="توضیحات"
+                                            multiline
+                                            minRows={3}
+                                            helperText="توضیحات داخلی (برای کاربران نمایش داده نمی‌شود)"
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <CiTextAlignJustify size={20}/>
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </div>
+                        </form>
                     )}
-                  />
-                </div>
-                <Autocomplete
-                  multiple
-                  id="users"
-                  options={users}
-                  getOptionLabel={(option) => option.name}
-                  defaultValue={[{ name: "همه", phone: "" }]}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="کاربران"
-                      placeholder="کابران مورد نظر را انتخاب کنید"
-                    />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="description"
-                  render={({ field }) => (
-                    <TextField
-                      id="description"
-                      label="توضیحات"
-                      multiline
-                      minRows={3}
-                      helperText={errors?.description?.message}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <CiTextAlignJustify size={20} />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  )}
-                />
-                <Typography>
-                  زمان ایجاد و زمان بروزرسانی در ویرایش ذکر شود.
-                </Typography>
-              </div>
-            </form>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>لغو</Button>
-          <Button variant="contained" color="secondary" onClick={handleClose}>
-            ذخیره
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
-  );
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} disabled={loading}>
+                        لغو
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleSubmit(onSubmit)}
+                        disabled={loading || !isValid}
+                    >
+                        {isSaving ? "در حال ذخیره..." : (discountId ? "بروزرسانی" : "ذخیره")}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
+    );
 }
+
 
 export default AddDiscount;
