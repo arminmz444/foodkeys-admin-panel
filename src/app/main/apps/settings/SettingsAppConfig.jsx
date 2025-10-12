@@ -201,7 +201,6 @@ const SettingsAppConfig = {
 					element: <AboutUsPageTab />,
 				},
 
-				// Individual Website Page Routes
 				{
 					path: "homepage",
 					element: <HomePageTab />,

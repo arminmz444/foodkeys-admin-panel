@@ -25,7 +25,7 @@ const websiteConfigApi = api.enhanceEndpoints({ addTagTypes }).injectEndpoints({
             query: (configData) => ({
                 url: '',
                 method: 'POST',
-                body: configData,
+                data: configData,
             }),
             invalidatesTags: ['WebsiteConfig'],
         }),
@@ -33,9 +33,9 @@ const websiteConfigApi = api.enhanceEndpoints({ addTagTypes }).injectEndpoints({
         // Update config section
         updateConfig: builder.mutation({
             query: ({ section, configData }) => ({
-                url: `/${section}`,
+                url: `/config/website/${section}`,
                 method: 'PUT',
-                body: configData,
+                data: configData,
             }),
             invalidatesTags: (result, error, { section }) => [{ type: 'WebsiteConfig', id: section }],
         }),
@@ -45,7 +45,7 @@ const websiteConfigApi = api.enhanceEndpoints({ addTagTypes }).injectEndpoints({
             query: (schemaData) => ({
                 url: '/schema',
                 method: 'POST',
-                body: schemaData,
+                data: schemaData,
             }),
             invalidatesTags: ['ConfigSchema'],
         }),
@@ -57,7 +57,7 @@ const websiteConfigApi = api.enhanceEndpoints({ addTagTypes }).injectEndpoints({
                 return {
                     url: `/${section}/file`,
                     method: 'POST',
-                    body: formData,
+                    data: formData,
                 };
             },
             invalidatesTags: (result, error, { section }) => [{ type: 'WebsiteConfig', id: section }],

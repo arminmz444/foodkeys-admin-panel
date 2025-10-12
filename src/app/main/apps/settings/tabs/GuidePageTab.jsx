@@ -487,7 +487,7 @@ function GuidePageTab() {
             }
 
             await updateConfig({
-                section: 'GUIDE_CONFIG',
+                section: 'GUIDE_PAGE_CONFIG',
                 configData: {
                     schemaId: guideSchema.id,
                     configData: formData
