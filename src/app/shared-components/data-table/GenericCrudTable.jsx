@@ -109,6 +109,24 @@ const tableIcons = {
 	),
 };
 
+const defaultTransformColumnFilters = (columnFilters) => {
+	return columnFilters.map(filter => {
+		const { id, value } = filter;
+		if (Array.isArray(value)) {
+			if (value.length === 2 && typeof value[0] === 'number') {
+				return `${id}:BETWEEN:${value[0]},${value[1]}`;
+			} else {
+				return `${id}:IN:${value.join(',')}`;
+			}
+		} else if (typeof value === 'boolean') {
+			return `${id}:EQUALS:${value}`;
+		} else if (value && value.includes('%')) {
+			return `${id}:LIKE:${value}`;
+		}
+		return `${id}:EQUALS:${value}`;
+	});
+};
+
 function GenericCrudTable(props) {
 	const [paginationState, setPaginationState] = useState({
 		pageIndex: 0,
@@ -137,6 +155,8 @@ function GenericCrudTable(props) {
 		enableRowSelection = false,
 		editItemProps = null,
 		enableBuiltInEditing = true,
+		transformColumnFilters,
+		globalFilterColumns,
 		// serviceIdentifier = "",
 		// requiredQueryParams,
 		// requiredPathVariables,
@@ -152,6 +172,12 @@ function GenericCrudTable(props) {
 	const [editingRow, setEditingRow] = useState(null);
 	const [showGlobalFilter, setShowGlobalFilter] = useState(true);
 	const [searchValue, setSearchValue] = useState("");
+
+	// Transform column filters using custom transformer or default
+	const transformedFilters = useMemo(() => {
+		const transformer = transformColumnFilters || defaultTransformColumnFilters;
+		return transformer(columnFilters);
+	}, [columnFilters, transformColumnFilters]);
 	// const handleGlobalFilterChange = useCallback(
 	// 	(val) => setGlobalFilter(val),
 	// 	[]
@@ -190,7 +216,8 @@ function GenericCrudTable(props) {
 			pageSize: paginationState.pageSize,
 			search: globalFilter,
 			sort: sorting,
-			filter: columnFilters,
+			filter: transformedFilters,
+			globalFilterColumns,
 			// serviceIdentifier,
 			// requiredQueryParams,
 			// requiredPathVariables
@@ -354,9 +381,14 @@ function GenericCrudTable(props) {
 				: [])
 		];
 
-		const resolved = typeof rowActions === 'function'
-			? (rowActions({ row, table, refetchList }) || [])
-			: (Array.isArray(rowActions) ? rowActions : []);
+		let resolved;
+		if (typeof rowActions === 'function') {
+			resolved = rowActions({ row, table, refetchList }) || [];
+		} else if (Array.isArray(rowActions)) {
+			resolved = rowActions;
+		} else {
+			resolved = [];
+		}
 
 		const visible = resolved.filter((a) => {
 			if (!a) return false;
@@ -659,7 +691,7 @@ function GenericCrudTable(props) {
 				manualSorting: true,
 				manualPagination: true,
 				onColumnFiltersChange: setColumnFilters,
-				// onGlobalFilterChange: setGlobalFilter,
+				onGlobalFilterChange: setGlobalFilter,
 				onShowGlobalFilterChange: setShowGlobalFilter,
 				onSortingChange: setSorting,
 				onPaginationChange: setPaginationState,

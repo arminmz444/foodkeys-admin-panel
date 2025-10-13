@@ -144,11 +144,9 @@ import {
   useDeleteSubCategoryMutation,
 } from "./SubCategoriesApi";
 import GenericCrudTable from "../../../shared-components/data-table/GenericCrudTable";
-import CustomUniformsAsyncPaginateSelect from "app/shared-components/dynamic-field-generator/CustomUniformsAsyncPaginateSelect";
 import CustomUniformsAsyncSelect from "app/shared-components/dynamic-field-generator/CustomUniformsAsyncSelect";
 import axios from "axios";
 import _ from "lodash";
-import {useUpdateCategoryMutation} from "@/app/main/category/CategoriesApi.js";
 
 const citiesList = [
   "صنایع غذایی",
@@ -234,6 +232,7 @@ const citiesList = [
 // 	}
 // ],
 
+
 const loadCategories = async () => {
   const result = await axios.get("/category/options"); // TODO: Use category options endpoint (create if not exists)
   const data = result?.data?.data || [];
@@ -241,20 +240,15 @@ const loadCategories = async () => {
   const res = data.map((d) => {
     return { label: d.label, value: d.value };
   });
-  console.log(res);
   return res;
 };
+
+const DateCell = ({ row }) => <div dir="rtl">{row.original.createdAtStr}</div>;
+const UpdatedDateCell = ({ row }) => <div dir="rtl">{row.original.updatedAtStr}</div>;
 
 function SubCategoryTable() {
   const [createSubCategory] = useCreateSubCategoryMutation();
   const [updateSubCategory] = useUpdateSubCategoryMutation();
-  const categoryStatusSelectOptionsMapper = {
-    1: "فعال",
-    2: "غیرفعال",
-  };
-  const categoryStatusSelectOptions = [
-    ...Object.values(categoryStatusSelectOptionsMapper),
-  ];
   const columns = React.useMemo(
     () => [
       {
@@ -301,14 +295,14 @@ function SubCategoryTable() {
         accessorKey: "createdAtStr",
         size: 200,
         enableEditing: false,
-        Cell: ({ row }) => <div dir="rtl">{row.original.createdAtStr}</div>,
+        Cell: DateCell,
       },
       {
         header: "آخرین بروزرسانی",
         accessorKey: "updatedAtStr",
         size: 200,
         enableEditing: false,
-        Cell: ({ row }) => <div dir="rtl">{row.original.updatedAtStr}</div>,
+        Cell: UpdatedDateCell,
       },
       {
         header: "شرکت‌های در انتظار تایید",
@@ -615,6 +609,28 @@ function SubCategoryTable() {
       editItemProps={editItemProps}
       enableBuiltInEditing={false}
       renderTopToolbarCustomActionsClasses="flex justify-start px-8 py-16"
+      enableFilters
+      enableGlobalFilter
+      enableColumnFilters
+      enableFacetedValues
+      columnFilterDisplayMode="popover"
+      initialState={{
+        showColumnFilters: false,
+        showGlobalFilter: true,
+        density: 'comfortable',
+        pagination: {
+          pageIndex: 0,
+          pageSize: 10,
+        },
+      }}
+      localization={{
+        filterByColumn: 'فیلتر بر اساس {column}',
+        filteringByColumn: 'فیلتر شده بر اساس {column}',
+        hideColumn: 'پنهان کردن {column}',
+        sortByColumnAsc: 'مرتب‌سازی {column} صعودی',
+        sortByColumnDesc: 'مرتب‌سازی {column} نزولی',
+        globalFilterPlaceholder: 'جستجو در همه ستون‌ها...',
+      }}
       // renderTopToolbarCustomActions={() => (
       // <Button
       // 	color="primary"

@@ -32,7 +32,7 @@ const SubCategoryApi = api
     endpoints: (builder) => ({
       // 1) GET subCategories (list)
       getSubCategories: builder.query({
-        query: ({ pageNumber, pageSize, search, sort, filter }) => ({
+        query: ({ pageNumber = 1, pageSize = 10, search = '', sort = [], filter = [] }) => ({
           url: `/subcategory?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}&sort=${(sort && Object.entries(sort)?.length && JSON.stringify(sort)) || ""}&filter=${(filter && Object.entries(filter)?.length && JSON.stringify(filter)) || ""}`,
           method: "GET",
         }),
