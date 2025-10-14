@@ -64,10 +64,10 @@ const statusColors = {
 
 // Map of ticket status to label
 const statusLabels = {
-  'PENDING': 'Pending',
-  'IN_PROGRESS': 'In Progress',
-  'ANSWERED': 'Answered',
-  'CLOSED': 'Closed'
+  'PENDING': 'در انتظار پاسخ',
+  'IN_PROGRESS': 'در انتظار پاسخ',
+  'ANSWERED': 'پاسخ داده شده',
+  'CLOSED': 'بسته'
 };
 
 function TicketListItem({ ticket }) {
@@ -95,7 +95,17 @@ function TicketListItem({ ticket }) {
     >
       <div className="flex flex-col flex-grow">
         <div className="flex items-center justify-between">
-          <Typography className="text-16 font-semibold truncate" noWrap>
+          <Typography 
+            className="text-16 font-semibold truncate" 
+            noWrap
+            title={ticket.subject}
+            sx={{
+              maxWidth: '250px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
+            }}
+          >
             {ticket.subject}
           </Typography>
           <Typography
@@ -112,13 +122,13 @@ function TicketListItem({ ticket }) {
               size="small"
               label={statusLabels[ticket.status] || ticket.status}
               color={statusColors[ticket.status] || 'default'}
-              className={clsx("mr-8", ticket.hasAttachment ? "mb-8" : "")}
+              className={clsx("ml-8", ticket.hasAttachment ? "mb-8" : "")}
             />
             <Typography
               className="text-13"
               color="text.secondary"
             >
-              #{ticket.ticketRefId}
+              {ticket.ticketRefId}#
             </Typography>
           </div>
           

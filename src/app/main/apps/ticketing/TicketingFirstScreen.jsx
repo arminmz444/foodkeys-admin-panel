@@ -24,7 +24,7 @@ function TicketingFirstScreen() {
         className="hidden lg:flex text-20 font-semibold tracking-tight text-secondary"
         color="text.secondary"
       >
-        Select a ticket or create a new one
+        یک تیکت را انتخاب کنید تا پیام‌های آن را مشاهده کنید
       </Typography>
       <Button
         variant="contained"
@@ -32,7 +32,7 @@ function TicketingFirstScreen() {
         className="flex lg:hidden mt-16"
         onClick={() => setMainSidebarOpen(true)}
       >
-        Select a ticket or create a new one
+        یک تیکت را انتخاب کنید تا پیام‌های آن را مشاهده کنید
       </Button>
     </motion.div>
   );

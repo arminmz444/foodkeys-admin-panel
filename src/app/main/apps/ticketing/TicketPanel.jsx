@@ -105,10 +105,10 @@ const statusColors = {
 
 // Map of ticket status to label
 const statusLabels = {
-  'PENDING': 'Pending',
-  'IN_PROGRESS': 'In Progress',
-  'ANSWERED': 'Answered',
-  'CLOSED': 'Closed'
+  'PENDING': 'در انتظار پاسخ',
+  'IN_PROGRESS': 'در انتظار پاسخ',
+  'ANSWERED': 'پاسخ داده شده',
+  'CLOSED': 'بسته'
 };
 
 function TicketPanel() {
@@ -225,7 +225,7 @@ function TicketPanel() {
                       className="mt-4"
                     />
                     <Typography className="text-12 ml-8 mt-4" color="inherit">
-                      #{selectedTicket.ticketRefId}
+                      {selectedTicket.ticketRefId}
                     </Typography>
                   </div>
                 </div>

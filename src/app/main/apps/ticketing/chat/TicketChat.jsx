@@ -127,10 +127,10 @@ const statusColors = {
 
 // Map of ticket status to label
 const statusLabels = {
-  'PENDING': 'Pending',
-  'IN_PROGRESS': 'In Progress',
-  'ANSWERED': 'Answered',
-  'CLOSED': 'Closed'
+  'PENDING': 'در انتظار پاسخ',
+  'IN_PROGRESS': 'در انتظار پاسخ',
+  'ANSWERED': 'پاسخ داده شده',
+  'CLOSED': 'بسته'
 };
 
 function TicketChat() {
@@ -320,12 +320,13 @@ function TicketChat() {
                   {ticket.subject} 
                 </Typography>
                 <Typography className="mx-8 text-12 font-medium">
-                  (#{ticket.ticketRefId})
+                  ({ticket.ticketRefId})
                 </Typography>
               </div>
               <div className="flex items-center mt-4">
                 <Chip 
                   size="small"
+                  className="ml-8"
                   label={statusLabels[ticket.status] || ticket.status}
                   color={statusColors[ticket.status] || 'default'}
                 />

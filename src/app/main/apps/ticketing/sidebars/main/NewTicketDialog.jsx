@@ -106,9 +106,8 @@ function NewTicketDialog({ open, onClose }) {
         ...data,
         status: 'PENDING' // Default status for new tickets
       }).unwrap();
-      
       // Navigate to the newly created ticket
-      navigate(`/apps/ticketing/${result.id}`);
+      navigate(`/apps/ticketing/${result?.data?.id}`);
       onClose();
     } catch (error) {
       console.error('Failed to create ticket:', error);

@@ -142,7 +142,7 @@ function TicketChatMoreMenu(props) {
             <ListItemIcon>
               <FuseSvgIcon size={20}>heroicons-outline:x-circle</FuseSvgIcon>
             </ListItemIcon>
-            <ListItemText primary="Close Ticket" />
+            <ListItemText primary="بستن تیکت" />
           </MenuItem>
         )}
         
@@ -151,7 +151,7 @@ function TicketChatMoreMenu(props) {
             <ListItemIcon>
               <FuseSvgIcon size={20}>heroicons-outline:refresh</FuseSvgIcon>
             </ListItemIcon>
-            <ListItemText primary="Reopen Ticket" />
+            <ListItemText primary="باز کردن تیکت" />
           </MenuItem>
         )}
         

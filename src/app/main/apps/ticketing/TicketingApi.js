@@ -25,7 +25,12 @@ const TicketsApi = api
         transformResponse: (response) => {
           return response?.data;
         },
-        providesTags: ["tickets"],
+        providesTags: (result, error, params) => [
+          { type: "tickets", id: "LIST" },
+          ...(result?.map(({ id }) => ({ type: "tickets", id })) || [])
+        ],
+        // Force refetch when parameters change
+        keepUnusedDataFor: 0,
       }),
       getTicketById: build.query({
         query: (ticketId) => ({
@@ -42,7 +47,10 @@ const TicketsApi = api
           method: "POST",
           data: ticket,
         }),
-        invalidatesTags: ["tickets"],
+        invalidatesTags: [
+          { type: "tickets", id: "LIST" },
+          "tickets"
+        ],
       }),
       updateTicketStatus: build.mutation({
         query: ({ ticketId, status }) => ({
@@ -52,6 +60,7 @@ const TicketsApi = api
         }),
         invalidatesTags: (result, error, { ticketId }) => [
           { type: "ticket", id: ticketId },
+          { type: "tickets", id: "LIST" },
           "tickets",
         ],
       }),
@@ -60,7 +69,10 @@ const TicketsApi = api
           url: `/ticket/${ticketId}`,
           method: "DELETE",
         }),
-        invalidatesTags: ["tickets"],
+        invalidatesTags: [
+          { type: "tickets", id: "LIST" },
+          "tickets"
+        ],
       }),
       getTicketMessages: build.query({
         query: ({ ticketId, ...params }) => ({
@@ -81,6 +93,7 @@ const TicketsApi = api
         invalidatesTags: (result, error, { ticketId }) => [
           { type: "ticket_messages", id: ticketId },
           { type: "ticket", id: ticketId },
+          { type: "tickets", id: "LIST" },
           "tickets",
         ],
       }),

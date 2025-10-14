@@ -1,26 +1,21 @@
 /**
- * The payments of statuses.
+ * The ticket statuses.
  */
 const Statuses = [
 	{
-		title: 'Online',
-		value: 'online',
-		color: 'rgb(76, 175, 80)'
+		title: "در انتظار پاسخ",
+		value: "PENDING",
+		color: "rgb(251, 192, 45)"
 	},
 	{
-		title: 'Away',
-		value: 'away',
-		color: 'rgb(251, 192, 45)'
+		title: "پاسخ داده شده",
+		value: "ANSWERED",
+		color: "rgb(76, 175, 80)"
 	},
 	{
-		title: 'Do not disturb',
-		value: 'do-not-disturb',
-		color: 'rgb(244, 67, 54)'
-	},
-	{
-		title: 'Offline',
-		value: 'offline',
-		color: 'rgb(162,162,162)'
+		title: "بسته",
+		value: "CLOSED",
+		color: "rgb(162,162,162)"
 	}
 ];
 export default Statuses;
