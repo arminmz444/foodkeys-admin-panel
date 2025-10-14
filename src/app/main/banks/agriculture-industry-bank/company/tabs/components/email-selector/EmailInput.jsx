@@ -64,12 +64,12 @@ function EmailInput(props) {
 			/>
 			<Controller
 				control={control}
-				name="label"
+				name="type"
 				render={({ field }) => (
 					<TextField
 						{...field}
-						label="Label"
-						placeholder="Label"
+						label="برچسب"
+						placeholder="برچسب"
 						variant="outlined"
 						fullWidth
 						error={!!errors.label}

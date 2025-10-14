@@ -1,147 +1,228 @@
-import { orange } from '@mui/material/colors';
-import { lighten, styled } from '@mui/material/styles';
-import clsx from 'clsx';
-import FuseUtils from '@fuse/utils';
-import { Controller, useFormContext } from 'react-hook-form';
-import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
-import Box from '@mui/material/Box';
+import { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
+import { Typography, Alert, Box, CircularProgress } from '@mui/material';
+import axios from 'axios';
+import { motion } from 'framer-motion';
+import FileSection from './components/FileSection';
 
-const Root = styled('div')(({ theme }) => ({
-	'& .productImageFeaturedStar': {
-		position: 'absolute',
-		top: 0,
-		right: 0,
-		color: orange[400],
-		opacity: 0
-	},
-	'& .productImageUpload': {
-		transitionProperty: 'box-shadow',
-		transitionDuration: theme.transitions.duration.short,
-		transitionTimingFunction: theme.transitions.easing.easeInOut
-	},
-	'& .productImageItem': {
-		transitionProperty: 'box-shadow',
-		transitionDuration: theme.transitions.duration.short,
-		transitionTimingFunction: theme.transitions.easing.easeInOut,
-		'&:hover': {
-			'& .productImageFeaturedStar': {
-				opacity: 0.8
-			}
-		},
-		'&.featured': {
-			pointerEvents: 'none',
-			boxShadow: theme.shadows[3],
-			'& .productImageFeaturedStar': {
-				opacity: 1
-			},
-			'&:hover .productImageFeaturedStar': {
-				opacity: 1
-			}
-		}
-	}
-}));
-
-/**
- * The product images tab.
- */
 function CompanyGalleryTab() {
-	const methods = useFormContext();
-	const { control, watch } = methods;
-	const images = watch('images');
-	return (
-		<Root>
-			<div className="flex justify-center sm:justify-start flex-wrap -mx-16">
-				<Controller
-					name="images"
-					control={control}
-					render={({ field: { onChange, value } }) => (
-						<Box
-							sx={{
-								backgroundColor: (theme) =>
-									theme.palette.mode === 'light'
-										? lighten(theme.palette.background.default, 0.4)
-										: lighten(theme.palette.background.default, 0.02)
-							}}
-							component="label"
-							htmlFor="button-file"
-							className="productImageUpload flex items-center justify-center relative w-128 h-128 rounded-16 mx-12 mb-24 overflow-hidden cursor-pointer shadow hover:shadow-lg"
-						>
-							<input
-								accept="image/*"
-								className="hidden"
-								id="button-file"
-								type="file"
-								onChange={async (e) => {
-									function readFileAsync() {
-										return new Promise((resolve, reject) => {
-											const file = e?.target?.files?.[0];
+  const methods = useFormContext();
+  const { setValue } = methods;
+  const routeParams = useParams();
+  const { companyId } = routeParams;
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
+  // Fetch gallery files when component mounts
+  useEffect(() => {
+    // Skip if we're creating a new company
+    if (!companyId || companyId === 'new') return;
+    
+    const fetchGalleryFiles = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        const response = await axios.get(`/company/${companyId}/gallery`);
+        if (response.data && response.data.status === 'SUCCESS') {
+          const galleryFiles = response.data.data || [];
+          
+          // Group files by their file service type
+          const groupedFiles = galleryFiles.reduce((groups, file) => {
+            const serviceType = file.fileServiceType;
+            if (!groups[serviceType]) {
+              groups[serviceType] = [];
+            }
+            
+            let metadata = {};
+            if (file.metadata) {
+              try {
+                metadata = typeof file.metadata === 'string' 
+                  ? JSON.parse(file.metadata) 
+                  : file.metadata;
+              } catch (e) {
+                console.error('Error parsing file metadata:', e);
+              }
+            }
+            
+            groups[serviceType].push({
+              id: file.id,
+              fileName: file.fileName,
+              filePath: file.filePath,
+              contentType: file.contentType || `image/${file.fileExtension.substring(1)}`,
+              fileSize: file.fileSize,
+              metadata,
+              fileServiceType: serviceType,
+            });
+            
+            return groups;
+          }, {});
+          
+          // Set values in form for each file type
+          if (groupedFiles.COMPANY_LOGO) {
+            setValue('companyLogoFiles', groupedFiles.COMPANY_LOGO);
+          }
+          
+          if (groupedFiles.COMPANY_BACKGROUND_IMAGE) {
+            setValue('companyBackgroundImages', groupedFiles.COMPANY_BACKGROUND_IMAGE);
+          }
+          
+          if (groupedFiles.COMPANY_CERTIFICATE) {
+            setValue('companyCertificates', groupedFiles.COMPANY_CERTIFICATE);
+          }
+          
+          if (groupedFiles.COMPANY_GALLERY_DOCUMENT) {
+            setValue('companyGalleryDocument', groupedFiles.COMPANY_GALLERY_DOCUMENT);
+          }
+          
+          if (groupedFiles.COMPANY_GALLERY_PRODUCT) {
+            setValue('companyGalleryProduct', groupedFiles.COMPANY_GALLERY_PRODUCT);
+          }
+          
+          if (groupedFiles.COMPANY_GALLERY_CONTACT) {
+            setValue('companyGalleryContact', groupedFiles.COMPANY_GALLERY_CONTACT);
+          }
+          
+          if (groupedFiles.COMPANY_GALLERY_CATALOG) {
+            setValue('companyGalleryCatalog', groupedFiles.COMPANY_GALLERY_CATALOG);
+          }
+          
+          if (groupedFiles.COMPANY_GALLERY_SLIDER) {
+            setValue('companyGallerySlider', groupedFiles.COMPANY_GALLERY_SLIDER);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching gallery files:', err);
+        setError(err.response?.data?.message || 'خطا در بارگیری اطلاعات گالری');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchGalleryFiles();
+  }, [companyId, setValue]);
 
-											if (!file) {
-												return;
-											}
+  if (isLoading && companyId && companyId !== 'new') {
+    return (
+      <Box className="flex justify-center items-center p-24">
+        <CircularProgress />
+      </Box>
+    );
+  }
 
-											const reader = new FileReader();
-											reader.onload = () => {
-												resolve({
-													id: FuseUtils.generateGUID(),
-													url: `data:${file.type};base64,${btoa(reader.result)}`,
-													type: 'image'
-												});
-											};
-											reader.onerror = reject;
-											reader.readAsBinaryString(file);
-										});
-									}
+  if (error) {
+    return (
+      <Alert severity="error" className="my-16">
+        خطا در بارگیری اطلاعات گالری: {error}
+      </Alert>
+    );
+  }
 
-									const newImage = await readFileAsync();
-									onChange([newImage, ...value]);
-								}}
-							/>
-							<FuseSvgIcon
-								size={32}
-								color="action"
-							>
-								heroicons-outline:upload
-							</FuseSvgIcon>
-						</Box>
-					)}
-				/>
-				<Controller
-					name="featuredImageId"
-					control={control}
-					defaultValue=""
-					render={({ field: { onChange, value } }) => {
-						return (
-							<>
-								{images.map((media) => (
-									<div
-										onClick={() => onChange(media.id)}
-										onKeyDown={() => onChange(media.id)}
-										role="button"
-										tabIndex={0}
-										className={clsx(
-											'productImageItem flex items-center justify-center relative w-128 h-128 rounded-16 mx-12 mb-24 overflow-hidden cursor-pointer outline-none shadow hover:shadow-lg',
-											media.id === value && 'featured'
-										)}
-										key={media.id}
-									>
-										<FuseSvgIcon className="productImageFeaturedStar">
-											heroicons-solid:star
-										</FuseSvgIcon>
-										<img
-											className="max-w-none w-auto h-full"
-											src={media.url}
-											alt="product"
-										/>
-									</div>
-								))}
-							</>
-						);
-					}}
-				/>
-			</div>
-		</Root>
-	);
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { delay: 0.1 } }}
+      className="w-full"
+    >
+      <Typography variant="h4" className="mb-6 font-medium">
+        مدیریت گالری و فایل‌های شرکت
+      </Typography>
+      
+      <Alert severity="info" className="mb-6">
+        در این بخش می‌توانید تصاویر، ویدیوها و اسناد مرتبط با شرکت را بارگذاری کنید.
+        برای هر فایل امکان تعریف عنوان، توضیحات و سایر ویژگی‌ها وجود دارد.
+      </Alert>
+      
+      <FileSection
+        title="لوگو شرکت"
+        fieldName="companyLogoFiles"
+        fileServiceType="COMPANY_LOGO"
+        maxFiles={2}
+        allowedFileTypes="image/*"
+        description="لوگوی اصلی شرکت را در این قسمت آپلود کنید. فرمت‌های PNG و SVG با پس‌زمینه شفاف توصیه می‌شود."
+        acceptMessage="فقط فایل‌های تصویری مجاز هستند (حداکثر 2 فایل)"
+        companyId={companyId}
+      />
+      
+      <FileSection
+        title="تصویر پس زمینه"
+        fieldName="companyBackgroundImages"
+        fileServiceType="COMPANY_BACKGROUND_IMAGE"
+        maxFiles={5}
+        allowedFileTypes="image/*"
+        description="تصاویر پس‌زمینه برای نمایش در هدر پروفایل شرکت استفاده می‌شوند."
+        acceptMessage="فقط فایل‌های تصویری با کیفیت بالا مجاز هستند (حداکثر 5 فایل)"
+        companyId={companyId}
+      />
+      
+      <FileSection
+        title="گواهی‌ها و مجوزها"
+        fieldName="companyCertificates"
+        fileServiceType="COMPANY_CERTIFICATE"
+        maxFiles={10}
+        allowedFileTypes="image/*,application/pdf"
+        description="گواهینامه‌ها، استانداردها و مجوزهای کسب و کار خود را در این قسمت آپلود کنید."
+        acceptMessage="فایل‌های تصویری و PDF مجاز هستند (حداکثر 10 فایل)"
+        companyId={companyId}
+      />
+      
+      <FileSection
+        title="اسناد"
+        fieldName="companyGalleryDocument"
+        fileServiceType="COMPANY_GALLERY_DOCUMENT"
+        maxFiles={20}
+        allowedFileTypes="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain"
+        description="اسناد مرتبط با شرکت مانند کاتالوگ‌ها، بروشورها و گزارش‌ها را در این قسمت آپلود کنید."
+        acceptMessage="فرمت‌های PDF، Word و Excel مجاز هستند (حداکثر 20 فایل)"
+        companyId={companyId}
+      />
+      
+      <FileSection
+        title="گالری محصولات"
+        fieldName="companyGalleryProduct"
+        fileServiceType="COMPANY_GALLERY_PRODUCT"
+        maxFiles={50}
+        allowedFileTypes="image/*,video/*"
+        description="تصاویر و ویدیوهای محصولات و خدمات شرکت را در این قسمت آپلود کنید."
+        acceptMessage="فایل‌های تصویری و ویدیویی مجاز هستند (حداکثر 50 فایل)"
+        companyId={companyId}
+      />
+      
+      <FileSection
+        title="گالری مخاطبین"
+        fieldName="companyGalleryContact"
+        fileServiceType="COMPANY_GALLERY_CONTACT"
+        maxFiles={20}
+        allowedFileTypes="image/*"
+        description="تصاویر پرسنل، مدیران و افراد کلیدی شرکت را در این قسمت آپلود کنید."
+        acceptMessage="فقط فایل‌های تصویری مجاز هستند (حداکثر 20 فایل)"
+        companyId={companyId}
+      />
+      
+      <FileSection
+        title="گالری کاتالوگ"
+        fieldName="companyGalleryCatalog"
+        fileServiceType="COMPANY_GALLERY_CATALOG"
+        maxFiles={10}
+        allowedFileTypes="image/*,application/pdf"
+        description="کاتالوگ‌های محصولات و خدمات شرکت را در این قسمت آپلود کنید."
+        acceptMessage="فایل‌های تصویری و PDF مجاز هستند (حداکثر 10 فایل)"
+        companyId={companyId}
+      />
+      
+      <FileSection
+        title="گالری اسلایدر"
+        fieldName="companyGallerySlider"
+        fileServiceType="COMPANY_GALLERY_SLIDER"
+        maxFiles={10}
+        allowedFileTypes="image/*"
+        description="تصاویر مورد نظر برای نمایش در اسلایدر اصلی صفحه شرکت را در این قسمت آپلود کنید."
+        acceptMessage="فقط فایل‌های تصویری با کیفیت بالا و ابعاد مناسب مجاز هستند (حداکثر 10 فایل)"
+        companyId={companyId}
+      />
+    </motion.div>
+  );
 }
 
 export default CompanyGalleryTab;

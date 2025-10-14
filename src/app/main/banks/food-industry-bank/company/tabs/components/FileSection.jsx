@@ -217,7 +217,7 @@ function FileSection({
     // If the file has an ID from the server, update metadata there too
     if (file.id && !file.uploadPending && !file.uploadError) {
       try {
-        axios.patch(`/${companyId}/gallery/${file.id}/metadata`, {
+        axios.patch(`/company/${companyId}/gallery/${file.id}/metadata`, {
           metadata: newMetadata
         }).catch(error => {
           console.error('Error updating file metadata:', error);

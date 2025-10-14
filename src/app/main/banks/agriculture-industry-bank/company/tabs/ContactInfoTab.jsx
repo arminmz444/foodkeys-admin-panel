@@ -1,564 +1,708 @@
-import { Typography } from '@mui/material';
-import TextField from '@mui/material/TextField';
-import { Controller, useFormContext } from 'react-hook-form';
-import { useState } from 'react';
-import CustomDialog from './components/CustomDialog';
-import CustomForm from './components/CustomForm';
-import ContactEmailSelector from './components/email-selector/ContactEmailSelector';
-import CustomArrayFieldSelector from './components/custom-array-field-input/CustomArrayFieldSelector';
+import { Button, InputAdornment, Typography } from "@mui/material";
+import TextField from "@mui/material/TextField";
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
+import { useEffect } from "react";
+import FuseSvgIcon from "@fuse/core/FuseSvgIcon";
+import { BiMinus } from "react-icons/bi";
 
-function ContactInfoTab(props) {
-	const methods = useFormContext();
-	const { control, formState } = methods;
-	const { errors } = formState;
-	const [phoneCount, setPhoneCount] = useState(0);
-	const [faxCount, setFaxCount] = useState(0);
-	const [phoneCountOffice, setPhoneCountOffice] = useState(0);
-	const [faxCountOffice, setFaxCountOffice] = useState(0);
-	const [emailCount, setEmailCount] = useState(0);
+function ContactInfoTab() {
+    const methods = useFormContext();
+    const { control, formState } = methods;
+    const { errors } = formState;
 
-	return (
-		<div>
-			<Typography
-				variant="h5"
-				color="WindowText"
-				className="font-bold"
-			>
-				اطلاعات تماس محل فعالیت
-			</Typography>
-			<div className="flex sm:flex-row flex-col -mx-4">
-				<Controller
-					name="province"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.province}
-							helperText={errors?.province?.message}
-							label="استان محل"
-							id="province"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
+    const { fields: factoryTelFields, append: appendFactoryTel, remove: removeFactoryTel } =
+        useFieldArray({ control, name: "factoryTels" });
 
-				<Controller
-					name="city"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.city}
-							helperText={errors?.city?.message}
-							label="شهر محل"
-							id="city"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-			</div>
-			<div className="flex sm:flex-row flex-col -mx-4">
-				<Controller
-					name="industrialTown"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.industrialTown}
-							helperText={errors?.industrialTown?.message}
-							label="نام شهرک صنعتی"
-							id="industrialTown"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-				<Controller
-					name="zipCode"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							type="number"
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.zipCode}
-							helperText={errors?.zipCode?.message}
-							label="کدپستی"
-							id="zipCode"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-			</div>
+    const { fields: factoryFaxFields, append: appendFactoryFax, remove: removeFactoryFax } =
+        useFieldArray({ control, name: "factoryFaxes" });
 
-			<Controller
-				name="address"
-				control={control}
-				render={({ field }) => (
-					<TextField
-						{...field}
-						className="mt-8 mb-16"
-						id="address"
-						label="آدرس"
-						type="text"
-						multiline
-						rows={3}
-						variant="outlined"
-						fullWidth
-					/>
-				)}
-			/>
-			<Controller
-				control={control}
-				name="emails"
-				render={({ field }) => (
-					<ContactEmailSelector
-						className="mt-32"
-						{...field}
-						value={field?.value}
-						onChange={(val) => field.onChange(val)}
-					/>
-				)}
-			/>
+    const { fields: officeTelFields, append: appendOfficeTel, remove: removeOfficeTel } =
+        useFieldArray({ control, name: "officeTels" });
 
-			<Controller
-				control={control}
-				name="phoneNumbers"
-				render={({ field }) => (
-					<CustomArrayFieldSelector
-						className="mt-32"
-						{...field}
-						error={!!errors.phoneNumbers}
-						helperText={errors?.phoneNumbers?.message}
-						value={field.value || [{ country: '', label: 'تست', value: '09352388350' }]}
-						onChange={(val) => field.onChange(val)}
-					/>
-				)}
-			/>
-			<div className="flex flex-col sm:flex-row sm:gap-10 items-center my-4">
-				<Typography>تعداد تلفن های ثبت شده: {phoneCount !== 0 ? phoneCount + 1 : phoneCount}</Typography>
-				<div className="w-1/3">
-					<CustomDialog
-						buttonText="افزودن شماره تلفن"
-						title="افزودن شماره تماس های محل"
-						setCount={setPhoneCount}
-						form={
-							<CustomForm
-								totalAmount={3}
-								textLabel="شماره تلفن محل"
-								textName="phoneNumber"
-								textType="number"
-								count={phoneCount}
-								setCount={setPhoneCount}
-							/>
-						}
-					/>
-				</div>
-			</div>
-			<div className="flex flex-col sm:flex-row sm:gap-10 items-center my-4">
-				<Typography>تعداد فکس های ثبت شده: {faxCount !== 0 ? faxCount + 1 : faxCount}</Typography>
-				<div className="w-1/3">
-					<CustomDialog
-						buttonText="افزودن فکس"
-						title="افزودن فکس های محل"
-						setCount={setFaxCount}
-						form={
-							<CustomForm
-								totalAmount={3}
-								textLabel="شماره فکس محل"
-								textName="fax"
-								textType="number"
-								count={faxCount}
-								setCount={setFaxCount}
-							/>
-						}
-					/>
-				</div>
-			</div>
-			<div className="flex sm:flex-row flex-col -mx-4">
-				<Controller
-					name="companyMobile1"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							type="number"
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.companyMobile1}
-							helperText={errors?.companyMobile1?.message || '(مثال: 09123456789)'}
-							label="شماره موبایل 1 شرکت"
-							id="companyMobile1"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-				<Controller
-					name="phoneHolderPosition1"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.phoneHolderPosition1}
-							helperText={errors?.phoneHolderPosition1?.message}
-							label="سمت دارنده موبایل 1"
-							id="phoneHolderPosition1"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-			</div>
-			<div className="flex sm:flex-row flex-col -mx-4">
-				<Controller
-					name="companyMobile2"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							type="number"
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.companyMobile2}
-							helperText={errors?.companyMobile2?.message || '(مثال: 09123456789)'}
-							label="شماره موبایل 2 شرکت"
-							id="companyMobile2"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-				<Controller
-					name="phoneHolderPosition2"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.phoneHolderPosition2}
-							helperText={errors?.phoneHolderPosition2?.message}
-							label="سمت دارنده موبایل 2"
-							id="phoneHolderPosition2"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-			</div>
-			<Typography
-				variant="h5"
-				color="WindowText"
-				className="font-bold"
-			>
-				اطلاعات تماس دفتر مرکزی
-			</Typography>
-			<div className="flex sm:flex-row flex-col -mx-4">
-				<Controller
-					name="officeProvince"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.officeProvince}
-							helperText={errors?.officeProvince?.message}
-							label="استان محل دفتر مرکزی"
-							id="officeProvince"
-							variant="outlined"
-							fullWidth
-							required
-						/>
-					)}
-				/>
-				<Controller
-					name="officeCity"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.officeCity}
-							helperText={errors?.officeCity?.message}
-							label="شهر دفتر مرکزی"
-							id="officeCity"
-							required
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-				<Controller
-					name="officeZipCode"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							{...field}
-							type="number"
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.officeZipCode}
-							helperText={errors?.officeZipCode?.message}
-							label="کدپستی دفتر مرکزی"
-							id="officeZipCode"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-			</div>
-			<Controller
-				name="officeAddress"
-				control={control}
-				render={({ field }) => (
-					<TextField
-						{...field}
-						className="mt-8 mb-16"
-						id="officeAddress"
-						label="آدرس دفتر مرکزی"
-						type="text"
-						multiline
-						rows={3}
-						variant="outlined"
-						fullWidth
-					/>
-				)}
-			/>
-			<div className="flex flex-col sm:flex-row sm:gap-10 items-center my-4">
-				<Typography>
-					تعداد تلفن های ثبت شده: {phoneCountOffice !== 0 ? phoneCountOffice + 1 : phoneCountOffice}
-				</Typography>
-				<div className="w-1/3">
-					<CustomDialog
-						buttonText="افزودن شماره تلفن"
-						title="افزودن شماره تماس های دفتر مرکزی"
-						form={
-							<CustomForm
-								totalAmount={3}
-								textLabel="شماره تلفن دفتر مرکزی"
-								textName="phoneNumberOffice"
-								textType="number"
-								count={phoneCountOffice}
-								setCount={setPhoneCountOffice}
-							/>
-						}
-						setCount={setPhoneCountOffice}
-					/>
-				</div>
-			</div>
-			<div className="flex flex-col sm:flex-row sm:gap-10 items-center my-4">
-				<Typography>
-					تعداد فکس های ثبت شده: {faxCountOffice !== 0 ? faxCountOffice + 1 : faxCountOffice}
-				</Typography>
-				<div className="w-1/3">
-					<CustomDialog
-						buttonText="افزودن فکس"
-						title="افزودن فکس های دفتر مرکزی"
-						setCount={setFaxCountOffice}
-						form={
-							<CustomForm
-								totalAmount={3}
-								textLabel="شماره فکس دفتر مرکزی"
-								textName="faxOffice"
-								textType="number"
-								count={faxCountOffice}
-								setCount={setFaxCountOffice}
-							/>
-						}
-					/>
-				</div>
-			</div>
-			<div className="flex sm:flex-row flex-col -mx-4">
-				<Controller
-					name="sms"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							type="number"
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.sms}
-							helperText={errors?.sms?.message}
-							label="سامانه پیام کوتاه"
-							id="sms"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-				<Controller
-					name="specialLineNumber"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							type="number"
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.specialLineNumber}
-							helperText={errors?.specialLineNumber?.message}
-							label="شماره خط ویژه"
-							id="specialLineNumber"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-			</div>
-			<Typography
-				variant="h5"
-				color="WindowText"
-				className="font-bold"
-			>
-				اطلاعات شبکه های اجتماعی و اینترنت{' '}
-			</Typography>
-			<div className="flex sm:flex-row flex-col -mx-4">
-				<Controller
-					name="telegram"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							type="number"
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.telegram}
-							helperText={errors?.telegram?.message || '(مثال: 09123456789)'}
-							label="شماره تلگرام"
-							id="telegram"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-				<Controller
-					name="whatsapp"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							type="number"
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.whatsapp}
-							helperText={errors?.whatsapp?.message || '(مثال: 09123456789)'}
-							label="شماره واتساپ"
-							id="whatsapp"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-			</div>
-			<div className="flex sm:flex-row flex-col -mx-4">
-				<Controller
-					name="instagram"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.instagram}
-							helperText={errors?.instagram?.message || '(مثال: @foodkeys)'}
-							label="آی دی اینستاگرام"
-							id="instagram"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-				<Controller
-					name="linkedin"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.linkedin}
-							helperText={errors?.linkedin?.message || '(مثال: foodkeys)'}
-							label="آی دی لینکدین"
-							id="linkedin"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-			</div>
-			<div className="flex sm:flex-row flex-col -mx-4">
-				<Controller
-					name="eitaa"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							type="number"
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.eitaa}
-							helperText={errors?.eitaa?.message || '(مثال: 09123456789)'}
-							label="شماره ایتا"
-							id="eitaa"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-				<Controller
-					name="rubika"
-					control={control}
-					render={({ field }) => (
-						<TextField
-							type="number"
-							{...field}
-							className="mt-8 mb-16 sm:mx-4"
-							error={!!errors.rubika}
-							helperText={errors?.rubika?.message || '(مثال: 09123456789)'}
-							label="شماره روبیکا"
-							id="rubika"
-							variant="outlined"
-							fullWidth
-						/>
-					)}
-				/>
-			</div>
-			<div className="flex flex-col sm:flex-row sm:gap-10 items-center my-4">
-				<Typography>تعداد ایمیل های ثبت شده: {emailCount !== 0 ? emailCount + 1 : emailCount}</Typography>
-				<div className="w-1/3">
-					<CustomDialog
-						buttonText="افزودن ایمیل"
-						title="افزودن ایمیل ها"
-						setCount={setEmailCount}
-						form={
-							<CustomForm
-								totalAmount={3}
-								textLabel="آدرس ایمیل"
-								textName="email"
-								textType="email"
-								count={emailCount}
-								setCount={setEmailCount}
-							/>
-						}
-					/>
-				</div>
-			</div>
-			<Controller
-				name="website"
-				control={control}
-				render={({ field }) => (
-					<TextField
-						{...field}
-						className="mt-8 mb-16 sm:mx-4"
-						error={!!errors.website}
-						helperText={errors?.website?.message || '(مثال: www.foodkeys.com)'}
-						label="وبسایت"
-						id="website"
-						variant="outlined"
-						fullWidth
-					/>
-				)}
-			/>
-		</div>
-	);
+    const { fields: officeFaxFields, append: appendOfficeFax, remove: removeOfficeFax } =
+        useFieldArray({ control, name: "officeFaxes" });
+
+    const { fields: emailFields, append: appendEmail, remove: removeEmail } =
+        useFieldArray({ control, name: "emails" });
+
+    return (
+        <div>
+            <Typography variant="h5" color="WindowText" className="font-bold">
+                اطلاعات تماس محل فعالیت
+            </Typography>
+
+            <div className="flex sm:flex-row flex-col -mx-4">
+                <Controller
+                    name="factoryState"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.factoryState}
+                            helperText={errors?.factoryState?.message}
+                            label="استان کارخانه"
+                            id="factoryState"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="factoryCity"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.factoryCity}
+                            helperText={errors?.factoryCity?.message}
+                            label="شهر کارخانه"
+                            id="factoryCity"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+            </div>
+
+            <div className="flex sm:flex-row flex-col -mx-4">
+                <Controller
+                    name="industrialCity"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.industrialCity}
+                            helperText={errors?.industrialCity?.message}
+                            label="نام شهرک صنعتی"
+                            id="industrialCity"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="factoryPoBox"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            type="number"
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.factoryPoBox}
+                            helperText={errors?.factoryPoBox?.message}
+                            label="کدپستی"
+                            id="factoryPoBox"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+            </div>
+
+            <Controller
+                name="factoryLocation"
+                control={control}
+                render={({ field }) => (
+                    <TextField
+                        {...field}
+                        className="mt-8 mb-16"
+                        id="factoryLocation"
+                        label="آدرس کارخانه"
+                        type="text"
+                        multiline
+                        rows={3}
+                        variant="outlined"
+                        fullWidth
+                    />
+                )}
+            />
+
+            {/* Factory Tels - Array Field */}
+            <div className="flex flex-col space-y-2">
+                <label className="font-medium text-gray-700 dark:text-gray-600">
+                    تلفن ثابت کارخانه
+                </label>
+
+                {factoryTelFields.map((field, index) => (
+                    <div key={field.id} className="flex items-center gap-2 space-x-2">
+                        <Controller
+                            name={`factoryTels.${index}.telNumber`}
+                            control={control}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label={`تلفن کارخانه ${index + 1}`}
+                                    placeholder={`تلفن کارخانه ${index + 1}`}
+                                    variant="outlined"
+                                    fullWidth
+                                    className="me-10 mt-16"
+                                    error={!!errors?.factoryTels?.[index]?.telNumber}
+                                    helperText={errors?.factoryTels?.[index]?.telNumber?.message}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <FuseSvgIcon size={20}>heroicons-solid:tag</FuseSvgIcon>
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+                            )}
+                        />
+
+                        <Button
+                            onClick={() => removeFactoryTel(index)}
+                            variant="flat"
+                            color="danger"
+                        >
+                            <BiMinus size={30} color="red" className="text-red-light" />
+                        </Button>
+                    </div>
+                ))}
+
+                {factoryTelFields.length < 3 && (
+                    <Button
+                        className="group inline-flex items-center mt-8 -ml-4 py-2 px-4 rounded cursor-pointer"
+                        onClick={() => appendFactoryTel({ telNumber: '', telType: 'FACTORY_TEL' })}
+                    >
+                        <FuseSvgIcon size={20}>heroicons-solid:plus-circle</FuseSvgIcon>
+                        <span className="ml-8 font-medium text-secondary group-hover:underline">
+              {"افزودن شماره تلفن جدید"}
+            </span>
+                    </Button>
+                )}
+            </div>
+
+            {/* Factory Faxes - Array Field */}
+            <div className="flex flex-col space-y-2 mt-16">
+                <label className="font-medium text-gray-700 dark:text-gray-600">
+                    فکس ثابت کارخانه
+                </label>
+
+                {factoryFaxFields.map((field, index) => (
+                    <div key={field.id} className="flex items-center gap-2 space-x-2 mt-8">
+                        <Controller
+                            name={`factoryFaxes.${index}.telNumber`}
+                            control={control}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label={`فکس کارخانه ${index + 1}`}
+                                    placeholder={`فکس کارخانه ${index + 1}`}
+                                    variant="outlined"
+                                    fullWidth
+                                    className="me-10"
+                                    error={!!errors?.factoryFaxes?.[index]?.telNumber}
+                                    helperText={errors?.factoryFaxes?.[index]?.telNumber?.message}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <FuseSvgIcon size={20}>heroicons-solid:tag</FuseSvgIcon>
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+                            )}
+                        />
+
+                        <Button
+                            onClick={() => removeFactoryFax(index)}
+                            variant="flat"
+                            color="danger"
+                        >
+                            <BiMinus size={30} color="red" className="text-red-light" />
+                        </Button>
+                    </div>
+                ))}
+
+                {factoryFaxFields.length < 3 && (
+                    <Button
+                        className="group inline-flex items-center mt-2 -ml-4 py-2 px-4 rounded cursor-pointer"
+                        onClick={() => appendFactoryFax({ telNumber: '', telType: 'FACTORY_FAX' })}
+                    >
+                        <FuseSvgIcon size={20}>heroicons-solid:plus-circle</FuseSvgIcon>
+                        <span className="ml-8 font-medium text-secondary group-hover:underline">
+              {"افزودن شماره فکس جدید"}
+            </span>
+                    </Button>
+                )}
+            </div>
+
+            <Typography variant="h5" color="WindowText" className="font-bold mt-48">
+                اطلاعات تماس دفتر مرکزی
+            </Typography>
+
+            <div className="flex sm:flex-row flex-col -mx-4">
+                <Controller
+                    name="officeState"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.officeState}
+                            helperText={errors?.officeState?.message}
+                            label="استان محل دفتر مرکزی"
+                            id="officeState"
+                            variant="outlined"
+                            fullWidth
+                            required
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="officeCity"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.officeCity}
+                            helperText={errors?.officeCity?.message}
+                            label="شهر دفتر مرکزی"
+                            id="officeCity"
+                            required
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="officePoBox"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            type="number"
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.officePoBox}
+                            helperText={errors?.officePoBox?.message}
+                            label="کدپستی دفتر مرکزی"
+                            id="officePoBox"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+            </div>
+
+            <Controller
+                name="officeLocation"
+                control={control}
+                render={({ field }) => (
+                    <TextField
+                        {...field}
+                        className="mt-8 mb-16"
+                        id="officeLocation"
+                        label="آدرس دفتر مرکزی"
+                        type="text"
+                        error={!!errors.officeLocation}
+                        helperText={errors?.officeLocation?.message}
+                        multiline
+                        rows={3}
+                        variant="outlined"
+                        fullWidth
+                    />
+                )}
+            />
+
+            {/* Office Tels - Array Field */}
+            <div className="flex flex-col space-y-2 mt-8">
+                <label className="font-medium text-gray-700 dark:text-gray-600">
+                    تلفن ثابت اداره مرکزی
+                </label>
+
+                {officeTelFields.map((field, index) => (
+                    <div key={field.id} className="flex items-center gap-2 space-x-2">
+                        <Controller
+                            name={`officeTels.${index}.telNumber`}
+                            control={control}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label={`تلفن اداره مرکزی ${index + 1}`}
+                                    placeholder={`تلفن اداره مرکزی ${index + 1}`}
+                                    variant="outlined"
+                                    fullWidth
+                                    className="me-10 mt-16"
+                                    error={!!errors?.officeTels?.[index]?.telNumber}
+                                    helperText={errors?.officeTels?.[index]?.telNumber?.message}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <FuseSvgIcon size={20}>heroicons-solid:tag</FuseSvgIcon>
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+                            )}
+                        />
+
+                        <Button
+                            onClick={() => removeOfficeTel(index)}
+                            variant="flat"
+                            color="danger"
+                        >
+                            <BiMinus size={30} color="red" className="text-red-light" />
+                        </Button>
+                    </div>
+                ))}
+
+                {officeTelFields.length < 3 && (
+                    <Button
+                        className="group inline-flex items-center mt-8 -ml-4 py-2 px-4 rounded cursor-pointer"
+                        onClick={() => appendOfficeTel({ telNumber: '', telType: 'OFFICE_TEL' })}
+                    >
+                        <FuseSvgIcon size={20}>heroicons-solid:plus-circle</FuseSvgIcon>
+                        <span className="ml-8 font-medium text-secondary group-hover:underline">
+              {"افزودن شماره تلفن جدید"}
+            </span>
+                    </Button>
+                )}
+            </div>
+
+            {/* Office Faxes - Array Field */}
+            <div className="flex flex-col space-y-2">
+                <label className="font-medium text-gray-700 dark:text-gray-600">
+                    شماره فکس‌های اداره مرکزی
+                </label>
+
+                {officeFaxFields.map((field, index) => (
+                    <div key={field.id} className="flex items-center gap-2 space-x-2">
+                        <Controller
+                            name={`officeFaxes.${index}.telNumber`}
+                            control={control}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label={`فکس اداره مرکزی ${index + 1}`}
+                                    placeholder={`فکس اداره مرکزی ${index + 1}`}
+                                    variant="outlined"
+                                    fullWidth
+                                    className="me-10 mt-16"
+                                    error={!!errors?.officeFaxes?.[index]?.telNumber}
+                                    helperText={errors?.officeFaxes?.[index]?.telNumber?.message}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <FuseSvgIcon size={20}>heroicons-solid:tag</FuseSvgIcon>
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+                            )}
+                        />
+
+                        <Button
+                            onClick={() => removeOfficeFax(index)}
+                            variant="flat"
+                            color="danger"
+                        >
+                            <BiMinus size={30} color="red" className="text-red-light" />
+                        </Button>
+                    </div>
+                ))}
+
+                {officeFaxFields.length < 3 && (
+                    <Button
+                        className="group inline-flex items-center mt-8 -ml-4 py-2 px-4 rounded cursor-pointer"
+                        onClick={() => appendOfficeFax({ telNumber: '', telType: 'OFFICE_FAX' })}
+                    >
+                        <FuseSvgIcon size={20}>heroicons-solid:plus-circle</FuseSvgIcon>
+                        <span className="ml-8 font-medium text-secondary group-hover:underline">
+              {"افزودن شماره فکس جدید"}
+            </span>
+                    </Button>
+                )}
+            </div>
+
+            <div className="flex sm:flex-row flex-col mt-16 -mx-4">
+                <Controller
+                    name="smsNumber"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            type="number"
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.smsNumber}
+                            helperText={errors?.smsNumber?.message}
+                            label="سامانه پیام کوتاه"
+                            id="smsNumber"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="specialLineNumber"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            type="number"
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.specialLineNumber}
+                            helperText={errors?.specialLineNumber?.message}
+                            label="شماره خط ویژه"
+                            id="specialLineNumber"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+            </div>
+
+            <Typography variant="h5" color="WindowText" className="font-bold mt-48">
+                اطلاعات شبکه های اجتماعی و اینترنت{" "}
+            </Typography>
+
+            <div className="flex sm:flex-row flex-col -mx-4">
+                <Controller
+                    name="telegramId"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            type="text"
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.telegramId}
+                            helperText={errors?.telegramId?.message || "(مثال: 09123456789)"}
+                            label="آیدی تلگرام"
+                            id="telegramId"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="telegramPhoneNo"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            type="text"
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.telegramPhoneNo}
+                            helperText={errors?.telegramPhoneNo?.message || "(مثال: 09123456789)"}
+                            label="شماره تلگرام"
+                            id="telegramPhoneNo"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="whatsAppId"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            type="text"
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.whatsAppId}
+                            helperText={errors?.whatsAppId?.message || "(مثال: 09123456789)"}
+                            label="آیدی واتساپ"
+                            id="whatsAppId"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="whatsAppPhoneNo"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            type="text"
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.whatsAppPhoneNo}
+                            helperText={errors?.whatsAppPhoneNo?.message || "(مثال: 09123456789)"}
+                            label="شماره واتساپ"
+                            id="whatsAppPhoneNo"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+            </div>
+
+            <div className="flex sm:flex-row flex-col -mx-4">
+                <Controller
+                    name="instagramId"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.instagramId}
+                            helperText={errors?.instagramId?.message || "(مثال: @foodkeys)"}
+                            label="آی دی اینستاگرام"
+                            id="instagramId"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="linkedInId"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.linkedInId}
+                            helperText={errors?.linkedInId?.message || "(مثال: foodkeys)"}
+                            label="آی دی لینکدین"
+                            id="linkedInId"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="skypeId"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.skypeId}
+                            helperText={errors?.skypeId?.message || "(مثال: foodkeys)"}
+                            label="آی دی اسکایپ"
+                            id="skypeId"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+            </div>
+
+            <div className="flex sm:flex-row flex-col -mx-4">
+                <Controller
+                    name="eitaaPhoneNo"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            type="number"
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.eitaaPhoneNo}
+                            helperText={errors?.eitaaPhoneNo?.message || "(مثال: 09123456789)"}
+                            label="شماره ایتا"
+                            id="eitaaPhoneNo"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="rubikaPhoneNo"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            type="number"
+                            {...field}
+                            className="mt-8 mb-16 sm:mx-4"
+                            error={!!errors.rubikaPhoneNo}
+                            helperText={errors?.rubikaPhoneNo?.message || "(مثال: 09123456789)"}
+                            label="شماره روبیکا"
+                            id="rubikaPhoneNo"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    )}
+                />
+            </div>
+
+            {/* Emails - Array Field */}
+            <div className="flex flex-col space-y-2">
+                <label className="font-medium text-gray-700 dark:text-gray-600">
+                    ایمیل ثبت شده
+                </label>
+
+                {emailFields.map((field, index) => (
+                    <div key={field.id} className="flex items-center gap-2 space-x-2">
+                        <Controller
+                            name={`emails.${index}`}
+                            control={control}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label={`آدرس ایمیل ${index + 1}`}
+                                    placeholder={`آدرس ایمیل ${index + 1}`}
+                                    variant="outlined"
+                                    fullWidth
+                                    type="email"
+                                    className="me-10 mt-16"
+                                    error={!!errors?.emails?.[index]}
+                                    helperText={errors?.emails?.[index]?.message}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <FuseSvgIcon size={20}>heroicons-solid:tag</FuseSvgIcon>
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+                            )}
+                        />
+
+                        <Button
+                            onClick={() => removeEmail(index)}
+                            variant="flat"
+                            color="danger"
+                        >
+                            <BiMinus size={30} color="red" className="text-red-light" />
+                        </Button>
+                    </div>
+                ))}
+
+                {emailFields.length < 3 && (
+                    <Button
+                        className="group inline-flex items-center mt-8 -ml-4 py-2 px-4 rounded cursor-pointer"
+                        onClick={() => appendEmail('')}
+                    >
+                        <FuseSvgIcon size={20}>heroicons-solid:plus-circle</FuseSvgIcon>
+                        <span className="ml-8 font-medium text-secondary group-hover:underline">
+              {"افزودن ایمیل جدید"}
+            </span>
+                    </Button>
+                )}
+            </div>
+
+            <Controller
+                name="website"
+                control={control}
+                render={({ field }) => (
+                    <TextField
+                        {...field}
+                        className="mt-8 mb-16 sm:mx-4"
+                        error={!!errors.website}
+                        helperText={errors?.website?.message || "(مثال: www.foodkeys.com)"}
+                        label="وبسایت"
+                        id="website"
+                        variant="outlined"
+                        fullWidth
+                    />
+                )}
+            />
+        </div>
+    );
 }
 
 export default ContactInfoTab;

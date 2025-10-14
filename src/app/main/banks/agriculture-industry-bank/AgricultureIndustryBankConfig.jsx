@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
+import CompanyRequestsPage from './requests/CompanyRequestsPage';
 
 const Company = lazy(() => import('./company/Company'));
 const RequestsList = lazy(() => import('./requests/RequestsList'));
@@ -29,13 +30,17 @@ const AgricultureIndustryBankConfig = {
 					path: 'company/list',
 					element: <Companies />
 				},
+				// {
+				// 	path: 'company/:companyId/settings/*',
+				// 	element: <AdditionalSettingsPageLayout />
+				// },
 				{
 					path: 'company/:companyId/*',
 					element: <Company />
 				},
 				{
 					path: 'request/*',
-					element: <RequestsList />
+					element: <CompanyRequestsPage />
 				}
 
 				// {
