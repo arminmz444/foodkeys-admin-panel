@@ -9,6 +9,7 @@ import {
   Typography
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { getServerFile } from 'src/utils/string-utils.js';
 
 const StyledAttachment = styled(Paper)(({ theme }) => ({
   display: 'flex',
@@ -24,21 +25,63 @@ const StyledAttachment = styled(Paper)(({ theme }) => ({
   }
 }));
 
-function TicketAttachment({ attachment }) {
+function TicketAttachment({ attachment, onPreview }) {
   const [loading, setLoading] = useState(false);
   
-  const handleDownload = () => {
+  const handleDownload = async () => {
     setLoading(true);
     
-    // Create a link and trigger download
-    const link = document.createElement('a');
-    link.href = attachment.filePath;
-    link.download = attachment.fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    setTimeout(() => setLoading(false), 1000);
+    try {
+      // Fetch the file with proper headers
+      const response = await fetch(getServerFile(attachment.filePath), {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('jwt_access_token') || ''}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to download file');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      
+      // Create a link and trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = attachment.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the URL object
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download failed:', error);
+    } finally {
+      setTimeout(() => setLoading(false), 1000);
+    }
+  };
+
+  const handlePreview = () => {
+    if (onPreview && isPreviewableFile()) {
+      onPreview(attachment);
+    }
+  };
+
+  const isImageFile = () => {
+    return attachment.contentType?.startsWith('image/') || 
+           ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(attachment.fileExtension?.toLowerCase());
+  };
+
+  const isVideoFile = () => {
+    return attachment.contentType?.startsWith('video/') || 
+           ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'].includes(attachment.fileExtension?.toLowerCase());
+  };
+
+  const isPreviewableFile = () => {
+    return isImageFile() || isVideoFile();
   };
   
   const getFileIcon = () => {
@@ -61,28 +104,69 @@ function TicketAttachment({ attachment }) {
   
   return (
     <StyledAttachment className="relative">
-      <FuseSvgIcon size={20} className="mr-8">
-        {getFileIcon()}
-      </FuseSvgIcon>
+      {isImageFile() ? (
+        // Show image preview for images
+        <Box className="flex items-center gap-8">
+          <Box 
+            className="w-48 h-48 rounded cursor-pointer overflow-hidden border-1 border-gray-300"
+            onClick={handlePreview}
+          >
+            <img 
+              src={getServerFile(attachment.filePath)} 
+              alt={attachment.fileName}
+              className="w-full h-full object-cover"
+              style={{ 
+                filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.1))'
+              }}
+            />
+          </Box>
+          <Box className="flex-1 overflow-hidden">
+            <Tooltip title={attachment.fileName}>
+              <Typography variant="body2" className="truncate max-w-128">
+                {attachment.fileName}
+              </Typography>
+            </Tooltip>
+            <Typography variant="caption" color="text.secondary">
+              {(attachment.fileSize / 1024).toFixed(1)} KB
+            </Typography>
+          </Box>
+        </Box>
+      ) : (
+        // Show icon for non-image files
+        <>
+          <FuseSvgIcon size={20} className="mr-8">
+            {getFileIcon()}
+          </FuseSvgIcon>
+          
+          <Box className="overflow-hidden flex-1">
+            <Tooltip title={attachment.fileName}>
+              <Typography variant="body2" className="truncate max-w-128">
+                {attachment.fileName}
+              </Typography>
+            </Tooltip>
+            <Typography variant="caption" color="text.secondary">
+              {(attachment.fileSize / 1024).toFixed(1)} KB
+            </Typography>
+          </Box>
+        </>
+      )}
       
-      <Box className="overflow-hidden">
-        <Tooltip title={attachment.fileName}>
-          <Typography variant="body2" className="truncate max-w-128">
-            {attachment.fileName}
-          </Typography>
-        </Tooltip>
-        <Typography variant="caption" color="text.secondary">
-          {(attachment.fileSize / 1024).toFixed(1)} KB
-        </Typography>
-      </Box>
-      
-      <div className="attachment-actions absolute right-4 opacity-0 transition-opacity duration-200">
+      <div className="attachment-actions absolute right-4 opacity-0 transition-opacity duration-200 flex gap-1">
+        {isPreviewableFile() && (
+          <Tooltip title="پیش نمایش">
+            <IconButton size="small" onClick={handlePreview}>
+              <FuseSvgIcon size={18} color="white">
+                {isVideoFile() ? 'heroicons-outline:play' : 'heroicons-outline:eye'}
+              </FuseSvgIcon>
+            </IconButton>
+          </Tooltip>
+        )}
         {loading ? (
-          <CircularProgress size={20} />
+          <CircularProgress size={20} sx={{ color: 'white' }} />
         ) : (
-          <Tooltip title="Download">
+          <Tooltip title="دانلود">
             <IconButton size="small" onClick={handleDownload}>
-              <FuseSvgIcon size={18}>
+              <FuseSvgIcon size={18} color="white">
                 heroicons-outline:download
               </FuseSvgIcon>
             </IconButton>

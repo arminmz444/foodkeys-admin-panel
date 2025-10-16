@@ -13,19 +13,22 @@ import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import TicketChatMoreMenu from './TicketChatMoreMenu';
 import { TicketAppContext } from '../TicketingApp';
-import { 
+import {
   useGetTicketByIdQuery,
   useGetTicketMessagesQuery,
   useGetUserProfileQuery,
   useSendTicketMessageMutation,
   useUpdateTicketStatusMutation
 } from '../TicketingApi';
+import axiosInstance from 'src/configs/axiosInstance';
 import { Button, Chip, CircularProgress, Avatar } from '@mui/material';
 import AttachmentUploader from './AttachmentUploader';
 import TicketAttachment from './TicketAttachment';
 import { motion } from 'framer-motion';
 import { getServerFile } from 'src/utils/string-utils.js';
-import { ConsoleLogger } from 'aws-amplify/utils';
+import Lightbox from 'yet-another-react-lightbox';
+import 'yet-another-react-lightbox/styles.css';
+import { Download } from 'yet-another-react-lightbox/plugins';
 
 // Fixed StyledMessageRow component with improved styling for RTL support
 const StyledMessageRow = styled('div')(({ theme }) => ({
@@ -135,10 +138,13 @@ const statusLabels = {
 };
 
 function TicketChat() {
-  const { setMainSidebarOpen, setContactSidebarOpen } = useContext(TicketAppContext);
+  const { setMainSidebarOpen } = useContext(TicketAppContext);
   const chatRef = useRef(null);
   const [message, setMessage] = useState('');
   const [attachments, setAttachments] = useState([]);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [lightboxSlides, setLightboxSlides] = useState([]);
   const routeParams = useParams();
   const ticketId = routeParams.id;
   const { data: userData, isLoading: isUserLoading } = useGetUserProfileQuery();
@@ -156,8 +162,7 @@ function TicketChat() {
   });
   
   const [sendMessage] = useSendTicketMessageMutation();
-  const [updateTicketStatus] = useUpdateTicketStatusMutation();
-
+  const [_updateTicketStatus] = useUpdateTicketStatusMutation();
   // Scroll to bottom when messages change
   useEffect(() => {
     if (messages) {
@@ -198,6 +203,41 @@ function TicketChat() {
     setAttachments(newAttachments);
   }
 
+  function handleAttachmentPreview(attachment) {
+    // Find all image and video attachments in the current message
+    const currentMessageAttachments = messages
+      ?.flatMap(msg => msg.attachments || [])
+      .filter(att => {
+        const isImage = att.contentType?.startsWith('image/') || 
+                      ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(att.fileExtension?.toLowerCase());
+        const isVideo = att.contentType?.startsWith('video/') || 
+                       ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'].includes(att.fileExtension?.toLowerCase());
+        return isImage || isVideo;
+      }) || [];
+
+    // Create slides for lightbox
+    const slides = currentMessageAttachments.map(att => {
+      const isVideo = att.contentType?.startsWith('video/') || 
+                    ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'].includes(att.fileExtension?.toLowerCase());
+      
+      return {
+        src: getServerFile(att.filePath),
+        alt: att.fileName,
+        title: att.fileName,
+        type: isVideo ? 'video' : 'image',
+        downloadUrl: getServerFile(att.filePath),
+        downloadFilename: att.fileName
+      };
+    });
+
+    // Find the index of the clicked attachment
+    const index = currentMessageAttachments.findIndex(att => att.id === attachment.id);
+    
+    setLightboxSlides(slides);
+    setLightboxIndex(index >= 0 ? index : 0);
+    setLightboxOpen(true);
+  }
+
   async function onMessageSubmit(ev) {
     ev.preventDefault();
 
@@ -216,14 +256,17 @@ function TicketChat() {
       }).unwrap();
 
       // If we have attachments, upload them with the returned message ID
-      if (attachments.length > 0 && result.id) {
-        const uploadPromises = attachments.map(file => 
-          sendMessage({
-            ticketId,
-            messageId: result.id,
-            file
-          })
-        );
+      if (attachments.length > 0 && result?.data?.id) {
+        const uploadPromises = attachments.map(async (file) => {
+          const formData = new FormData();
+          formData.append("file", file);
+          
+          return axiosInstance.post(`/ticket/messages/${result.data.id}/attachments`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+        });
         await Promise.all(uploadPromises);
       }
 
@@ -422,7 +465,8 @@ function TicketChat() {
                                 {item.attachments.map((attachment) => (
                                   <TicketAttachment 
                                     key={attachment.id} 
-                                    attachment={attachment} 
+                                    attachment={attachment}
+                                    onPreview={handleAttachmentPreview}
                                   />
                                 ))}
                               </div>
@@ -522,6 +566,18 @@ function TicketChat() {
           </Paper>
         </div>
       </div>
+
+      {/* Lightbox for image and video preview */}
+      <Lightbox
+        open={lightboxOpen}
+        close={() => setLightboxOpen(false)}
+        index={lightboxIndex}
+        slides={lightboxSlides}
+        plugins={[Download]}
+        on={{
+          view: ({ index }) => setLightboxIndex(index),
+        }}
+      />
     </motion.div>
   );
 }

@@ -71,7 +71,7 @@ export default function RequestCard({ request, onActionComplete }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   const { data: companyDetails, isFetching: isCompanyLoading } = useGetFoodIndustryCompanyDetailsQuery(
-    request?.company?.companyId,
+    request?.company?.id,
     { 
       skip: !expanded && !modalOpen,  
       refetchOnMountOrArgChange: true 

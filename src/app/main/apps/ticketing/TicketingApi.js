@@ -102,11 +102,12 @@ const TicketsApi = api
           const formData = new FormData();
           formData.append("file", file);
 
+          debugger
           return {
-            url: `/ticket/${ticketId}/messages/${messageId}/attachments`,
+            url: `/ticket/messages/${messageId}/attachments`,
             method: "POST",
-            data: formData,
-            formData: true,
+            body: formData,
+            // formData: true,
           };
         },
         invalidatesTags: (result, error, { ticketId, messageId }) => [
