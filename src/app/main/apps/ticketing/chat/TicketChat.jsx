@@ -25,6 +25,7 @@ import AttachmentUploader from './AttachmentUploader';
 import TicketAttachment from './TicketAttachment';
 import { motion } from 'framer-motion';
 import { getServerFile } from 'src/utils/string-utils.js';
+import { ConsoleLogger } from 'aws-amplify/utils';
 
 // Fixed StyledMessageRow component with improved styling for RTL support
 const StyledMessageRow = styled('div')(({ theme }) => ({
@@ -140,7 +141,9 @@ function TicketChat() {
   const [attachments, setAttachments] = useState([]);
   const routeParams = useParams();
   const ticketId = routeParams.id;
-  const { data: user, isLoading: isUserLoading } = useGetUserProfileQuery();
+  const { data: userData, isLoading: isUserLoading } = useGetUserProfileQuery();
+  const userAccesses = userData?.data?.accesses;
+  const user = userData?.data?.user;
   const { data: ticket, isLoading: isTicketLoading } = useGetTicketByIdQuery(ticketId, {
     skip: !ticketId
   });
@@ -230,27 +233,27 @@ function TicketChat() {
 
       // If the ticket is pending and the current user is an admin/employee,
       // update the status to 'ANSWERED'
-      if (
-        ticket.status === 'PENDING' && 
-        user.hasAccess && 
-        user.hasAccess.includes('EMPLOYEE_ACCESS')
-      ) {
-        await updateTicketStatus({
-          ticketId,
-          status: 'ANSWERED'
-        });
-      }
-      // If the ticket status is 'ANSWERED' and the current user is the sender (customer),
-      // update the status to 'PENDING'
-      else if (
-        ticket.status === 'ANSWERED' && 
-        user.id === ticket.senderId
-      ) {
-        await updateTicketStatus({
-          ticketId,
-          status: 'PENDING'
-        });
-      }
+      // if (
+      //   ticket.status === 'PENDING' &&
+      //     userAccesses &&
+      //     userAccesses.includes('EMPLOYEE_ACCESS')
+      // ) {
+      //   await updateTicketStatus({
+      //     ticketId,
+      //     status: 'ANSWERED'
+      //   });
+      // }
+      // // If the ticket status is 'ANSWERED' and the current user is the sender (customer),
+      // // update the status to 'PENDING'
+      // else if (
+      //   ticket.status === 'ANSWERED' &&
+      //   user.id === ticket.senderId
+      // ) {
+      //   await updateTicketStatus({
+      //     ticketId,
+      //     status: 'PENDING'
+      //   });
+      // }
     } catch (error) {
       console.error('Failed to send message:', error);
     }
@@ -284,8 +287,8 @@ function TicketChat() {
     );
   }
 
-  const isAdmin = user.hasAccess && user.hasAccess.includes('EMPLOYEE_ACCESS');
-
+  const isAdmin = userAccesses && userAccesses.includes('EMPLOYEE_ACCESS');
+  console.log(user)
   return (
     <motion.div 
       className="flex flex-col h-full w-full"
@@ -369,7 +372,7 @@ function TicketChat() {
                       key={item.id}
                       className={clsx(
                         'flex flex-col grow-0 shrink-0 px-16 py-4',
-                        isMe ? 'me' : 'contact',
+                        isMe ? 'contact' : 'me',
                         { 'first-of-group': isFirstMessageOfGroup(item, i) },
                         { 'last-of-group': isLastMessageOfGroup(item, i) },
                         i + 1 === messages.length && 'mb-96 pb-24' // Extra space at the bottom of the chat
@@ -378,13 +381,13 @@ function TicketChat() {
                       {/* Message container with avatar and bubble */}
                       <div className={clsx(
                         'flex items-start mb-4',
-                        isMe ? 'flex-row-reverse' : 'flex-row'
+                        isMe ? 'flex-row' : 'flex-row-reverse'
                       )}>
                         {/* Avatar */}
                         <Avatar
                           src={item.senderAvatar ? getServerFile(item.senderAvatar) : undefined}
                           alt={item.senderUsername}
-                          className={clsx("w-32 h-32", isMe ? "mr-8" : "ml-8")}
+                          className={clsx("w-32 h-32", isMe ? "ml-8" : "mr-8")}
                         >
                           {item.senderUsername?.charAt(0)}
                         </Avatar>
@@ -395,7 +398,7 @@ function TicketChat() {
                           {isFirstMessageOfGroup(item, i) && (
                             <div className={clsx(
                               "flex items-center mb-4",
-                              isMe ? "justify-end" : "justify-start"
+                              isMe ? "justify-start" : "justify-end"
                             )}>
                               <Typography className="text-12 font-semibold">
                                 {item.senderName || 'Unknown User'}
