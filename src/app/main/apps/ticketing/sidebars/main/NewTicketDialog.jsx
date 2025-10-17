@@ -274,6 +274,7 @@ function NewTicketDialog({ open, onClose }) {
                       <div className="flex items-center justify-between mb-8">
                         <Typography variant="subtitle2">فایل‌ها</Typography>
                         <input
+                        disabled
                           type="file"
                           id="file-upload"
                           style={{ display: 'none' }}
@@ -285,6 +286,7 @@ function NewTicketDialog({ open, onClose }) {
                             component="span"
                             variant="outlined"
                             size="small"
+                            disabled
                             startIcon={<FuseSvgIcon>heroicons-outline:paper-clip</FuseSvgIcon>}
                           >
                             اضافه کردن فایل‌ها
