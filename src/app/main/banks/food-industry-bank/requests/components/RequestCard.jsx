@@ -27,6 +27,7 @@ import 'dayjs/locale/fa';
 
 import { useGetFoodIndustryCompanyDetailsQuery } from '../../FoodIndustryBankApi';
 import ApprovalModal from './ApprovalModal';
+import {getServerFile} from "@/utils/string-utils.js";
 
 // dayjs.extend(jalaali);
 // dayjs.extend(relativeTime);
@@ -66,7 +67,7 @@ const requestTypeMap = {
 };
 
 export default function RequestCard({ request, onActionComplete }) {
-  console.log(`Request: ${JSON.stringify(request)}`)
+  // console.log(`Request: ${JSON.stringify(request)}`)
   const [expanded, setExpanded] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -80,7 +81,7 @@ export default function RequestCard({ request, onActionComplete }) {
 
   const company = companyDetails || request?.company;
 
-  console.log(`Company: ${JSON.stringify(company)}`)
+  // console.log(`Company: ${JSON.stringify(company)}`)
   const handleExpandClick = () => setExpanded(!expanded);
   
   const formatDate = (dateString) => {
@@ -104,9 +105,9 @@ export default function RequestCard({ request, onActionComplete }) {
   const statusDetails = getStatusDetails(request.requestStatus);
   const StatusIcon = statusDetails.icon;
   
-  const logoUrl = company?.logo || 'assets/images/placeholders/company-logo.png';
+  const logoUrl = (company?.logo && getServerFile(company?.logo)) || 'assets/images/placeholders/company-logo.png';
   
-  const backgroundUrl = company?.backgroundImage || 'assets/images/placeholders/company-banner.png';
+  const backgroundUrl = (company?.backgroundImage && getServerFile(company?.backgroundImage)) || 'assets/images/placeholders/company-banner.png';
 
   const canTakeAction = request.requestStatus === "PENDING"; 
   const { requester } = request;
@@ -336,7 +337,8 @@ export default function RequestCard({ request, onActionComplete }) {
         <ApprovalModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
-          request={{...request, company}}
+          request={request}
+          company={company}
           onActionComplete={onActionComplete}
         />
       )}

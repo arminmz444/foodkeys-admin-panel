@@ -51,6 +51,7 @@ export default function ApprovalModal({
   open,
   onClose,
   request,
+  company,
   onActionComplete,
 }) {
   const [activeTab, setActiveTab] = useState(0);
@@ -66,15 +67,15 @@ export default function ApprovalModal({
   });
 
   useEffect(() => {
-    if (request?.company) {
+    if (company) {
       setFormData((prev) => ({
         ...prev,
-        ranking: request.company.ranking || 0,
-        rankingAll: request.company.rankingAll || 0,
-        finalStatus: request.company.status || 0,
+        ranking: company.ranking || 0,
+        rankingAll: company.rankingAll || 0,
+        finalStatus: company.status || 0,
       }));
     }
-  }, [request]);
+  }, [company]);
 
   const { data: workflowData, isLoading: isWorkflowLoading } =
     useGetRequestWorkflowQuery(request?.requestId, {
@@ -123,7 +124,7 @@ export default function ApprovalModal({
     try {
       if (request.requestType === 5) {
         await answerCompanyRevisionRequest({
-          companyId: request.company.id,
+          companyId: company.id,
           requestId: request.requestId,
           answerData: {
             answer: updatedData.answer,
@@ -133,7 +134,7 @@ export default function ApprovalModal({
         }).unwrap();
       } else {
         await answerCompanySubmitRequest({
-          companyId: request.company.id,
+          companyId: company.id,
           requestId: request.requestId,
           answerData: updatedData,
         }).unwrap();
@@ -476,7 +477,7 @@ export default function ApprovalModal({
               </div>
 
               {request?.company?.products &&
-                request.company.products.length > 0 && (
+                company.products.length > 0 && (
                   <>
                     <Typography variant="subtitle1" className="mb-2">
                       محصولات:
@@ -491,7 +492,7 @@ export default function ApprovalModal({
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {request.company.products.map((product, index) => (
+                        {company.products.map((product, index) => (
                           <TableRow key={product.id || index}>
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>{product.name}</TableCell>
@@ -510,13 +511,13 @@ export default function ApprovalModal({
                 )}
 
               {request?.company?.contacts &&
-                request.company.contacts.length > 0 && (
+                company.contacts.length > 0 && (
                   <>
                     <Typography variant="subtitle1" className="mt-6 mb-2">
                       اطلاعات تماس:
                     </Typography>
                     <Grid container spacing={2}>
-                      {request.company.contacts.map((contact, i) => (
+                      {company.contacts.map((contact, i) => (
                         <Grid item xs={12} sm={6} key={i}>
                           <Box
                             sx={{
@@ -713,7 +714,7 @@ export default function ApprovalModal({
                 </AccordionSummary>
                 <AccordionDetails>
                   {request?.company?.products &&
-                  request.company.products.length > 0 ? (
+                  company.products.length > 0 ? (
                     <Table size="small">
                       <TableHead>
                         <TableRow>
@@ -724,7 +725,7 @@ export default function ApprovalModal({
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {request.company.products.map((product, index) => (
+                        {company.products.map((product, index) => (
                           <TableRow key={product.id || index}>
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>{product.name}</TableCell>
@@ -745,7 +746,7 @@ export default function ApprovalModal({
                       <Typography variant="subtitle2">
                         عناوین محصولات:
                       </Typography>
-                      <Typography>{request.company.productTitles}</Typography>
+                      <Typography>{company.productTitles}</Typography>
                     </Box>
                   )}
 
@@ -755,7 +756,7 @@ export default function ApprovalModal({
                         محصولات برون‌سپاری شده:
                       </Typography>
                       <Typography>
-                        {request.company.outSourcedProductTitles}
+                        {company.outSourcedProductTitles}
                       </Typography>
                     </Box>
                   )}
@@ -770,8 +771,8 @@ export default function ApprovalModal({
                 <AccordionDetails>
                   <Grid container spacing={2}>
                     {request?.company?.contacts &&
-                    request.company.contacts.length > 0 ? (
-                      request.company.contacts.map((contact, i) => (
+                    company.contacts.length > 0 ? (
+                      company.contacts.map((contact, i) => (
                         <Grid item xs={12} sm={6} key={i}>
                           <Box
                             sx={{
@@ -807,7 +808,7 @@ export default function ApprovalModal({
                     )}
 
                     {request?.company?.tels &&
-                      request.company.tels.length > 0 && (
+                      company.tels.length > 0 && (
                         <Grid item xs={12}>
                           <Typography variant="subtitle2" gutterBottom>
                             شماره تلفن‌ها:
@@ -820,7 +821,7 @@ export default function ApprovalModal({
                               </TableRow>
                             </TableHead>
                             <TableBody>
-                              {request.company.tels.map((tel, index) => (
+                              {company.tels.map((tel, index) => (
                                 <TableRow key={tel.id || index}>
                                   <TableCell>{tel.telType || "-"}</TableCell>
                                   <TableCell>{tel.telNumber}</TableCell>
@@ -841,9 +842,9 @@ export default function ApprovalModal({
                 </AccordionSummary>
                 <AccordionDetails>
                   {request?.company?.socialMedias &&
-                  request.company.socialMedias.length > 0 ? (
+                  company.socialMedias.length > 0 ? (
                     <Grid container spacing={2}>
-                      {request.company.socialMedias.map((social, i) => (
+                      {company.socialMedias.map((social, i) => (
                         <Grid item xs={12} sm={6} key={i}>
                           <Typography variant="subtitle2">
                             {social.type}
@@ -885,31 +886,31 @@ export default function ApprovalModal({
                       <Grid item xs={12} sm={6}>
                         <Typography variant="subtitle2">کشور</Typography>
                         <Typography>
-                          {request.company.location.country || "-"}
+                          {company.location.country || "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <Typography variant="subtitle2">شهر صنعتی</Typography>
                         <Typography>
-                          {request.company.location.industrialCity || "-"}
+                          {company.location.industrialCity || "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <Typography variant="subtitle2">موقعیت دفتر</Typography>
                         <Typography>
-                          {request.company.location.officeLocation || "-"}
+                          {company.location.officeLocation || "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <Typography variant="subtitle2">استان دفتر</Typography>
                         <Typography>
-                          {request.company.location.officeState || "-"}
+                          {company.location.officeState || "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <Typography variant="subtitle2">شهر دفتر</Typography>
                         <Typography>
-                          {request.company.location.officeCity || "-"}
+                          {company.location.officeCity || "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={6}>
@@ -917,7 +918,7 @@ export default function ApprovalModal({
                           صندوق پستی دفتر
                         </Typography>
                         <Typography>
-                          {request.company.location.officePoBox || "-"}
+                          {company.location.officePoBox || "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={6}>
@@ -925,7 +926,7 @@ export default function ApprovalModal({
                           موقعیت کارخانه
                         </Typography>
                         <Typography>
-                          {request.company.location.factoryLocation || "-"}
+                          {company.location.factoryLocation || "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={6}>
@@ -933,13 +934,13 @@ export default function ApprovalModal({
                           استان کارخانه
                         </Typography>
                         <Typography>
-                          {request.company.location.factoryState || "-"}
+                          {company.location.factoryState || "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <Typography variant="subtitle2">شهر کارخانه</Typography>
                         <Typography>
-                          {request.company.location.factoryCity || "-"}
+                          {company.location.factoryCity || "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={6}>
@@ -947,26 +948,26 @@ export default function ApprovalModal({
                           صندوق پستی کارخانه
                         </Typography>
                         <Typography>
-                          {request.company.location.factoryPoBox || "-"}
+                          {company.location.factoryPoBox || "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={12}>
                         <Typography variant="subtitle2">آدرس کامل</Typography>
                         <Typography>
-                          {request.company.location.fullAddress || "-"}
+                          {company.location.fullAddress || "-"}
                         </Typography>
                       </Grid>
 
-                      {request.company.location.longitude &&
-                        request.company.location.latitude && (
+                      {company.location.longitude &&
+                        company.location.latitude && (
                           <Grid item xs={12}>
                             <Typography variant="subtitle2" gutterBottom>
                               مختصات جغرافیایی:
                             </Typography>
                             <Typography>
                               طول جغرافیایی:{" "}
-                              {request.company.location.longitude}, عرض
-                              جغرافیایی: {request.company.location.latitude}
+                              {company.location.longitude}, عرض
+                              جغرافیایی: {company.location.latitude}
                             </Typography>
                             <Box
                               sx={{
@@ -1016,7 +1017,7 @@ export default function ApprovalModal({
                   </Grid>
 
                   {request?.company?.stakeholders &&
-                    request.company.stakeholders.length > 0 && (
+                    company.stakeholders.length > 0 && (
                       <Box sx={{ mt: 3 }}>
                         <Typography variant="subtitle2" gutterBottom>
                           سهامداران:
@@ -1032,7 +1033,7 @@ export default function ApprovalModal({
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {request.company.stakeholders.map(
+                            {company.stakeholders.map(
                               (stakeholder, index) => (
                                 <TableRow key={stakeholder.id || index}>
                                   <TableCell>{index + 1}</TableCell>
@@ -1060,7 +1061,7 @@ export default function ApprovalModal({
                         اطلاعات سهامداران (متنی):
                       </Typography>
                       <Typography>
-                        {request.company.companyStakeholders}
+                        {company.companyStakeholders}
                       </Typography>
                     </Box>
                   )}
@@ -1124,7 +1125,7 @@ export default function ApprovalModal({
                         اطلاعات اضافی:
                       </Typography>
                       <pre className="bg-gray-100 p-3 rounded overflow-auto max-h-60">
-                        {request.company.additionalInfo}
+                        {company.additionalInfo}
                       </pre>
                     </Box>
                   )}
@@ -1179,23 +1180,23 @@ export default function ApprovalModal({
                         <Grid item xs={12} sm={6}>
                           <Typography variant="body2">
                             نام:{" "}
-                            {request.company.registrantUser.firstName || "-"}
+                            {company.registrantUser.firstName || "-"}
                           </Typography>
                         </Grid>
                         <Grid item xs={12} sm={6}>
                           <Typography variant="body2">
                             نام خانوادگی:{" "}
-                            {request.company.registrantUser.lastName || "-"}
+                            {company.registrantUser.lastName || "-"}
                           </Typography>
                         </Grid>
                         <Grid item xs={12} sm={6}>
                           <Typography variant="body2">
-                            ایمیل: {request.company.registrantUser.email || "-"}
+                            ایمیل: {company.registrantUser.email || "-"}
                           </Typography>
                         </Grid>
                         <Grid item xs={12} sm={6}>
                           <Typography variant="body2">
-                            تلفن: {request.company.registrantUser.phone || "-"}
+                            تلفن: {company.registrantUser.phone || "-"}
                           </Typography>
                         </Grid>
                       </Grid>
@@ -1217,26 +1218,26 @@ export default function ApprovalModal({
                           دسته‌بندی اصلی
                         </Typography>
                         <Typography>
-                          {request.company.subCategory.category?.name || "-"}
+                          {company.subCategory.category?.name || "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <Typography variant="subtitle2">زیر دسته</Typography>
                         <Typography>
-                          {request.company.subCategory.name || "-"}
+                          {company.subCategory.name || "-"}
                         </Typography>
                       </Grid>
                     </Grid>
                   )}
 
                   {request?.company?.industries &&
-                    request.company.industries.length > 0 && (
+                    company.industries.length > 0 && (
                       <Box sx={{ mt: 3 }}>
                         <Typography variant="subtitle2" gutterBottom>
                           صنایع مرتبط:
                         </Typography>
                         <Grid container spacing={1}>
-                          {request.company.industries.map((industry, index) => (
+                          {company.industries.map((industry, index) => (
                             <Grid item key={industry.id || index}>
                               <Chip
                                 label={industry.name}
@@ -1253,13 +1254,13 @@ export default function ApprovalModal({
                     )}
 
                   {request?.company?.activities &&
-                    request.company.activities.length > 0 && (
+                    company.activities.length > 0 && (
                       <Box sx={{ mt: 3 }}>
                         <Typography variant="subtitle2" gutterBottom>
                           فعالیت‌های مرتبط:
                         </Typography>
                         <Grid container spacing={1}>
-                          {request.company.activities.map((activity, index) => (
+                          {company.activities.map((activity, index) => (
                             <Grid item key={activity.id || index}>
                               <Chip
                                 label={activity.name}
@@ -1281,7 +1282,7 @@ export default function ApprovalModal({
                 </AccordionSummary>
                 <AccordionDetails>
                   {request?.company?.brands &&
-                  request.company.brands.length > 0 ? (
+                  company.brands.length > 0 ? (
                     <Table size="small">
                       <TableHead>
                         <TableRow>
@@ -1292,7 +1293,7 @@ export default function ApprovalModal({
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {request.company.brands.map((brand, index) => (
+                        {company.brands.map((brand, index) => (
                           <TableRow key={brand.id || index}>
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>{brand.name}</TableCell>
@@ -1317,9 +1318,9 @@ export default function ApprovalModal({
                 </AccordionSummary>
                 <AccordionDetails>
                   {request?.company?.galleryFile &&
-                  request.company.galleryFile.length > 0 ? (
+                  company.galleryFile.length > 0 ? (
                     <Grid container spacing={2}>
-                      {request.company.galleryFile.map((file, index) => (
+                      {company.galleryFile.map((file, index) => (
                         <Grid item xs={6} sm={4} md={3} key={file.id || index}>
                           <Box
                             sx={{

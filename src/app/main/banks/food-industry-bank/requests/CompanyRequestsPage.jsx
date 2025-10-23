@@ -1,5 +1,6 @@
 // src/pages/CompanyRequests.jsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { debounce } from 'lodash';
 import FusePageSimple from '@fuse/core/FusePageSimple';
 import { 
   Typography, 
@@ -16,12 +17,12 @@ import {
 } from '@mui/material';
 import { Filter, RefreshCw, Search, FileText, X } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { showMessage } from '@fuse/core/FuseMessage/fuseMessageSlice';
+import { useAppDispatch as useDispatch } from 'app/store/hooks';
 import FilterDrawer from './components/FilterDrawer';
 import RequestCard from './components/RequestCard';
 import EmptyState from './components/EmptyState';
 import { useGetCompanyRequestsQuery } from '../FoodIndustryBankApi';
-import { showMessage } from "@fuse/core/FuseMessage/fuseMessageSlice";
-import { useAppDispatch as useDispatch } from "app/store/hooks";
 export default function CompanyRequests() {
   const dispatch = useDispatch();
   const [filters, setFilters] = useState({ 
@@ -30,12 +31,18 @@ export default function CompanyRequests() {
     search: '',
     categoryId: 1 
   });
+  const [searchInput, setSearchInput] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [pagination, setPagination] = useState({
     pageNumber: 1,
     pageSize: 12
   });
+  
+  // State to accumulate all loaded items
+  const [allRequests, setAllRequests] = useState([]);
+  const [totalRequests, setTotalRequests] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   const { 
     data, 
@@ -46,17 +53,58 @@ export default function CompanyRequests() {
   } = useGetCompanyRequestsQuery({
     ...pagination,
     ...filters,
+    requestStatus: filters.status,
     sort: JSON.stringify({ createdAt: 'desc' }) // Default sorting by creation date
   });
 
-  // Reset pagination when filters change
+  // Reset pagination and clear accumulated data when filters change
   useEffect(() => {
-    setPagination(prev => ({ ...prev, pageNumber: 0 }));
+    setPagination(prev => ({ ...prev, pageNumber: 1 }));
+    setAllRequests([]);
+    setTotalRequests(0);
+    setTotalPages(0);
   }, [filters]);
 
-  // Handle search input
-  const [searchInput, setSearchInput] = useState('');
+  // Update accumulated data when new data arrives
+  useEffect(() => {
+    if (data) {
+      if (pagination.pageNumber === 1) {
+        // First page - replace all data
+        setAllRequests(data.data || []);
+      } else {
+        // Subsequent pages - append new data, but avoid duplicates
+        setAllRequests(prev => {
+          const existingIds = new Set(prev.map(item => item.requestId));
+          const newItems = (data.data || []).filter(item => !existingIds.has(item.requestId));
+          return [...prev, ...newItems];
+        });
+      }
+      setTotalRequests(data.totalElements || 0);
+      setTotalPages(data.totalPages || 0);
+    }
+  }, [data, pagination.pageNumber]);
+
+  // Debounced search function
+  const debouncedSearch = useCallback(
+    debounce((searchValue) => {
+      setFilters(prev => ({ ...prev, search: searchValue }));
+    }, 500),
+    []
+  );
+
+  // Handle search input changes
+  const handleSearchInputChange = ({ target: { value } }) => {
+    setSearchInput(value);
+    debouncedSearch(value);
+  };
+
+  const handleStatusChange = (status) => {
+    setFilters(prev => ({ ...prev, status }));
+  };
+
   const handleSearch = () => {
+    // Cancel any pending debounced search and apply immediately
+    debouncedSearch.cancel();
     setFilters(prev => ({ ...prev, search: searchInput }));
   };
 
@@ -67,7 +115,9 @@ export default function CompanyRequests() {
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
-      handleSearch();
+      // Cancel any pending debounced search and apply immediately
+      debouncedSearch.cancel();
+      setFilters(prev => ({ ...prev, search: searchInput }));
     }
   };
 
@@ -75,13 +125,13 @@ export default function CompanyRequests() {
     setActiveTab(newValue);
     
     if (newValue === 0) { 
-      setFilters(prev => ({ ...prev, status: null }));
+      handleStatusChange(null);
     } else if (newValue === 1) { 
-      setFilters(prev => ({ ...prev, status: 1 })); 
+      handleStatusChange(1); // PENDING
     } else if (newValue === 2) { 
-      setFilters(prev => ({ ...prev, status: 2 })); 
+      handleStatusChange(2); // APPROVED
     } else if (newValue === 3) { 
-      setFilters(prev => ({ ...prev, status: 3 })); 
+      handleStatusChange(3); // REJECTED
     }
   };
 
@@ -94,18 +144,22 @@ export default function CompanyRequests() {
     }
   }, [error, dispatch]);
 
+  // Cleanup debounced function on unmount
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
+
   const handleLoadMore = () => {
-    if (data?.totalPages > pagination.pageNumber + 1) {
+    if (totalPages > pagination.pageNumber) {
       setPagination(prev => ({ ...prev, pageNumber: prev.pageNumber + 1 }));
     }
   };
 
-  const requests = data?.data || [];
-  console.log(`Requests ${JSON.stringify(requests)}`)
-  const totalRequests = data?.totalElements || 0;
-  console.log(`totalRequests ${totalRequests}`)
+  const requests = allRequests;
 
-  const hasMore = data?.totalPages > pagination.pageNumber + 1;
+  const hasMore = totalPages > pagination.pageNumber;
 
   const header = (
     <div className="flex flex-col w-full">
@@ -137,7 +191,7 @@ export default function CompanyRequests() {
           variant="outlined"
           size="small"
           value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
+          onChange={handleSearchInputChange}
           onKeyPress={handleKeyPress}
           fullWidth
           sx={{ maxWidth: 400 }}
@@ -194,7 +248,7 @@ export default function CompanyRequests() {
               {!isLoading && (
                 <Chip 
                   size="small" 
-                  label={data?.data?.filter(r => r.requestStatus === "PENDING").length || 0} 
+                  label={allRequests?.filter(r => r.requestStatus === "PENDING").length || 0} 
                   color="warning" 
                   className="ml-2"
                 />
@@ -208,67 +262,83 @@ export default function CompanyRequests() {
     </div>
   );
 
-  const content = (
-    <div className="p-24">
-      {isLoading && !data ? (
+  const renderContent = () => {
+    if (isLoading && allRequests.length === 0) {
+      return (
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
           <CircularProgress />
         </Box>
-      ) : error ? (
+      );
+    }
+
+    if (error) {
+      return (
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
           <EmptyState 
             message="خطا در بارگذاری اطلاعات" 
             onRefresh={refetch}
           />
         </Box>
-      ) : requests.length === 0 ? (
+      );
+    }
+
+    if (requests.length === 0) {
+      return (
         <EmptyState 
           message="هیچ درخواستی یافت نشد" 
           onReset={() => setFilters({ status: null, type: null, search: '', categoryId: 1 })}
           onRefresh={refetch}
         />
-      ) : (
-        <>
-          <Typography variant="body2" color="text.secondary" className="mb-4">
-            نمایش {requests.length} درخواست از {totalRequests} درخواست
-          </Typography>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-24">
-            {requests.map(request => (
-              <motion.div 
-                key={request.requestId} 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <RequestCard 
-                  request={request} 
-                  onActionComplete={refetch}
-                />
-              </motion.div>
-            ))}
-          </div>
-          
-          {hasMore && (
-            <Box display="flex" justifyContent="center" mt={4}>
-              <Button
-                variant="outlined"
-                onClick={handleLoadMore}
-                disabled={isFetching}
-                startIcon={isFetching ? <CircularProgress size={20} /> : null}
-              >
-                بارگذاری بیشتر
-              </Button>
-            </Box>
-          )}
-          
-          {isFetching && data && (
-            <Box display="flex" justifyContent="center" mt={2}>
-              <CircularProgress size={24} />
-            </Box>
-          )}
-        </>
-      )}
+      );
+    }
+
+    return (
+      <>
+        <Typography variant="body2" color="text.secondary" className="mb-4">
+          نمایش {requests.length} درخواست از {totalRequests} درخواست
+        </Typography>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-24">
+          {requests.map(request => (
+            <motion.div 
+              key={request.requestId} 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <RequestCard 
+                request={request} 
+                onActionComplete={refetch}
+              />
+            </motion.div>
+          ))}
+        </div>
+        
+        {hasMore && (
+          <Box display="flex" justifyContent="center" mt={4}>
+            <Button
+              variant="outlined"
+              onClick={handleLoadMore}
+              disabled={isFetching}
+              startIcon={isFetching ? <CircularProgress size={20} /> : null}
+            >
+              بارگذاری بیشتر
+            </Button>
+          </Box>
+        )}
+        
+        {isFetching && allRequests.length > 0 && (
+          <Box display="flex" justifyContent="center" mt={2}>
+            <CircularProgress size={24} />
+          </Box>
+        )}
+      </>
+    );
+  };
+
+  const content = (
+    <div className="p-24">
+      {renderContent()}
     </div>
   );
 
