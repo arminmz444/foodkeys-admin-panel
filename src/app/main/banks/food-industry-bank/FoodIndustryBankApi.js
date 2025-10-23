@@ -31,7 +31,11 @@ const FoodIndustryBankApi = api
 
           return data;
         },
-        providesTags: ['foodCompanyList']
+        providesTags: ['foodCompanyList'],
+        // Disable caching to prevent stale data
+        keepUnusedDataFor: 0,
+        // Force refetch on every request
+        refetchOnMountOrArgChange: true
       }),
       getEmployeeCommentsByEntity: build.query({
         query: ({ entityType, entityId, pageNumber, pageSize }) => ({
@@ -90,7 +94,14 @@ const FoodIndustryBankApi = api
           url: `/company/${companyId}`
         }),
         transformResponse: (response) => response?.data,
-        providesTags: ['foodCompanyList', 'foodCompanyDetails']
+        providesTags: (result, error, companyId) => [
+          { type: 'foodCompanyDetails', id: companyId },
+          'foodCompanyList'
+        ],
+        // Disable caching to prevent stale data
+        keepUnusedDataFor: 0,
+        // Force refetch on every request
+        refetchOnMountOrArgChange: true
       }),
 
       updateCompanyLocation: build.mutation({
@@ -208,11 +219,15 @@ const FoodIndustryBankApi = api
 
           return data;
         },
-        providesTags: ['foodCompanyRequestList']
+        providesTags: ['foodCompanyRequestList'],
+        // Disable caching to prevent stale data
+        keepUnusedDataFor: 0,
+        // Force refetch on every request
+        refetchOnMountOrArgChange: true
       }),
       
       getCompanyRequests: build.query({
-        query: ({ pageNumber = 1, pageSize, search, sort, filter, categoryId }) => ({
+        query: ({ pageNumber = 1, pageSize, search, sort, filter, categoryId, requestStatus }) => ({
           url: `/request/company`,
           method: 'GET',
           params: {
@@ -221,7 +236,8 @@ const FoodIndustryBankApi = api
             search: search || '',
             categoryId: categoryId || 1,
             sort: (sort && Object.entries(sort)?.length && JSON.stringify(sort)) || '',
-            filter: (filter && Object.entries(filter)?.length && JSON.stringify(filter)) || ''
+            filter: (filter && Object.entries(filter)?.length && JSON.stringify(filter)) || '',
+            requestStatus: requestStatus || ''
           }
         }),
         transformResponse: (response) => {
@@ -236,7 +252,11 @@ const FoodIndustryBankApi = api
 
           return data;
         },
-        providesTags: ['companyRequests']
+        providesTags: ['companyRequests'],
+        // Disable caching to prevent stale data
+        keepUnusedDataFor: 0,
+        // Force refetch on every request
+        refetchOnMountOrArgChange: true
       }),
 
       getCompanyRequestById: build.query({
@@ -245,7 +265,11 @@ const FoodIndustryBankApi = api
           method: 'GET'
         }),
         transformResponse: (response) => response?.data,
-        providesTags: (result, error, id) => [{ type: 'companyRequest', id }]
+        providesTags: (result, error, id) => [{ type: 'companyRequest', id }],
+        // Disable caching to prevent stale data
+        keepUnusedDataFor: 0,
+        // Force refetch on every request
+        refetchOnMountOrArgChange: true
       }),
 
       answerCompanySubmitRequest: build.mutation({
