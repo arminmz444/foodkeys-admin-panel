@@ -7,8 +7,10 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import _ from '@lodash';
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
 import { getServerFile } from 'src/utils/string-utils';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Alert, CircularProgress, FormControl, InputLabel, MenuItem, Select, Snackbar } from '@mui/material';
+import { useAppSelector } from 'app/store/hooks';
+import { selectUser } from 'src/app/auth/user/store/userSlice';
 import {
 	useCreateCompanyMutation,
 	useUpdateCompanyMutation,
@@ -34,6 +36,20 @@ function CompanyHeader() {
 	const logo = watch('logo') // Changed from watching 'companyGallery' to 'logo'
   const status = watch('status');
 
+	// Get current user data and check for ADMIN_ACCESS
+	const user = useAppSelector(selectUser);
+	const hasAdminAccess = user?.data?.accesses?.includes('ADMIN_ACCESS') || 
+		user?.accesses?.includes('ADMIN_ACCESS') || 
+		user?.userAccesses?.some(access => access.name === 'ADMIN_ACCESS');
+
+	// Set default status based on user permissions
+	useEffect(() => {
+		if (!hasAdminAccess && isNewCompany) {
+			// For new companies, set status to PENDING if user doesn't have admin access
+			methods.setValue('status', 0, { shouldDirty: false });
+		}
+	}, [hasAdminAccess, isNewCompany, methods]);
+
 	const [notification, setNotification] = useState({
 		open: false,
 		message: '',
@@ -43,6 +59,12 @@ function CompanyHeader() {
 	  const handleSaveCompany = async () => {
 		try {
 		  const formData = getValues();
+		  
+		  // If user doesn't have ADMIN_ACCESS, set status to PENDING (0)
+		  if (!hasAdminAccess) {
+			formData.status = 0; // PENDING
+		  }
+		  
 		  const response = await updateCompany(formData).unwrap();
 		  
 		  setNotification({
@@ -66,6 +88,12 @@ function CompanyHeader() {
 	  const handleCreateCompany = async () => {
 		try {
 		  const formData = getValues();
+		  
+		  // If user doesn't have ADMIN_ACCESS, set status to PENDING (0)
+		  if (!hasAdminAccess) {
+			formData.status = 0; // PENDING
+		  }
+		  
 		  const response = await createCompany(formData).unwrap();
 		  
 		  setNotification({
@@ -192,7 +220,7 @@ function CompanyHeader() {
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0, transition: { delay: 0.3 } }}
       >
-        {!isNewCompany && (
+        {!isNewCompany && hasAdminAccess && (
           <FormControl variant="outlined" className="min-w-160 mr-8" size="small">
             <InputLabel id="company-status-label">وضعیت</InputLabel>
             <Select
