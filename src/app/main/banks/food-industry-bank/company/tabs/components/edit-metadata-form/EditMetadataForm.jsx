@@ -110,6 +110,19 @@ function EditMetadataForm({
   const schema = getMetadataSchema(file.fileServiceType, file.contentType);
   const fieldsConfig = getMetadataFieldsConfig(file.fileServiceType, file.contentType);
   
+  // Parse metadata if it's a string
+  const parseMetadata = (metadata) => {
+    if (typeof metadata === 'string') {
+      try {
+        return JSON.parse(metadata);
+      } catch (error) {
+        console.error('Error parsing metadata:', error);
+        return {};
+      }
+    }
+    return metadata || {};
+  };
+
   // Initialize form with react-hook-form and zod validation
   const { 
     control, 
@@ -120,7 +133,7 @@ function EditMetadataForm({
     setValue,
     watch
   } = useForm({
-    defaultValues: file.metadata || {},
+    defaultValues: parseMetadata(file.metadata),
     resolver: zodResolver(schema),
     mode: 'onChange'
   });
@@ -128,7 +141,7 @@ function EditMetadataForm({
   // Reset form when file changes
   useEffect(() => {
     if (file.metadata) {
-      reset(file.metadata);
+      reset(parseMetadata(file.metadata));
     }
   }, [file.metadata, reset]);
 
@@ -140,17 +153,19 @@ function EditMetadataForm({
 
   // Helper function to add array item
   const addArrayItem = (field) => {
-    const values = getValues(field) || [];
-    if (values.length < (fieldsConfig[field].max || 3)) {
-      setValue(field, [...values, '']);
+    const values = getValues(field);
+    const arrayValues = Array.isArray(values) ? values : [];
+    if (arrayValues.length < (fieldsConfig[field].max || 3)) {
+      setValue(field, [...arrayValues, '']);
     }
   };
 
   // Helper function to remove array item
   const removeArrayItem = (field, index) => {
-    const values = getValues(field) || [];
-    if (values.length > 1) {
-      const newValues = [...values];
+    const values = getValues(field);
+    const arrayValues = Array.isArray(values) ? values : [];
+    if (arrayValues.length > 1) {
+      const newValues = [...arrayValues];
       newValues.splice(index, 1);
       setValue(field, newValues);
     }
@@ -184,7 +199,7 @@ function EditMetadataForm({
                   </Typography>
                   
                   {/* Watch array values to re-render on change */}
-                  {(watch(fieldName) || []).map((_, index) => (
+                  {Array.isArray(watch(fieldName)) ? (watch(fieldName) || []).map((_, index) => (
                     <div key={`${fieldName}-${index}`} className="flex items-center mb-2">
                       <Controller
                         name={`${fieldName}.${index}`}
@@ -204,12 +219,12 @@ function EditMetadataForm({
                         size="small" 
                         onClick={() => removeArrayItem(fieldName, index)}
                         className="ml-1"
-                        disabled={(watch(fieldName) || []).length <= 1}
+                        disabled={Array.isArray(watch(fieldName)) ? (watch(fieldName) || []).length <= 1 : true}
                       >
                         <FuseSvgIcon size={16}>heroicons-outline:trash</FuseSvgIcon>
                       </IconButton>
                     </div>
-                  ))}
+                  )) : null}
                   
                   {/* Add button for array items */}
                   <Button
@@ -217,7 +232,7 @@ function EditMetadataForm({
                     size="small"
                     startIcon={<FuseSvgIcon>heroicons-outline:plus</FuseSvgIcon>}
                     onClick={() => addArrayItem(fieldName)}
-                    disabled={(watch(fieldName) || []).length >= (config.max || 3)}
+                    disabled={Array.isArray(watch(fieldName)) ? (watch(fieldName) || []).length >= (config.max || 3) : false}
                   >
                     افزودن {config.label}
                   </Button>
