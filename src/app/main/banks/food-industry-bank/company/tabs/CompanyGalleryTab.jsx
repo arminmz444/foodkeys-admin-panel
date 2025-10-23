@@ -149,10 +149,10 @@ function CompanyGalleryTab() {
         title="تصویر پس زمینه"
         fieldName="companyBackgroundImages"
         fileServiceType="COMPANY_BACKGROUND_IMAGE"
-        maxFiles={5}
+        maxFiles={1}
         allowedFileTypes="image/*"
         description="تصاویر پس‌زمینه برای نمایش در هدر پروفایل شرکت استفاده می‌شوند."
-        acceptMessage="فقط فایل‌های تصویری با کیفیت بالا مجاز هستند (حداکثر 5 فایل)"
+        acceptMessage="فقط فایل‌های تصویری با کیفیت بالا مجاز هستند (حداکثر 1 فایل)"
         companyId={companyId}
       />
       
