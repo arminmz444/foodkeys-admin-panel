@@ -2,7 +2,8 @@ import FuseScrollbars from '@fuse/core/FuseScrollbars';
 import {
 	CircularProgress,
 	Fab,
-	Chip
+	Chip,
+	IconButton
 } from '@mui/material';
 import Box from '@mui/material/Box';
 import Input from '@mui/material/Input';
@@ -12,16 +13,19 @@ import Typography from '@mui/material/Typography';
 import { lighten } from '@mui/material/styles';
 import { motion } from 'framer-motion';
 import { useContext, useMemo, useState, useCallback, useEffect } from 'react';
+import { useAppDispatch } from 'app/store/hooks';
 import clsx from 'clsx';
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon';
+import { RefreshCw } from 'lucide-react';
+import { debounce } from 'lodash';
 import { TicketAppContext } from '../../TicketingApp';
 import TicketListItem from './TicketListItem';
-import { useGetTicketsQuery, useGetUserProfileQuery } from '../../TicketingApi';
+import TicketsApi, { useGetTicketsQuery, useGetUserProfileQuery } from '../../TicketingApi';
 import NewTicketDialog from './NewTicketDialog';
 import Statuses from '../../Statuses';
-import { debounce } from 'lodash';
 
 function MainSidebar() {
+	const dispatch = useAppDispatch();
 	const { setUserSidebarOpen: _setUserSidebarOpen } = useContext(TicketAppContext);
 	const { data: _user, isLoading: isUserLoading } = useGetUserProfileQuery();
 	const [searchText, setSearchText] = useState('');
@@ -84,10 +88,23 @@ function MainSidebar() {
 	});
 
 	const handleSearchText = useCallback((event) => {
-		const value = event.target.value;
+		const { value } = event.target;
 		setSearchText(value);
 		debouncedSetSearch(value);
 	}, [debouncedSetSearch]);
+
+	const handleRefresh = useCallback(() => {
+		// Invalidate all ticket-related caches
+		dispatch(TicketsApi.util.invalidateTags([
+			{ type: "tickets", id: "LIST" },
+			"tickets",
+			"ticket_messages",
+			"ticket"
+		]));
+		
+		// Also refetch the current query
+		refetch();
+	}, [dispatch, refetch]);
 
 	const ticketsContent = useMemo(() => {
 		// Show loading spinner when tickets are loading or when searching/filtering
@@ -176,67 +193,82 @@ function MainSidebar() {
 				}}
 			>
 				<Box className="mt-16">
-					<Paper
-						className="flex items-center w-full px-16 py-4 border-1 rounded-12 shadow-sm hover:shadow-md transition-shadow duration-200"
-						sx={{
-							backgroundColor: (theme) =>
-								theme.palette.mode === 'light'
-									? theme.palette.background.paper
-									: theme.palette.background.default,
-							borderColor: (theme) =>
-								theme.palette.mode === 'light'
-									? theme.palette.divider
-									: theme.palette.divider,
-							'&:hover': {
-								borderColor: (theme) => theme.palette.primary.main
-							},
-							'&:focus-within': {
-								borderColor: (theme) => theme.palette.primary.main,
-								boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.main}20`
-							}
-						}}
-					>
-						<FuseSvgIcon
-							color="action"
-							size={20}
-							className="mr-8"
-						>
-							heroicons-solid:search
-						</FuseSvgIcon>
-
-						<Input
-							placeholder="جستجو تیکت ..."
-							className="flex flex-1"
-							disableUnderline
-							fullWidth
-							value={searchText}
-							inputProps={{
-								'aria-label': 'Search'
-							}}
-							onChange={handleSearchText}
+					<Box className="flex items-center gap-8">
+						<Paper
+							className="flex items-center w-full px-16 py-4 border-1 rounded-12 shadow-sm hover:shadow-md transition-shadow duration-200"
 							sx={{
-								'& .MuiInputBase-input': {
-									fontSize: '14px',
-									padding: '8px 4px'
+								backgroundColor: (theme) =>
+									theme.palette.mode === 'light'
+										? theme.palette.background.paper
+										: theme.palette.background.default,
+								borderColor: (theme) =>
+									theme.palette.mode === 'light'
+										? theme.palette.divider
+										: theme.palette.divider,
+								'&:hover': {
+									borderColor: (theme) => theme.palette.primary.main
+								},
+								'&:focus-within': {
+									borderColor: (theme) => theme.palette.primary.main,
+									boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.main}20`
 								}
 							}}
-						/>
-
-						{/* Clear button */}
-						{searchText && (
+						>
 							<FuseSvgIcon
-								color="inherit"
-								size={18}
-								className="cursor-pointer hover:text-primary transition-colors duration-200"
-								onClick={() => {
-									setSearchText('')
-									debouncedSetSearch('');
-								}}
+								color="action"
+								size={20}
+								className="mr-8"
 							>
-								heroicons-solid:x-circle
+								heroicons-solid:search
 							</FuseSvgIcon>
-						)}
-					</Paper>
+
+							<Input
+								placeholder="جستجو تیکت ..."
+								className="flex flex-1"
+								disableUnderline
+								fullWidth
+								value={searchText}
+								inputProps={{
+									'aria-label': 'Search'
+								}}
+								onChange={handleSearchText}
+								sx={{
+									'& .MuiInputBase-input': {
+										fontSize: '14px',
+										padding: '8px 4px'
+									}
+								}}
+							/>
+
+							{/* Clear button */}
+							{searchText && (
+								<FuseSvgIcon
+									color="inherit"
+									size={18}
+									className="cursor-pointer hover:text-primary transition-colors duration-200"
+									onClick={() => {
+										setSearchText('')
+										debouncedSetSearch('');
+									}}
+								>
+									heroicons-solid:x-circle
+								</FuseSvgIcon>
+							)}
+						</Paper>
+
+						{/* Refresh Button */}
+						<IconButton 
+							onClick={handleRefresh}
+							size="small"
+							disabled={isTicketsLoading || isFetchingTickets}
+						>
+							{isFetchingTickets ? (
+								<CircularProgress size={20} />
+							) : (
+								<RefreshCw size={20} />
+							)}
+						</IconButton>
+					</Box>
 				</Box>
 
 				{/* Status Filter - Beautiful Design */}
@@ -271,14 +303,12 @@ function MainSidebar() {
 								onClick={() => setStatusFilter(statusFilter === status.value ? '' : status.value)}
 								className="cursor-pointer transition-all duration-200 hover:shadow-md"
 								sx={{
-									'&:hover': {
-										transform: 'translateY(-1px)'
-									},
 									backgroundColor: statusFilter === status.value ? status.color : 'transparent',
 									borderColor: status.color,
 									color: statusFilter === status.value ? 'white' : status.color,
 									'&:hover': {
-										backgroundColor: statusFilter === status.value ? status.color : `${status.color}20`
+										backgroundColor: statusFilter === status.value ? status.color : `${status.color}20`,
+										transform: 'translateY(-1px)'
 									}
 								}}
 							/>
