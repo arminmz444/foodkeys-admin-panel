@@ -1,7 +1,9 @@
-import { createContext, useState, useEffect, useCallback, useMemo } from 'react';
-import axios from 'axios';
-import jwtDecode from 'jwt-decode';
-import config from './jwtAuthConfig';
+import { createContext, useState, useEffect, useCallback, useMemo } from "react";
+import axios from "axios";
+import jwtDecode from "jwt-decode";
+import { useAppDispatch } from "app/store/hooks";
+import config from "./jwtAuthConfig";
+import { setUser as setUserAction } from "../../user/store/userSlice";
 
 const defaultAuthContext = {
 	isAuthenticated: false,
@@ -22,6 +24,7 @@ function JwtAuthProvider(props) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [authStatus, setAuthStatus] = useState('configuring');
+	const dispatch = useAppDispatch();
 	const { children } = props;
 	/**
 	 * Handle sign-in success
@@ -30,7 +33,9 @@ function JwtAuthProvider(props) {
 		setSession(accessToken, userData);
 		setIsAuthenticated(true);
 		setUser(userData);
-	}, []);
+		// Also dispatch to Redux store
+		dispatch(setUserAction(userData));
+	}, [dispatch]);
 	/**
 	 * Handle sign-up success
 	 */
@@ -38,7 +43,9 @@ function JwtAuthProvider(props) {
 		setSession(accessToken, userData);
 		setIsAuthenticated(true);
 		setUser(userData);
-	}, []);
+		// Also dispatch to Redux store
+		dispatch(setUserAction(userData));
+	}, [dispatch]);
 	/**
 	 * Handle sign-in failure
 	 */
@@ -67,7 +74,7 @@ function JwtAuthProvider(props) {
 	}, []);
 	// Set session
 	const setSession = useCallback((accessToken, user) => {
-		if (accessToken) {
+		if (accessToken && typeof window !== "undefined" && window.localStorage) {
 			localStorage.setItem(config.tokenStorageKey, accessToken);
 			localStorage.setItem(config.userStorageKey, JSON.stringify(user));
 			axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
@@ -75,12 +82,17 @@ function JwtAuthProvider(props) {
 	}, []);
 	// Reset session
 	const resetSession = useCallback(() => {
-		localStorage.removeItem(config.tokenStorageKey);
+		if (typeof window !== "undefined" && window.localStorage) {
+			localStorage.removeItem(config.tokenStorageKey);
+		}
 		delete axios.defaults.headers.common.Authorization;
 	}, []);
 	// Get access token from local storage
 	const getAccessToken = useCallback(() => {
-		return localStorage.getItem(config.tokenStorageKey);
+		if (typeof window !== "undefined" && window.localStorage) {
+			return localStorage.getItem(config.tokenStorageKey);
+		}
+		return null;
 	}, []);
 	// Check if the access token is valid
 	const isTokenValid = useCallback((accessToken) => {
@@ -101,7 +113,7 @@ function JwtAuthProvider(props) {
 		const attemptAutoLogin = async () => {
 			const accessToken = getAccessToken();
 
-			console.log('Attempting auto login');
+			// Attempting auto login
 
 			if (isTokenValid(accessToken)) {
 				try {
@@ -109,18 +121,20 @@ function JwtAuthProvider(props) {
 					const response = await axios.get(config.getUserUrl, {
 						headers: { Authorization: `Bearer ${accessToken}` }
 					});
-					const userData = response?.data?.data;
-					console.log('Token is valid');
+					const responseData = response?.data?.data;
+					// Extract user object from response
+					const userData = responseData?.user || responseData;
+					// Token is valid
 					handleSignInSuccess(userData, accessToken);
 					return true;
 				} catch (error) {
-					console.log('Error, Token is not valid');
+					// Error, Token is not valid
 					const axiosError = error;
 					handleSignInFailure(axiosError);
 					return false;
 				}
 			} else {
-				console.log('Token is not valid');
+				// Token is not valid
 				resetSession();
 				return false;
 			}
@@ -130,7 +144,7 @@ function JwtAuthProvider(props) {
 			attemptAutoLogin()
 				.then((signedIn) => {
 					setIsLoading(false);
-					setAuthStatus(signedIn ? 'authenticated' : 'unauthenticated');
+					setAuthStatus(signedIn ? "authenticated" : "unauthenticated");
 				})
 				.catch((e) => {
 					console.error(e);
@@ -277,9 +291,9 @@ function JwtAuthProvider(props) {
 	}, [isAuthenticated, signOut, refreshToken]);
 	useEffect(() => {
 		if (user) {
-			setAuthStatus('authenticated');
+			setAuthStatus("authenticated");
 		} else {
-			setAuthStatus('unauthenticated');
+			setAuthStatus("unauthenticated");
 		}
 	}, [user]);
 	const authContextValue = useMemo(

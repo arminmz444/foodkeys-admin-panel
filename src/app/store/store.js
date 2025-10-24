@@ -3,8 +3,13 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import apiService from 'app/store/apiService';
 import { rootReducer } from './lazyLoadedSlices';
 import { dynamicMiddleware } from './middleware';
+import { createPreloadedState } from './rehydration';
 
 const middlewares = [apiService.middleware, dynamicMiddleware];
+
+// Create preloaded state from localStorage
+const preloadedState = createPreloadedState();
+
 export const makeStore = (preloadedState) => {
 	const store = configureStore({
 		reducer: rootReducer,
@@ -16,6 +21,6 @@ export const makeStore = (preloadedState) => {
 	setupListeners(store.dispatch);
 	return store;
 };
-export const store = makeStore();
+export const store = makeStore(preloadedState);
 export const createAppSelector = createSelector.withTypes();
 export default store;

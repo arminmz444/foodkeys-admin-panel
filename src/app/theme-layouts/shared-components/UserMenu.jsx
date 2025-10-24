@@ -33,6 +33,7 @@ function UserMenu() {
 		return null;
 	}
 
+	console.log("user: ", JSON.stringify(user.avatar))
 	return (
 		<>
 			<Button

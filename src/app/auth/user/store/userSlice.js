@@ -149,17 +149,30 @@ const selectMostAuthoritativeRole = (roles) => {
 const isGuest = (role) => !role || (Array.isArray(role) && role.length === 0);
 
 const getUserSettingsOrDefault = (user) => {
-	if (!user || !user.data) return {};
+	if (!user || !user.data) return DEFAULT_USER_SETTINGS;
 
-	if (Object.keys(user.data.settings || {}).length !== 0) return user.data.settings;
+	// Check if settings is a valid object
+	if (user.data.settings && typeof user.data.settings === 'object' && !Array.isArray(user.data.settings)) {
+		return user.data.settings;
+	}
 
 	return DEFAULT_USER_SETTINGS;
 };
 
 const getUserShortcutsOrDefault = (user) => {
-	if (!user || !user.data) return {};
+	if (!user || !user.data) {
+		return DEFAULT_USER_SHORTCUTS;
+	}
 
-	if (Object.keys(user.data.shortcuts || {}).length !== 0) return user.data.shortcuts;
+	// Check if shortcuts is an array
+	if (Array.isArray(user.data.shortcuts)) {
+		return user.data.shortcuts;
+	}
+
+	// If shortcuts is an object, return empty array
+	if (user.data.shortcuts && typeof user.data.shortcuts === 'object') {
+		return [];
+	}
 
 	return DEFAULT_USER_SHORTCUTS;
 };
