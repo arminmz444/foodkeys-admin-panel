@@ -180,21 +180,22 @@ const navigationConfig = [
           },
         ],
       },
-      {
-        id: "banks.service-bank",
-        title: "ServiceBank",
-        translate: "SERVICE_BANK",
-        type: "collapse",
-        icon: "heroicons-outline:shopping-cart",
-        children: [
+      // {
+        // id: "banks.service-bank",
+        // title: "ServiceBank",
+        // translate: "SERVICE_BANK",
+        // type: "item",
+        // icon: "heroicons-outline:shopping-cart",
+        // children: [
           {
             id: "banks.service-bank.list",
             title: "ServiceBankList",
-            translate: "SERVICE_LIST",
+            translate: "SERVICE_BANK",
             type: "item",
             url: "banks/service",
+            icon: "heroicons-outline:shopping-cart",
             end: true,
-          },
+          // },
           // {
           //   id: "banks.service-bank.schema",
           //   title: "Submit New Service Schema",
@@ -210,21 +211,21 @@ const navigationConfig = [
           //   url: "banks/service/company",
           //   end: true,
           // },
-          {
-            id: "banks.service-bank.requests",
-            title: "USER_REQUESTS",
-            translate: "USER_REQUESTS",
-            type: "item",
-            url: "banks/service/request/list",
-          },
-          {
-            id: "banks.service-bank.archive",
-            title: "BANK_ARCHIVE",
-            translate: "BANK_ARCHIVE",
-            type: "item",
-            url: "banks/service/archive",
-          },
-        ],
+          // {
+          //   id: "banks.service-bank.requests",
+          //   title: "SERVICE_REQUESTS",
+          //   translate: "USER_REQUESTS",
+          //   type: "item",
+          //   url: "banks/service/requests",
+          // },
+          // {
+          //   id: "banks.service-bank.archive",
+          //   title: "BANK_ARCHIVE",
+          //   translate: "BANK_ARCHIVE",
+          //   type: "item",
+          //   url: "banks/service/archive",
+          // },
+        // ],
       },
       {
         id: "banks.media",
