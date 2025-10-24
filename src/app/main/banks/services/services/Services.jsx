@@ -1,30 +1,62 @@
-import { useState, useEffect } from "react";
-import Typography from "@mui/material/Typography";
-import { motion } from "framer-motion";
-import FuseLoading from "@fuse/core/FuseLoading";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import Button from "@mui/material/Button";
-import ServiceItem from "../components/ServiceItem";
-import NewServiceItem from "../components/NewServiceItem";
-import ServiceFilterDrawer from "../components/ServiceFilterDrawer";
-import { useGetServicesQuery } from "../ServicesBankApi";
-import { Input } from "@mui/material";
+import { useState, useEffect, useCallback } from 'react';
+import Typography from '@mui/material/Typography';
+import { motion } from 'framer-motion';
+import FuseLoading from '@fuse/core/FuseLoading';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import Button from '@mui/material/Button';
+import { Input } from '@mui/material';
+import _ from '@lodash';
+import ServiceItem from '../components/ServiceItem';
+import NewServiceItem from '../components/NewServiceItem';
+import ServiceFilterDrawer from '../components/ServiceFilterDrawer';
+import ActiveFilters from '../components/ActiveFilters';
+import { useGetServicesQuery, useGetServiceSubcategoryOptionsQuery } from '../ServicesBankApi';
 
 function Services() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const [filterParams, setFilterParams] = useState({});
+
+  const { data: subcategoryOptionsData } = useGetServiceSubcategoryOptionsQuery();
+  const subcategoryOptions = subcategoryOptionsData?.data || [];
   const { data: responseData, isLoading } = useGetServicesQuery({
     pageSize: 999,
     pageNumber: 1,
+    search: debouncedSearchQuery,
+    filters: filterParams,
   });
+
+  // Debug log to see the current search state
+  // console.log('Current search states:', { searchQuery, debouncedSearchQuery });
   const apiServices = responseData?.data || [];
 
   const [draftServices, setDraftServices] = useState(() => {
-    return JSON.parse(localStorage.getItem("draftServices")) || [];
+    // eslint-disable-next-line no-undef
+    return JSON.parse(localStorage.getItem('draftServices')) || [];
   });
 
   const [allServices, setAllServices] = useState([]);
   useEffect(() => {
-    setAllServices([...apiServices, ...draftServices]);
+    // Put draft services first, then API services
+    setAllServices([...draftServices, ...apiServices]);
   }, [apiServices, draftServices]);
+
+  // Debounced search effect
+  useEffect(() => {
+    const debouncedSearch = _.debounce((query) => {
+      setDebouncedSearchQuery(query);
+    }, 500);
+
+    debouncedSearch(searchQuery);
+
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [searchQuery]);
+
+  const handleSearchChange = useCallback((event) => {
+    setSearchQuery(event.target.value);
+  }, []);
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
@@ -37,35 +69,49 @@ function Services() {
       .slice()
       .reverse()
       .map((item, index) => ({
-        name: item.name || "بدون نام",
+        name: item.name || 'بدون نام',
         order: index + 1,
       }));
-    localStorage.setItem("finalOrdering", JSON.stringify(finalOrdering));
+    // eslint-disable-next-line no-undef
+    localStorage.setItem('finalOrdering', JSON.stringify(finalOrdering));
   };
 
   const handleDraftCreated = () => {
-    const drafts = JSON.parse(localStorage.getItem("draftServices")) || [];
+    // eslint-disable-next-line no-undef
+    const drafts = JSON.parse(localStorage.getItem('draftServices')) || [];
     setDraftServices(drafts);
   };
 
   const handleRemoveDraft = (draftId) => {
-    const drafts = JSON.parse(localStorage.getItem("draftServices")) || [];
+    // eslint-disable-next-line no-undef
+    const drafts = JSON.parse(localStorage.getItem('draftServices')) || [];
     const updated = drafts.filter((draft) => draft.id !== draftId);
-    localStorage.setItem("draftServices", JSON.stringify(updated));
+    // eslint-disable-next-line no-undef
+    localStorage.setItem('draftServices', JSON.stringify(updated));
     setDraftServices(updated);
   };
 
   const handleClearDrafts = () => {
-    localStorage.removeItem("draftServices");
+    // eslint-disable-next-line no-undef
+    localStorage.removeItem('draftServices');
     setDraftServices([]);
   };
 
   const [filterOpen, setFilterOpen] = useState(false);
-  const [filterParams, setFilterParams] = useState({});
   const handleOpenFilter = () => setFilterOpen(true);
   const handleCloseFilter = () => setFilterOpen(false);
   const handleApplyFilters = (filters) => {
     setFilterParams(filters);
+  };
+
+  const handleRemoveFilter = (filterKey) => {
+    const newFilters = { ...filterParams };
+    delete newFilters[filterKey];
+    setFilterParams(newFilters);
+  };
+
+  const handleClearAllFilters = () => {
+    setFilterParams({});
   };
 
   const containerVariants = { show: { transition: { staggerChildren: 0.04 } } };
@@ -90,7 +136,9 @@ function Services() {
         <div className="flex flex-1 items-center space-x-2 space-x-reverse me-4">
           <Input
             type="text"
-            placeholder="جستجوی سرویس "
+            placeholder='جستجوی سرویس '
+            value={searchQuery}
+            onChange={handleSearchChange}
             className="flex-1 p-2 border-t-0 border-l-0 border-r-0 border border-gray-300 rounded me-4"
           />
           <Button variant="contained" color="primary" onClick={handleOpenFilter}>
@@ -104,11 +152,17 @@ function Services() {
         )}
       </div>
 
+      <ActiveFilters
+        filters={filterParams}
+        onRemoveFilter={handleRemoveFilter}
+        onClearAll={handleClearAllFilters}
+      />
+
       <ServiceFilterDrawer
         open={filterOpen}
         onClose={handleCloseFilter}
         onApplyFilters={handleApplyFilters}
-        subcategoryOptions={[]} 
+        subcategoryOptions={subcategoryOptions || []} 
       />
 
     
@@ -123,8 +177,24 @@ function Services() {
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
+              {/* NewServiceItem as first item */}
+              <Draggable key="new-service" draggableId="new-service" index={0}>
+                {(providedDraggable) => (
+                  <motion.div
+                    variants={itemVariants}
+                    ref={providedDraggable.innerRef}
+                    {...providedDraggable.draggableProps}
+                    {...providedDraggable.dragHandleProps}
+                    className="min-w-full sm:min-w-224 min-h-360"
+                  >
+                    <NewServiceItem onDraftCreated={handleDraftCreated} />
+                  </motion.div>
+                )}
+              </Draggable>
+              
+              {/* All services starting from index 1 */}
               {allServices.map((service, index) => (
-                <Draggable key={service.id} draggableId={service.id.toString()} index={index}>
+                <Draggable key={service.id} draggableId={service.id.toString()} index={index + 1}>
                   {(providedDraggable) => (
                     <motion.div
                       variants={itemVariants}
@@ -139,19 +209,6 @@ function Services() {
                 </Draggable>
               ))}
               {provided.placeholder}
-              <Draggable key="new-service" draggableId="new-service" index={allServices.length}>
-                {(providedDraggable) => (
-                  <motion.div
-                    variants={itemVariants}
-                    ref={providedDraggable.innerRef}
-                    {...providedDraggable.draggableProps}
-                    {...providedDraggable.dragHandleProps}
-                    className="min-w-full sm:min-w-224 min-h-360"
-                  >
-                    <NewServiceItem onDraftCreated={handleDraftCreated} />
-                  </motion.div>
-                )}
-              </Draggable>
             </motion.div>
           )}
         </Droppable>

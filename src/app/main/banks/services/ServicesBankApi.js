@@ -1,7 +1,7 @@
 // src/app/services/ServiceApi.js
 import { apiService as api } from "app/store/apiService.js";
 
-const addTagTypes = ["Services", "ServiceSchemas"];
+const addTagTypes = ["Services", "ServiceSchemas", "ServiceRequests"];
 
 export const serviceApi = api
   .enhanceEndpoints({ addTagTypes })
@@ -16,7 +16,7 @@ export const serviceApi = api
         providesTags: [
           {
             type: "Services",
-            id: "SERVICE_SUBCATEGORIES_BY_CATEGORY_ID_" + "4",
+            id: "SERVICE_SUBCATEGORIES_BY_CATEGORY_ID_4",
           },
         ],
       }),
@@ -29,12 +29,32 @@ export const serviceApi = api
         providesTags: [{ type: "Services", id: "SERVICE_ALL_SUBCATEGORIES" }],
       }),
       getServices: build.query({
-        query: ({ pageNumber = 0, pageSize = 10 }) => ({
-          url: "/service",
-          transformResponse: (response) => response?.data,
-          params: { pageNumber, pageSize },
-        }),
-        providesTags: [{ type: "Services", id: "LIST" }],
+        query: ({ pageNumber = 0, pageSize = 10, search = "", filters = {} }) => {
+          // console.log('API Query called with params:', { pageNumber, pageSize, search, filters });
+          const params = { pageNumber, pageSize, search };
+          
+          // Add filter parameters
+          if (filters.name) params.name = filters.name;
+          if (filters.description) params.description = filters.description;
+          if (filters.subCategoryId) params.subCategoryId = filters.subCategoryId;
+          if (filters.ranking) params.ranking = filters.ranking;
+          if (filters.rankingAll) params.rankingAll = filters.rankingAll;
+          if (filters.keyWords) params.keyWords = filters.keyWords;
+          if (filters.tags) params.tags = filters.tags;
+          if (filters.status !== undefined && filters.status !== null) params.status = filters.status;
+          if (filters.visit) params.visit = filters.visit;
+          
+          return {
+            url: "/service",
+            transformResponse: (response) => response?.data,
+            params,
+          };
+        },
+        providesTags: (result, error, { search, filters }) => [
+          { type: "Services", id: "LIST" },
+          { type: "Services", id: `SEARCH_${search || 'empty'}` },
+          { type: "Services", id: `FILTERS_${JSON.stringify(filters || {})}` }
+        ],
       }),
       getServiceById: build.query({
         query: (serviceId) => ({
@@ -76,6 +96,13 @@ export const serviceApi = api
       getSubcategoryOptions: build.query({
         query: () => `/subcategory/options`,
         providesTags: ["subcategoryOptions"],
+      }),
+      getServiceSubcategoryOptions: build.query({
+        query: () => ({
+          url: "/category/4/subcategory",
+          transformResponse: (response) => response?.data,
+        }),
+        providesTags: ["ServiceSubcategoryOptions"],
       }),
   
     // getServices: build.query({
@@ -147,6 +174,66 @@ export const serviceApi = api
       }),
       invalidatesTags: (result, error, id) => [{ type: 'Services', id }, 'Services']
     }),
+
+    // Service Request endpoints
+    getServiceRequests: build.query({
+      query: ({ pageNumber = 1, pageSize, search, sort, filter, categoryId, requestStatus }) => ({
+        url: `/request/service`,
+        method: 'GET',
+        params: {
+          pageNumber: pageNumber !== 0 ? pageNumber : 1,
+          pageSize: pageSize || 10,
+          search: search || '',
+          categoryId: categoryId || 4, // Service category ID
+          sort: (sort && Object.entries(sort)?.length && JSON.stringify(sort)) || '',
+          filter: (filter && Object.entries(filter)?.length && JSON.stringify(filter)) || '',
+          requestStatus: requestStatus || ''
+        }
+      }),
+      transformResponse: (response) => {
+        const data = { data: response?.data };
+
+        if (response && response.pagination) {
+          data.totalPages = response.pagination.totalPages;
+          data.totalElements = response.pagination.totalElements;
+          data.pageSize = response.pagination.pageSize;
+          data.pageIndex = response.pagination.pageNumber;
+        }
+
+        return data;
+      },
+      providesTags: ['serviceRequests'],
+      // Disable caching to prevent stale data
+      keepUnusedDataFor: 0,
+      // Force refetch on every request
+      refetchOnMountOrArgChange: true
+    }),
+
+    getServiceRequestById: build.query({
+      query: (requestId) => ({
+        url: `/request/${requestId}`,
+        method: 'GET'
+      }),
+      transformResponse: (response) => response?.data,
+      providesTags: (result, error, id) => [{ type: 'serviceRequest', id }],
+      // Disable caching to prevent stale data
+      keepUnusedDataFor: 0,
+      // Force refetch on every request
+      refetchOnMountOrArgChange: true
+    }),
+
+    answerServiceSubmitRequest: build.mutation({
+      query: ({ requestId, answer, description }) => ({
+        url: `/request/${requestId}/answer`,
+        method: 'POST',
+        data: {
+          answer,
+          description
+        }
+      }),
+      invalidatesTags: ['serviceRequests', 'serviceRequest'],
+    }),
+
     overrideExisting: false,
   })
   });
@@ -161,4 +248,8 @@ export const {
   useDeleteServiceMutation,
   useGetServiceSchemasQuery,
   useGetSubcategoryOptionsQuery,
+  useGetServiceSubcategoryOptionsQuery,
+  useGetServiceRequestsQuery,
+  useGetServiceRequestByIdQuery,
+  useAnswerServiceSubmitRequestMutation,
 } = serviceApi;

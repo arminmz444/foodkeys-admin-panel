@@ -11,8 +11,8 @@ function ServicesBank() {
     // Set active tab based on current path
     if (location.pathname.includes('/subcategory')) {
       setActiveTab(1);
-    } else if (location.pathname.includes('/schema')) {
-      setActiveTab(2);
+    // } else if (location.pathname.includes('/schema')) {
+    //   setActiveTab(2);
     } else {
       setActiveTab(0);
     }
@@ -26,9 +26,9 @@ function ServicesBank() {
       case 1:
         navigate('/banks/service/subcategory');
         break;
-      case 2:
-        navigate('/banks/service/schema');
-        break;
+      // case 2:
+      //   navigate('/banks/service/schema');
+      //   break;
       default:
         navigate('/banks/service');
     }
@@ -40,7 +40,7 @@ function ServicesBank() {
       <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}>
         <Tabs value={activeTab} onChange={handleTabChange} centered>
           <Tab label="سرویس‌ها" />
-          <Tab label="زیرشاخه‌ها" />
+          {/*<Tab label="زیرشاخه‌ها" />*/}
           <Tab label="ساختار سرویس" />
         </Tabs>
       </Box>
