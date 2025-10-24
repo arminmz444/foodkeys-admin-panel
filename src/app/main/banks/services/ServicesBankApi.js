@@ -1,7 +1,7 @@
 // src/app/services/ServiceApi.js
-import { apiService as api } from "app/store/apiService.js";
+import { apiService as api } from 'app/store/apiService.js';
 
-const addTagTypes = ["Services", "ServiceSchemas", "ServiceRequests"];
+const addTagTypes = ['Services', 'ServiceSchemas', 'ServiceRequests'];
 
 export const serviceApi = api
   .enhanceEndpoints({ addTagTypes })
@@ -211,7 +211,7 @@ export const serviceApi = api
 
     getServiceRequestById: build.query({
       query: (requestId) => ({
-        url: `/request/${requestId}`,
+        url: `/request/${requestId}/workflow`,
         method: 'GET'
       }),
       transformResponse: (response) => response?.data,
@@ -222,17 +222,36 @@ export const serviceApi = api
       refetchOnMountOrArgChange: true
     }),
 
+    // answerServiceSubmitRequest: build.mutation({
+    //   query: ({ requestId, answer, description }) => ({
+    //     url: `/request/${requestId}/answer`,
+    //     method: 'POST',
+    //     data: {
+    //       answer,
+    //       description
+    //     }
+    //   }),
+    //   invalidatesTags: ['serviceRequests', 'serviceRequest'],
+    // }),
+
     answerServiceSubmitRequest: build.mutation({
-      query: ({ requestId, answer, description }) => ({
-        url: `/request/${requestId}/answer`,
-        method: 'POST',
-        data: {
-          answer,
-          description
-        }
+        query: ({ serviceId, requestId, answerData }) => ({
+          url: `/request/${requestId}/service/${serviceId}`,
+          method: 'POST',
+          data: answerData
+        }),
+        invalidatesTags: ['serviceRequests', 'serviceRequest']
       }),
-      invalidatesTags: ['serviceRequests', 'serviceRequest'],
-    }),
+
+      answerServiceRevisionRequest: build.mutation({
+        query: ({ serviceId, requestId, answerData }) => ({
+          url: `/service/${serviceId}/revision/${requestId}`,
+          method: 'PUT',
+          data: answerData
+        }),
+        invalidatesTags: ['serviceRequests', 'serviceRequest']
+      }),
+
 
     overrideExisting: false,
   })

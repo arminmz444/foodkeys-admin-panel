@@ -1,6 +1,7 @@
 import { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
 import CreateServiceSchemaForm from '@/app/main/banks/services/service-schemas/CreateServiceSchemaForm.jsx';
+import ServiceRequestsPage from './requests/ServiceRequestsPage';
 
 const ServiceBank = lazy(() => import('./ServicesBank'));
 // const Product = lazy(() => import('./product/Product'));
@@ -42,6 +43,10 @@ const ServicesBankConfig = {
 				{
 					path: 'schema',
 					element: <CreateServiceSchemaForm />
+				},
+				{
+					path: 'requests',
+					element: <ServiceRequestsPage />
 				}
 			]
 		}
