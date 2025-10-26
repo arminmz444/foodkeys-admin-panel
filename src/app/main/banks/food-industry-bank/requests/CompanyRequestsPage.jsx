@@ -245,14 +245,14 @@ export default function CompanyRequests() {
           label={
             <div className="flex items-center">
               <span>در انتظار</span>
-              {!isLoading && (
-                <Chip 
-                  size="small" 
-                  label={allRequests?.filter(r => r.requestStatus === "PENDING").length || 0} 
-                  color="warning" 
-                  className="ml-2"
-                />
-              )}
+              {/*{!isLoading && (*/}
+              {/*  <Chip */}
+              {/*    size="small" */}
+              {/*    label={allRequests?.filter(r => r.requestStatus === "PENDING").length || 0} */}
+              {/*    color="warning" */}
+              {/*    className="ml-2"*/}
+              {/*  />*/}
+              {/*)}*/}
             </div>
           } 
         />

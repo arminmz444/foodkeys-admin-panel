@@ -204,8 +204,8 @@ const FoodIndustryBankApi = api
       }),
       
       getAllFoodIndustryCompanyRequests: build.query({
-        query: ({ pageNumber, pageSize, search, sort, filter }) => ({
-          url: `/request/company?categoryId=1&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}&sort=${(sort && Object.entries(sort)?.length && JSON.stringify(sort)) || ''}&filter=${(filter && Object.entries(filter)?.length && JSON.stringify(filter)) || ''}`,
+        query: ({ pageNumber, pageSize, search, sort, filter, requestStatus }) => ({
+          url: `/request/company?categoryId=1&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}&sort=${(sort && Object.entries(sort)?.length && JSON.stringify(sort)) || ''}&filter=${(filter && Object.entries(filter)?.length && JSON.stringify(filter)) || ''}&requestStatus=${requestStatus || ''}`,
           method: 'GET'
         }),
         transformResponse: (response) => {

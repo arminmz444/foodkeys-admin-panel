@@ -209,7 +209,7 @@ const AgricultureIndustryApi = api
       }),
       
       getCompanyRequests: build.query({
-        query: ({ pageNumber = 1, pageSize, search, sort, filter, categoryId }) => ({
+        query: ({ pageNumber = 1, pageSize, search, sort, filter, categoryId, requestStatus }) => ({
           url: `/request/company`,
           method: 'GET',
           params: {
@@ -218,7 +218,8 @@ const AgricultureIndustryApi = api
             search: search || '',
             categoryId: categoryId || 2,
             sort: (sort && Object.entries(sort)?.length && JSON.stringify(sort)) || '',
-            filter: (filter && Object.entries(filter)?.length && JSON.stringify(filter)) || ''
+            filter: (filter && Object.entries(filter)?.length && JSON.stringify(filter)) || '',
+            requestStatus: requestStatus || ''
           }
         }),
         transformResponse: (response) => {
