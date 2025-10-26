@@ -299,27 +299,31 @@ export default function ServiceRequests() {
           نمایش {requests.length} درخواست از {totalRequests} درخواست
         </Typography>
         
-        <div className="flex flex-wrap justify-center gap-24">
-          {requests.map(request => (
-            <motion.div 
-              key={request.requestId} 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className={`w-full max-w-sm ${
-                requests.length <= 2 
-                  ? 'sm:w-[calc(50%-12px)] lg:w-[calc(50%-12px)] xl:w-[calc(50%-12px)]'
-                  : requests.length <= 4
-                    ? 'sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(33.333%-16px)]'
-                    : 'sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)]'
-              }`}
-            >
-              <RequestCard 
-                request={request} 
-                onActionComplete={refetch}
-              />
-            </motion.div>
-          ))}
+        <div 
+          className="w-full flex justify-center"
+        >
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, minmax(320px, 400px))',
+              gap: '24px',
+              maxWidth: 'fit-content'
+            }}
+          >
+            {requests.map(request => (
+              <motion.div 
+                key={request.requestId} 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <RequestCard 
+                  request={request} 
+                  onActionComplete={refetch}
+                />
+              </motion.div>
+            ))}
+          </div>
         </div>
         
         {hasMore && (
@@ -345,8 +349,10 @@ export default function ServiceRequests() {
   };
 
   const content = (
-    <div className="p-24 min-h-screen">
-      {renderContent()}
+    <div className="min-h-screen">
+      <div className="px-24 pt-24 pb-24">
+        {renderContent()}
+      </div>
     </div>
   );
 

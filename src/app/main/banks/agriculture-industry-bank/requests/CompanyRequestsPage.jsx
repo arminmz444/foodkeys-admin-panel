@@ -209,66 +209,79 @@ export default function CompanyRequests() {
   );
 
   const content = (
-    <div className="p-24">
-      {isLoading && !data ? (
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-          <CircularProgress />
-        </Box>
-      ) : error ? (
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+    <div className="min-h-screen">
+      <div className="px-24 pt-24 pb-24">
+        {isLoading && !data ? (
+          <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+            <CircularProgress />
+          </Box>
+        ) : error ? (
+          <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+            <EmptyState 
+              message="خطا در بارگذاری اطلاعات" 
+              onRefresh={refetch}
+            />
+          </Box>
+        ) : requests.length === 0 ? (
           <EmptyState 
-            message="خطا در بارگذاری اطلاعات" 
+            message="هیچ درخواستی یافت نشد" 
+            onReset={() => setFilters({ status: null, type: null, search: '', categoryId: 2 })}
             onRefresh={refetch}
           />
-        </Box>
-      ) : requests.length === 0 ? (
-        <EmptyState 
-          message="هیچ درخواستی یافت نشد" 
-          onReset={() => setFilters({ status: null, type: null, search: '', categoryId: 2 })}
-          onRefresh={refetch}
-        />
-      ) : (
-        <>
-          <Typography variant="body2" color="text.secondary" className="mb-4">
-            نمایش {requests.length} درخواست از {totalRequests} درخواست
-          </Typography>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-24">
-            {requests.map(request => (
-              <motion.div 
-                key={request.requestId} 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
+        ) : (
+          <>
+            <Typography variant="body2" color="text.secondary" className="mb-4">
+              نمایش {requests.length} درخواست از {totalRequests} درخواست
+            </Typography>
+            
+            <div 
+              className="w-full flex justify-center"
+            >
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, minmax(320px, 400px))',
+                  gap: '24px',
+                  maxWidth: 'fit-content'
+                }}
               >
-                <RequestCard 
-                  request={request} 
-                  onActionComplete={refetch}
-                />
-              </motion.div>
-            ))}
-          </div>
-          
-          {hasMore && (
-            <Box display="flex" justifyContent="center" mt={4}>
-              <Button
-                variant="outlined"
-                onClick={handleLoadMore}
-                disabled={isFetching}
-                startIcon={isFetching ? <CircularProgress size={20} /> : null}
-              >
-                بارگذاری بیشتر
-              </Button>
-            </Box>
-          )}
-          
-          {isFetching && data && (
-            <Box display="flex" justifyContent="center" mt={2}>
-              <CircularProgress size={24} />
-            </Box>
-          )}
-        </>
-      )}
+                {requests.map(request => (
+                  <motion.div 
+                    key={request.requestId} 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <RequestCard 
+                      request={request} 
+                      onActionComplete={refetch}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+            
+            {hasMore && (
+              <Box display="flex" justifyContent="center" mt={4}>
+                <Button
+                  variant="outlined"
+                  onClick={handleLoadMore}
+                  disabled={isFetching}
+                  startIcon={isFetching ? <CircularProgress size={20} /> : null}
+                >
+                  بارگذاری بیشتر
+                </Button>
+              </Box>
+            )}
+            
+            {isFetching && data && (
+              <Box display="flex" justifyContent="center" mt={2}>
+                <CircularProgress size={24} />
+              </Box>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 
@@ -277,7 +290,7 @@ export default function CompanyRequests() {
       <FusePageSimple 
         header={header} 
         content={content} 
-        className="bg-gray-50"
+        className="bg-gray-50 min-h-screen"
       />
       <FilterDrawer
         open={drawerOpen}

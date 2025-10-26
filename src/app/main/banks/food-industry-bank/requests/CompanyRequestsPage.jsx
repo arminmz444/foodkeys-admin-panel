@@ -298,20 +298,31 @@ export default function CompanyRequests() {
           نمایش {requests.length} درخواست از {totalRequests} درخواست
         </Typography>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-24">
-          {requests.map(request => (
-            <motion.div 
-              key={request.requestId} 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <RequestCard 
-                request={request} 
-                onActionComplete={refetch}
-              />
-            </motion.div>
-          ))}
+        <div 
+          className="w-full flex justify-center"
+        >
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, minmax(320px, 400px))',
+              gap: '24px',
+              maxWidth: 'fit-content'
+            }}
+          >
+            {requests.map(request => (
+              <motion.div 
+                key={request.requestId} 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <RequestCard 
+                  request={request} 
+                  onActionComplete={refetch}
+                />
+              </motion.div>
+            ))}
+          </div>
         </div>
         
         {hasMore && (
@@ -337,8 +348,10 @@ export default function CompanyRequests() {
   };
 
   const content = (
-    <div className="p-24">
-      {renderContent()}
+    <div className="min-h-screen">
+      <div className="px-24 pt-24 pb-24">
+        {renderContent()}
+      </div>
     </div>
   );
 
@@ -347,7 +360,7 @@ export default function CompanyRequests() {
       <FusePageSimple 
         header={header} 
         content={content} 
-        className="bg-gray-50"
+        className="bg-gray-50 min-h-screen"
       />
       <FilterDrawer
         open={drawerOpen}
