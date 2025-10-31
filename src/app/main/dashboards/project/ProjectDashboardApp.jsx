@@ -6,10 +6,11 @@ import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import FuseLoading from '@fuse/core/FuseLoading';
 import ProjectDashboardAppHeader from './ProjectDashboardAppHeader';
-import HomeTab from './tabs/home/HomeTab';
-import TeamTab from './tabs/team/TeamTab';
-import BudgetTab from './tabs/budget/BudgetTab';
-import { useGetProjectDashboardWidgetsQuery } from './ProjectDashboardApi';
+import OverviewTab from './tabs/overview/OverviewTab';
+import CompaniesTab from './tabs/companies/CompaniesTab';
+import ServicesTab from './tabs/services/ServicesTab';
+import GeographicTab from './tabs/geographic/GeographicTab';
+import { useGetDashboardWidgetsQuery } from './ProjectDashboardApi';
 
 const Root = styled(FusePageSimple)(({ theme }) => ({
 	'& .FusePageSimple-header': {
@@ -22,7 +23,7 @@ const Root = styled(FusePageSimple)(({ theme }) => ({
  * The ProjectDashboardApp page.
  */
 function ProjectDashboardApp() {
-	const { isLoading } = useGetProjectDashboardWidgetsQuery();
+	const { isLoading } = useGetDashboardWidgetsQuery();
 	const [tabValue, setTabValue] = useState(0);
 
 	function handleChangeTab(event, value) {
@@ -59,22 +60,28 @@ function ProjectDashboardApp() {
 						<Tab
 							className="text-14 font-semibold min-h-40 min-w-64 mx-4 px-12"
 							disableRipple
-							label="Home"
+							label="خلاصه"
 						/>
 						<Tab
 							className="text-14 font-semibold min-h-40 min-w-64 mx-4 px-12"
 							disableRipple
-							label="Budget"
+							label="شرکت‌ها"
 						/>
 						<Tab
 							className="text-14 font-semibold min-h-40 min-w-64 mx-4 px-12"
 							disableRipple
-							label="Team"
+							label="خدمات"
+						/>
+						<Tab
+							className="text-14 font-semibold min-h-40 min-w-64 mx-4 px-12"
+							disableRipple
+							label="پراکندگی جغرافیایی"
 						/>
 					</Tabs>
-					{tabValue === 0 && <HomeTab />}
-					{tabValue === 1 && <BudgetTab />}
-					{tabValue === 2 && <TeamTab />}
+					{tabValue === 0 && <OverviewTab />}
+					{tabValue === 1 && <CompaniesTab />}
+					{tabValue === 2 && <ServicesTab />}
+					{tabValue === 3 && <GeographicTab />}
 				</div>
 			}
 		/>

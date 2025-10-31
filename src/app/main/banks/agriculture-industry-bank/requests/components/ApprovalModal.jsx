@@ -247,7 +247,7 @@ export default function ApprovalModal({
         <DialogTitle className="flex justify-between items-center">
           <div className="flex-1">
             <Typography variant="h6">
-              بررسی درخواست: {request?.company?.name}
+              بررسی درخواست: {request?.company?.companyName}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               شناسه درخواست: {request?.requestId}
@@ -399,13 +399,13 @@ export default function ApprovalModal({
                   <Typography variant="subtitle2" color="text.secondary">
                     نام شرکت:
                   </Typography>
-                  <Typography>{request?.company?.name || "-"}</Typography>
+                  <Typography>{request?.company?.companyName || "-"}</Typography>
                 </div>
                 <div>
                   <Typography variant="subtitle2" color="text.secondary">
                     نام انگلیسی:
                   </Typography>
-                  <Typography>{request?.company?.nameEn || "-"}</Typography>
+                  <Typography>{request?.company?.companyNameEn || "-"}</Typography>
                 </div>
                 <div>
                   <Typography variant="subtitle2" color="text.secondary">
@@ -426,7 +426,10 @@ export default function ApprovalModal({
                     تاریخ تاسیس:
                   </Typography>
                   <Typography>
-                    {formatDate(request?.company?.establishDate)}
+                    {request?.company?.establishDateStr ||
+                      (request?.company?.establishDate
+                        ? formatDate(request?.company?.establishDate)
+                        : "ثبت نشده")}
                   </Typography>
                 </div>
                 <div>

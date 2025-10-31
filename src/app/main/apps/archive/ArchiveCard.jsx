@@ -164,6 +164,10 @@ function ArchiveCard({
             </IconButton>
           </Tooltip>
         }
+        sx={{
+          '& .MuiCardHeader-content': { overflow: 'hidden' },
+          '& .MuiCardHeader-action': { alignSelf: 'center', marginTop: 0 }
+        }}
         title={
           <Tooltip title={archive.name || ''}>
             <Typography noWrap variant="subtitle1" className="font-medium">

@@ -6,8 +6,10 @@ import { selectSearchText } from "./archiveAppSlice";
 export const addTagTypes = [
   "Archive",
   "archives",
+  "Archives",
   "ArchiveTask",
   "archiveTasks",
+  "ArchiveTasks",
 ];
 
 const ArchiveApi = api
@@ -26,8 +28,9 @@ const ArchiveApi = api
             ? [
                 ...result.data.map(({ id }) => ({ type: "Archive", id })),
                 { type: "Archives", id: "LIST" },
+                { type: "archives", id: "LIST" },
               ]
-            : [{ type: "Archives", id: "LIST" }],
+            : [{ type: "Archives", id: "LIST" }, { type: "archives", id: "LIST" }],
         transformResponse: (response) => {
           return {
             data: response?.data || [],
@@ -39,6 +42,7 @@ const ArchiveApi = api
             },
           };
         },
+        refetchOnMountOrArgChange: true,
       }),
       getArchiveTasks: build.query({
         query: (params) => ({
@@ -50,8 +54,9 @@ const ArchiveApi = api
             ? [
                 ...result.data.map(({ id }) => ({ type: "ArchiveTask", id })),
                 { type: "ArchiveTasks", id: "LIST" },
+                { type: "archiveTasks", id: "LIST" },
               ]
-            : [{ type: "ArchiveTasks", id: "LIST" }],
+            : [{ type: "ArchiveTasks", id: "LIST" }, { type: "archiveTasks", id: "LIST" }],
         transformResponse: (response) => {
           return {
             data: response?.data || [],
@@ -63,6 +68,7 @@ const ArchiveApi = api
             },
           };
         },
+        refetchOnMountOrArgChange: true,
       }),
       getArchivesList: build.query({
         query: (paginationParams) => ({
@@ -74,8 +80,9 @@ const ArchiveApi = api
             ? [
                 ...result.data.map(({ id }) => ({ type: "Archive", id })),
                 { type: "archives", id: "LIST" },
+                { type: "Archives", id: "LIST" },
               ]
-            : [{ type: "archives", id: "LIST" }],
+            : [{ type: "archives", id: "LIST" }, { type: "Archives", id: "LIST" }],
         transformResponse: (response) => {
           const data = { data: response?.data };
 
@@ -88,11 +95,13 @@ const ArchiveApi = api
 
           return data;
         },
+        refetchOnMountOrArgChange: true,
       }),
       getArchiveTypes: build.query({
         query: () => ({ url: `/archives/types` }),
         transformResponse: (response) => response?.data,
         providesTags: ["archiveTypes"],
+        refetchOnMountOrArgChange: true,
       }),
       rollbackToArchive: build.mutation({
         query: ({ archiveId, reason }) => ({
@@ -101,7 +110,11 @@ const ArchiveApi = api
           params: { reason },
         }),
         transformResponse: (response) => response?.data,
-        invalidatesTags: [{ type: "archives", id: "LIST" }],
+        invalidatesTags: [
+          { type: "archives", id: "LIST" },
+          { type: "Archives", id: "LIST" },
+          { type: "Archives", id: "ENTITY_LIST" },
+        ],
       }),
       searchArchiveTasks: build.mutation({
         query: ({ search, ...paginationParams }) => ({
@@ -128,7 +141,12 @@ const ArchiveApi = api
           url: `/archives/${id}`,
           method: "DELETE",
         }),
-        invalidatesTags: [{ type: "archives", id: "LIST" }],
+        invalidatesTags: (result, error, id) => [
+          { type: "Archive", id },
+          { type: "archives", id: "LIST" },
+          { type: "Archives", id: "LIST" },
+          { type: "Archives", id: "ENTITY_LIST" },
+        ],
       }),
       createArchiveTask: build.mutation({
         query: (taskData) => ({
@@ -137,7 +155,12 @@ const ArchiveApi = api
           data: taskData,
         }),
         transformResponse: (response) => response?.data,
-        invalidatesTags: [{ type: "archiveTasks", id: "LIST" }],
+        invalidatesTags: [
+          { type: "archiveTasks", id: "LIST" },
+          { type: "ArchiveTasks", id: "LIST" },
+          { type: "archiveTasks", id: "ENTITY_LIST" },
+          { type: "archiveTasks", id: "STATUS_LIST" },
+        ],
       }),
       processArchiveTask: build.mutation({
         query: (id) => ({
@@ -148,6 +171,12 @@ const ArchiveApi = api
         invalidatesTags: (result, error, id) => [
           { type: "ArchiveTask", id },
           { type: "archiveTasks", id: "LIST" },
+          { type: "ArchiveTasks", id: "LIST" },
+          { type: "archiveTasks", id: "ENTITY_LIST" },
+          { type: "archiveTasks", id: "STATUS_LIST" },
+          { type: "archives", id: "LIST" },
+          { type: "Archives", id: "LIST" },
+          { type: "Archives", id: "ENTITY_LIST" },
         ],
       }),
       getArchivesByEntity: build.query({
@@ -173,6 +202,7 @@ const ArchiveApi = api
             },
           };
         },
+        refetchOnMountOrArgChange: true,
       }),
       
       getArchiveTasksList: build.query({
@@ -185,8 +215,9 @@ const ArchiveApi = api
             ? [
                 ...result.data.map(({ id }) => ({ type: "ArchiveTask", id })),
                 { type: "archiveTasks", id: "LIST" },
+                { type: "ArchiveTasks", id: "LIST" },
               ]
-            : [{ type: "archiveTasks", id: "LIST" }],
+            : [{ type: "archiveTasks", id: "LIST" }, { type: "ArchiveTasks", id: "LIST" }],
         transformResponse: (response) => {
           const data = { data: response?.data };
 
@@ -199,6 +230,7 @@ const ArchiveApi = api
 
           return data;
         },
+        refetchOnMountOrArgChange: true,
       }),
       compareArchives: build.query({
         query: ({ archiveId1, archiveId2 }) => ({
@@ -206,6 +238,12 @@ const ArchiveApi = api
           params: { archiveId1, archiveId2 },
         }),
         transformResponse: (response) => response?.data,
+      }),
+      getArchiveById: build.query({
+        query: (archiveId) => ({ url: `/archives/${archiveId}` }),
+        transformResponse: (response) => response?.data,
+        providesTags: (result, error, archiveId) => [{ type: "Archive", id: archiveId }],
+        refetchOnMountOrArgChange: true,
       }),
       getArchiveTasksByStatus: build.query({
         query: ({ status, ...paginationParams }) => ({
@@ -231,6 +269,7 @@ const ArchiveApi = api
 
           return data;
         },
+        refetchOnMountOrArgChange: true,
       }),
       getArchiveTasksByEntity: build.query({
         query: ({ entityType, entityId, ...paginationParams }) => ({
@@ -256,6 +295,7 @@ const ArchiveApi = api
 
           return data;
         },
+        refetchOnMountOrArgChange: true,
       }),
 
       cancelArchiveTask: build.mutation({
@@ -267,6 +307,9 @@ const ArchiveApi = api
         invalidatesTags: (result, error, id) => [
           { type: "ArchiveTask", id },
           { type: "archiveTasks", id: "LIST" },
+          { type: "ArchiveTasks", id: "LIST" },
+          { type: "archiveTasks", id: "ENTITY_LIST" },
+          { type: "archiveTasks", id: "STATUS_LIST" },
         ],
       }),
       searchArchives: build.mutation({
@@ -292,14 +335,21 @@ const ArchiveApi = api
       getArchiveTaskById: build.query({
         query: (taskId) => ({ url: `/archive-tasks/${taskId}` }),
         // transformResponse: (response) => response?.data,
-        providesTags: (result, error, id) => [{ type: "ArchiveTask", id }],
+        providesTags: (result, error, taskId) => [{ type: "ArchiveTask", id: taskId }],
+        refetchOnMountOrArgChange: true,
       }),
       deleteArchiveTask: build.mutation({
         query: (id) => ({
           url: `/archive-tasks/${id}`,
           method: "DELETE",
         }),
-        invalidatesTags: [{ type: "archiveTasks", id: "LIST" }],
+        invalidatesTags: (result, error, id) => [
+          { type: "ArchiveTask", id },
+          { type: "archiveTasks", id: "LIST" },
+          { type: "ArchiveTasks", id: "LIST" },
+          { type: "archiveTasks", id: "ENTITY_LIST" },
+          { type: "archiveTasks", id: "STATUS_LIST" },
+        ],
       }),
     }),
     overrideExisting: false,

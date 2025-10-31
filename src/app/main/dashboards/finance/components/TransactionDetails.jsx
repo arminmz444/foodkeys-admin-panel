@@ -1,34 +1,21 @@
 // src/app/components/finance/TransactionDetails.jsx
-import React from 'react';
 import { 
   Box, 
   Typography, 
-  CircularProgress, 
   Card, 
   CardContent, 
   Chip, 
   Button 
 } from '@mui/material';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import { useGetTransactionByIdQuery } from '../FinanceDashboardApi';
 
-const TransactionDetails = ({ transactionId, onClose }) => {
-  const { data: transaction, isLoading } = useGetTransactionByIdQuery(transactionId);
-  
+const TransactionDetails = ({ transaction }) => {
   const handleDownloadInvoice = () => {
     // Redirect to invoice PDF endpoint
     if (transaction?.hasBill) {
       window.open(`/api/v1/payments/${transaction.id}/invoice`, '_blank');
     }
   };
-  
-  if (isLoading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" p={3}>
-        <CircularProgress />
-      </Box>
-    );
-  }
   
   if (!transaction) {
     return (
@@ -92,24 +79,60 @@ const TransactionDetails = ({ transactionId, onClose }) => {
                 وضعیت
               </Typography>
               <Chip 
-                label={transaction.statusStr}
-                color={transaction.status === 'COMPLETED' ? 'success' : transaction.status === 'PENDING' ? 'warning' : 'error'}
+                label={transaction.statusStr || transaction.status}
+                color={
+                  transaction.status === 'COMPLETED' || transaction.statusStr === 'موفق' ? 'success' :
+                  transaction.status === 'PENDING' || transaction.statusStr === 'در انتظار' ? 'warning' :
+                  transaction.status === 'FAILED' || transaction.statusStr === 'ناموفق' ? 'error' : 'default'
+                }
                 size="small"
               />
             </Box>
+            
+            {transaction.username && (
+              <Box>
+                <Typography variant="subtitle2" color="textSecondary">
+                  نام کاربری
+                </Typography>
+                <Typography variant="body1">{transaction.username}</Typography>
+              </Box>
+            )}
+            
+            {transaction.userFullName && (
+              <Box>
+                <Typography variant="subtitle2" color="textSecondary">
+                  نام کامل کاربر
+                </Typography>
+                <Typography variant="body1">{transaction.userFullName}</Typography>
+              </Box>
+            )}
             
             <Box>
               <Typography variant="subtitle2" color="textSecondary">
                 تاریخ ایجاد
               </Typography>
-              <Typography variant="body1">{transaction.createdStr}</Typography>
+              <Box dir="rtl">
+                <Typography variant="body1" dir="rtl">
+                  {transaction.createdStr || transaction.createdAtStr}
+                </Typography>
+                <Typography variant="caption" color="textSecondary" dir="ltr">
+                  {transaction.createdTimeStr || transaction.createdAtTimeStr}
+                </Typography>
+              </Box>
             </Box>
             
             <Box>
               <Typography variant="subtitle2" color="textSecondary">
                 آخرین بروزرسانی
               </Typography>
-              <Typography variant="body1">{transaction.updatedStr}</Typography>
+              <Box dir="rtl">
+                <Typography variant="body1" dir="rtl">
+                  {transaction.updatedStr || transaction.updatedAtStr}
+                </Typography>
+                <Typography variant="caption" color="textSecondary" dir="ltr">
+                  {transaction.updatedTimeStr || transaction.updatedAtTimeStr}
+                </Typography>
+              </Box>
             </Box>
             
             {transaction.hasBill && (

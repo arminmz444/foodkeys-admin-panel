@@ -22,7 +22,7 @@ import { Link } from 'react-router-dom';
 import { useGetFinanceDashboardWidgetsQuery } from '../FinanceDashboardApi';
 
 const FinanceDashboardWidgets = () => {
-  const { data: widgets, isLoading } = useGetFinanceDashboardWidgetsQuery();
+  const { data: widgets, isLoading, error } = useGetFinanceDashboardWidgetsQuery();
   
   const pageVariants = {
     initial: {
@@ -42,6 +42,26 @@ const FinanceDashboardWidgets = () => {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="400px">
         <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="400px">
+        <Typography variant="h6" color="error">
+          خطا در بارگذاری داده‌ها: {error.message || 'خطای نامشخص'}
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (!widgets) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="400px">
+        <Typography variant="h6" color="textSecondary">
+          داده‌ای یافت نشد
+        </Typography>
       </Box>
     );
   }
@@ -192,72 +212,7 @@ const FinanceDashboardWidgets = () => {
         </Paper>
         
         {/* Budget Overview */}
-        <Paper elevation={3} sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            وضعیت بودجه
-          </Typography>
-          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 3 }}>
-            {/* Expenses */}
-            <Box>
-              <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography variant="subtitle2" color="textSecondary">
-                  هزینه‌ها
-                </Typography>
-                <Typography variant="body2">
-                  {new Intl.NumberFormat('fa-IR').format(widgets?.budget?.expenses)} / {new Intl.NumberFormat('fa-IR').format(widgets?.budget?.expensesLimit)} ریال
-                </Typography>
-              </Box>
-              <LinearProgress
-                variant="determinate"
-                value={Math.min((widgets?.budget?.expenses * 100) / widgets?.budget?.expensesLimit, 100)}
-                color="warning"
-                sx={{ height: 8, borderRadius: 4, my: 1 }}
-              />
-            </Box>
-            
-            {/* Savings */}
-            <Box>
-              <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography variant="subtitle2" color="textSecondary">
-                  پس‌انداز
-                </Typography>
-                <Typography variant="body2">
-                  {new Intl.NumberFormat('fa-IR').format(widgets?.budget?.savings)} / {new Intl.NumberFormat('fa-IR').format(widgets?.budget?.savingsGoal)} ریال
-                </Typography>
-              </Box>
-              <LinearProgress
-                variant="determinate"
-                value={Math.min((widgets?.budget?.savings * 100) / widgets?.budget?.savingsGoal, 100)}
-                color="success"
-                sx={{ height: 8, borderRadius: 4, my: 1 }}
-              />
-            </Box>
-            
-            {/* Bills */}
-            <Box>
-              <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography variant="subtitle2" color="textSecondary">
-                  فاکتورها
-                </Typography>
-                <Typography variant="body2">
-                  {new Intl.NumberFormat('fa-IR').format(widgets?.budget?.bills)} / {new Intl.NumberFormat('fa-IR').format(widgets?.budget?.billsLimit)} ریال
-                </Typography>
-              </Box>
-              <LinearProgress
-                variant="determinate"
-                value={Math.min((widgets?.budget?.bills * 100) / widgets?.budget?.billsLimit, 100)}
-                color={(widgets?.budget?.bills > widgets?.budget?.billsLimit) ? "error" : "primary"}
-                sx={{ height: 8, borderRadius: 4, my: 1 }}
-              />
-              {widgets?.budget?.bills > widgets?.budget?.billsLimit && (
-                <Typography variant="caption" color="error">
-                  از محدوده تعیین شده فراتر رفته‌اید!
-                </Typography>
-              )}
-            </Box>
-          </Box>
-        </Paper>
-        
+       
         {/* Recent Transactions */}
         <Paper elevation={3} sx={{ p: 3 }}>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -275,35 +230,44 @@ const FinanceDashboardWidgets = () => {
           </Box>
           
           <TableContainer>
-            <Table size="small">
+            <Table size="small" dir="rtl">
               <TableHead>
                 <TableRow>
                   {widgets?.recentTransactions?.columns.map((column, index) => (
-                    <TableCell key={index}>{column}</TableCell>
+                    <TableCell key={index} align="center" sx={{ textAlign: 'center' }}>{column}</TableCell>
                   ))}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {widgets?.recentTransactions?.rows?.map((transaction) => (
                   <TableRow key={transaction.id} hover>
-                    <TableCell>{transaction.referenceCode}</TableCell>
-                    <TableCell>{transaction.username}</TableCell>
-                    <TableCell>{transaction.serviceNameFa || transaction.serviceName}</TableCell>
-                    <TableCell>{new Intl.NumberFormat('fa-IR').format(transaction.amount)} ریال</TableCell>
-                    <TableCell>
+                    <TableCell align="center" sx={{ textAlign: 'center' }}>{transaction.id || transaction.referenceCode}</TableCell>
+                    <TableCell align="center" sx={{ textAlign: 'center' }}>{transaction.username}</TableCell>
+                    <TableCell align="center" sx={{ textAlign: 'center' }}>{transaction.serviceNameFa || transaction.serviceName || transaction.service}</TableCell>
+                    <TableCell align="center" sx={{ textAlign: 'center' }}>{new Intl.NumberFormat('fa-IR').format(transaction.amount)} ریال</TableCell>
+                    <TableCell align="center" sx={{ textAlign: 'center' }}>
                       <Chip 
-                        label={transaction.statusStr}
+                        label={transaction.statusStr || transaction.status}
                         color={transaction.status === 'COMPLETED' ? 'success' : transaction.status === 'PENDING' ? 'warning' : 'error'}
                         size="small"
                       />
                     </TableCell>
-                    <TableCell>{transaction.createdStr}</TableCell>
+                    <TableCell align="center" sx={{ textAlign: 'center' }}>
+                      <Box dir="rtl">
+                        <Typography variant="body2" component="div" dir="rtl">
+                          {transaction.createdStr || transaction.createdAtStr}
+                        </Typography>
+                        <Typography variant="caption" color="textSecondary" component="div" dir="ltr">
+                          {transaction.createdTimeStr || transaction.createdAtTimeStr}
+                        </Typography>
+                      </Box>
+                    </TableCell>
                   </TableRow>
                 ))}
                 {(!widgets?.recentTransactions?.rows || widgets?.recentTransactions?.rows.length === 0) && (
-                  <TableRow>
-                    <TableCell colSpan={6} align="center">
-                      <Typography variant="body2" color="textSecondary">
+                  <TableRow >
+                    <TableCell colSpan={6} align="center" className='text-center mt-8'>
+                      <Typography variant="body2" color="textSecondary" className='text-center'>
                         تراکنشی یافت نشد
                       </Typography>
                     </TableCell>
@@ -331,29 +295,42 @@ const FinanceDashboardWidgets = () => {
           </Box>
           
           <TableContainer>
-            <Table size="small">
+            <Table size="small" dir="rtl">
               <TableHead>
                 <TableRow>
                   {widgets?.recentPayments?.columns.map((column, index) => (
-                    <TableCell key={index}>{column}</TableCell>
+                    <TableCell key={index} align="center" sx={{ textAlign: 'center' }}>{column}</TableCell>
                   ))}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {widgets?.recentPayments?.rows?.map((payment) => (
                   <TableRow key={payment.id} hover>
-                    <TableCell>{payment.id.substring(0, 8)}</TableCell>
-                    <TableCell>{payment.username}</TableCell>
-                    <TableCell>{payment.serviceFa || payment.service}</TableCell>
-                    <TableCell>{new Intl.NumberFormat('fa-IR').format(payment.amount)} ریال</TableCell>
-                    <TableCell>
+                    <TableCell align="center" sx={{ textAlign: 'center' }}>{payment.id.substring(0, 8)}</TableCell>
+                    <TableCell align="center" sx={{ textAlign: 'center' }}>{payment.username}</TableCell>
+                    <TableCell align="center" sx={{ textAlign: 'center' }}>{payment.serviceFa || payment.service}</TableCell>
+                    <TableCell align="center" sx={{ textAlign: 'center' }}>{new Intl.NumberFormat('fa-IR').format(payment.amount)} ریال</TableCell>
+                    <TableCell align="center" sx={{ textAlign: 'center' }}>
                       <Chip 
                         label={payment.paymentStatus}
                         size="small"
-                        style={{ backgroundColor: payment.paymentStatusColor, color: '#ffffff' }}
+                        color={
+                          payment.paymentStatusColor === 'success' ? 'success' :
+                          payment.paymentStatusColor === 'warning' ? 'warning' :
+                          payment.paymentStatusColor === 'danger' ? 'error' : 'default'
+                        }
                       />
                     </TableCell>
-                    <TableCell>{payment.createdAtStr}</TableCell>
+                    <TableCell align="center" sx={{ textAlign: 'center' }}>
+                      <Box dir="rtl">
+                        <Typography variant="body2" component="div" dir="rtl">
+                          {payment.createdAtStr}
+                        </Typography>
+                        <Typography variant="caption" color="textSecondary" component="div" dir="ltr">
+                          {payment.createdAtTimeStr}
+                        </Typography>
+                      </Box>
+                    </TableCell>
                   </TableRow>
                 ))}
                 {(!widgets?.recentPayments?.rows || widgets?.recentPayments?.rows.length === 0) && (

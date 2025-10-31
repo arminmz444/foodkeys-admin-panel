@@ -1,5 +1,4 @@
 // src/app/components/finance/PaymentDetails.jsx
-import React from 'react';
 import { 
   Box, 
   Typography, 
@@ -62,7 +61,7 @@ const PaymentDetails = ({ payment }) => {
               <Typography variant="subtitle2" color="textSecondary">
                 روش پرداخت
               </Typography>
-              <Typography variant="body1">{payment.method}</Typography>
+              <Typography variant="body1">{payment.methodStr || payment.method}</Typography>
             </Box>
             
             <Box>
@@ -72,7 +71,11 @@ const PaymentDetails = ({ payment }) => {
               <Chip 
                 label={payment.paymentStatus}
                 size="small"
-                style={{ backgroundColor: payment.paymentStatusColor, color: '#ffffff' }}
+                color={
+                  payment.paymentStatusColor === 'success' ? 'success' :
+                  payment.paymentStatusColor === 'warning' ? 'warning' :
+                  payment.paymentStatusColor === 'danger' ? 'error' : 'default'
+                }
               />
             </Box>
             
@@ -83,18 +86,50 @@ const PaymentDetails = ({ payment }) => {
               <Typography variant="body1">{payment.transactionId}</Typography>
             </Box>
             
+            {payment.username && (
+              <Box>
+                <Typography variant="subtitle2" color="textSecondary">
+                  نام کاربری
+                </Typography>
+                <Typography variant="body1">{payment.username}</Typography>
+              </Box>
+            )}
+            
+            {payment.userFullName && (
+              <Box>
+                <Typography variant="subtitle2" color="textSecondary">
+                  نام کامل کاربر
+                </Typography>
+                <Typography variant="body1">{payment.userFullName}</Typography>
+              </Box>
+            )}
+            
             <Box>
               <Typography variant="subtitle2" color="textSecondary">
                 تاریخ ایجاد
               </Typography>
-              <Typography variant="body1">{payment.createdAtStr}</Typography>
+              <Box dir="rtl">
+                <Typography variant="body1" dir="rtl">
+                  {payment.createdAtStr}
+                </Typography>
+                <Typography variant="caption" color="textSecondary" dir="ltr">
+                  {payment.createdAtTimeStr}
+                </Typography>
+              </Box>
             </Box>
             
             <Box>
               <Typography variant="subtitle2" color="textSecondary">
                 آخرین بروزرسانی
               </Typography>
-              <Typography variant="body1">{payment.updatedAtStr}</Typography>
+              <Box dir="rtl">
+                <Typography variant="body1" dir="rtl">
+                  {payment.updatedAtStr}
+                </Typography>
+                <Typography variant="caption" color="textSecondary" dir="ltr">
+                  {payment.updatedAtTimeStr}
+                </Typography>
+              </Box>
             </Box>
             
             {payment.refId && (

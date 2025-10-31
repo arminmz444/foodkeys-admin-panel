@@ -230,7 +230,8 @@ const FoodIndustryBankApi = api
           method: 'GET'
         }),
         transformResponse: (response) => response?.data,
-        providesTags: ['companyArchives']
+        providesTags: ['companyArchives'],
+        refetchOnMountOrArgChange: true,
       }),
       
       getArchiveById: build.query({
@@ -238,7 +239,8 @@ const FoodIndustryBankApi = api
           url: `/archives/${archiveId}`,
           method: 'GET'
         }),
-        transformResponse: (response) => response?.data
+        transformResponse: (response) => response?.data,
+        refetchOnMountOrArgChange: true,
       }),
       
       compareArchives: build.query({
@@ -273,7 +275,8 @@ const FoodIndustryBankApi = api
           method: 'GET'
         }),
         transformResponse: (response) => response?.data,
-        providesTags: ['archiveTypes']
+        providesTags: ['archiveTypes'],
+        refetchOnMountOrArgChange: true,
       }),
       
       getCompanyVersionHistory: build.query({

@@ -125,7 +125,11 @@ const item = {
  * The finance dashboard app.
  */
 function FinanceDashboardApp() {
-  const { isLoading } = useGetFinanceDashboardWidgetsQuery();
+  const { data: widgets, isLoading, refetch, isFetching } = useGetFinanceDashboardWidgetsQuery();
+
+  const handleRefresh = () => {
+    refetch();
+  };
 
   if (isLoading) {
     return <FuseLoading />;
@@ -133,7 +137,7 @@ function FinanceDashboardApp() {
 
   return (
     <FusePageSimple
-      header={<FinanceDashboardAppHeader />}
+      header={<FinanceDashboardAppHeader onRefresh={handleRefresh} isRefreshing={isFetching} />}
       content={
         <div className="w-full py-24 px-24 md:px-32 pb-24">
           <motion.div

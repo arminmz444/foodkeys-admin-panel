@@ -30,7 +30,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ArchiveCard from 'src/app/main/apps/archive/ArchiveCard';
 import { 
   useGetArchivesByEntityQuery, 
-  useCreateArchiveTaskMutation, 
+  useCreateArchiveTaskMutation,
+  useProcessArchiveTaskMutation,
   useRollbackToArchiveMutation,
   useDeleteArchiveMutation,
   useCompareArchivesQuery,
@@ -73,6 +74,7 @@ function ArchivesTab() {
   });
   const { data: archiveTypes, isLoading: isLoadingTypes } = useGetArchiveTypesQuery();
   const [createArchiveTask, { isLoading: isCreating }] = useCreateArchiveTaskMutation();
+  const [processArchiveTask, { isLoading: isProcessing }] = useProcessArchiveTaskMutation();
   const [rollbackToArchive, { isLoading: isRollingBack }] = useRollbackToArchiveMutation();
   const [deleteArchive, { isLoading: isDeleting }] = useDeleteArchiveMutation();
   
@@ -164,10 +166,24 @@ function ArchivesTab() {
   // Create archive task
   const handleCreateArchiveTask = async () => {
     try {
-      const response = await createArchiveTask(archiveTaskData).unwrap();
-      showSnackbar('درخواست ایجاد آرشیو با موفقیت ثبت شد', 'success');
-      setCreateDialogOpen(false);
-      refetch();
+      // Create the archive task
+      const createResponse = await createArchiveTask(archiveTaskData).unwrap();
+      const taskId = createResponse?.id || createResponse?.data?.id;
+      
+      if (!taskId) {
+        showSnackbar('خطا: شناسه وظیفه آرشیو دریافت نشد', 'error');
+        return;
+      }
+      
+      // Process the archive task
+      try {
+        await processArchiveTask(taskId).unwrap();
+        showSnackbar('آرشیو شرکت با موفقیت ایجاد شد', 'success');
+        setCreateDialogOpen(false);
+        refetch();
+      } catch (processError) {
+        showSnackbar(`خطا در پردازش آرشیو: ${processError.message || 'خطای ناشناخته'}`, 'error');
+      }
     } catch (error) {
       showSnackbar(`خطا در ایجاد آرشیو: ${error.message || 'خطای ناشناخته'}`, 'error');
     }
@@ -248,13 +264,13 @@ function ArchivesTab() {
               >
                 ایجاد آرشیو جدید
               </Button>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={handleNavigateToTasks}
-              >
-                وظایف آرشیو
-              </Button>
+              {/*<Button*/}
+              {/*  variant="outlined"*/}
+              {/*  color="primary"*/}
+              {/*  onClick={handleNavigateToTasks}*/}
+              {/*>*/}
+              {/*  وظایف آرشیو*/}
+              {/*</Button>*/}
             </Box>
           </Box>
           
@@ -374,9 +390,9 @@ function ArchivesTab() {
               onClick={handleCreateArchiveTask} 
               color="primary" 
               variant="contained"
-              disabled={isCreating || !archiveTaskData.name}
+              disabled={isCreating || isProcessing || !archiveTaskData.name}
             >
-              {isCreating ? <CircularProgress size={24} /> : 'ایجاد آرشیو'}
+              {(isCreating || isProcessing) ? <CircularProgress size={24} /> : 'ایجاد آرشیو'}
             </Button>
           </DialogActions>
         </Dialog>

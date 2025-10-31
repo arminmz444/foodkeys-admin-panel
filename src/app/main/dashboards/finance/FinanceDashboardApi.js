@@ -10,6 +10,7 @@ const FinanceDashboardApi = api
     endpoints: (build) => ({
       getFinanceDashboardWidgets: build.query({
         query: () => ({ url: `/dashboard/finance/widgets/all` }),
+        transformResponse: (response) => response.data,
         providesTags: ["finance_dashboard_widgets"],
       }),
       getTransactions: build.query({
@@ -32,7 +33,7 @@ const FinanceDashboardApi = api
 
       getMyTransactions: build.query({
         query: (params) => ({
-          url: "/transaction/me",
+          url: "/transaction",
           params,
         }),
         transformResponse: (response) => ({
@@ -49,7 +50,7 @@ const FinanceDashboardApi = api
       }),
 
       getTransactionById: build.query({
-        query: (id) => `transactions/${id}`,
+        query: (id) => ({url: `/transaction/${id}`}),
         transformResponse: (response) => response.data,
         providesTags: (result, error, id) => [{ type: "Transaction", id }],
       }),
@@ -75,7 +76,7 @@ const FinanceDashboardApi = api
 
       getMyPayments: build.query({
         query: (params) => ({
-          url: "/payment/me",
+          url: "/payment",
           params,
         }),
         transformResponse: (response) => ({
@@ -184,6 +185,13 @@ const FinanceDashboardApi = api
         transformResponse: (response) => response.data,
         providesTags: (result, error, id) => [{ type: "Bill", id }],
       }),
+
+      // User Info
+      getUserInfo: build.query({
+        query: (userId) => ({ url: `/user/${userId}` }),
+        transformResponse: (response) => response.data,
+        providesTags: (result, error, userId) => [{ type: "User", id: userId }],
+      }),
     }),
     overrideExisting: false,
   });
@@ -202,6 +210,7 @@ export const {
   useGetBillsQuery,
   useGetMyBillsQuery,
   useGetBillByIdQuery,
+  useGetUserInfoQuery,
 } = FinanceDashboardApi;
 export const selectFinanceDashboardWidgets = createSelector(
   FinanceDashboardApi.endpoints.getFinanceDashboardWidgets.select(),

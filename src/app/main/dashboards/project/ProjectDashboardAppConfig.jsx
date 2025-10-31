@@ -12,7 +12,7 @@ const ProjectDashboardAppConfig = {
 	},
 	routes: [
 		{
-			path: 'dashboards/project',
+			path: '/',
 			element: <ProjectDashboardApp />
 		}
 	]

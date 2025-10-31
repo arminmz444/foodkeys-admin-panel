@@ -48,32 +48,32 @@ function NotificationPanel() {
 			dispatch(closeNotificationPanel());
 		}
 	}, [location, dispatch]);
-	useEffect(() => {
-		dispatch(addNotification(notifications))
-		const baseItem = NotificationModel({
-			title: 'ثبت شرکت جدید',
-			message: 'شرکت جدیدی با شناسه ۶۵۳۷ ثبت شده است',
-			description: 'شرکت جدیدی با شناسه ۶۵۳۷ ثبت شده است',
-			link: '/documentation/changelog',
-			icon: 'heroicons-solid:fire',
-		  });
-		  const item = { ...baseItem, variant: 'secondary' };
-		setTimeout(() => {
-			// addNotification(item);
-			enqueueSnackbar(item.title, {
-				key: item.id,
-				autoHideDuration: 6000,
-				content: (
-					<NotificationTemplate
-						item={item}
-						onClose={() => {
-							closeSnackbar(item.id);
-						}}
-					/>
-				)
-			});
-		}, 2000);
-	}, []);
+	// useEffect(() => {
+		// dispatch(addNotification(notifications))
+		// const baseItem = NotificationModel({
+		// 	title: 'ثبت شرکت جدید',
+		// 	message: 'شرکت جدیدی با شناسه ۶۵۳۷ ثبت شده است',
+		// 	description: 'شرکت جدیدی با شناسه ۶۵۳۷ ثبت شده است',
+		// 	link: '/documentation/changelog',
+		// 	icon: 'heroicons-solid:fire',
+		//   });
+		//   const item = { ...baseItem, variant: 'secondary' };
+		// setTimeout(() => {
+		// 	// addNotification(item);
+		// 	enqueueSnackbar(item.title, {
+		// 		key: item.id,
+		// 		autoHideDuration: 6000,
+		// 		content: (
+		// 			<NotificationTemplate
+		// 				item={item}
+		// 				onClose={() => {
+		// 					closeSnackbar(item.id);
+		// 				}}
+		// 			/>
+		// 		)
+		// 	});
+	// 	}, 2000);
+	// }, []);
 
 	function handleClose() {
 		dispatch(closeNotificationPanel());

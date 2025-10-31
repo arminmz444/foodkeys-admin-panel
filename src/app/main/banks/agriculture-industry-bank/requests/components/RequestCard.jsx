@@ -27,6 +27,7 @@ import 'dayjs/locale/fa';
 
 import { useGetAgricultureIndustryCompanyDetailsQuery } from '../../AgricultureIndustryApi';
 import ApprovalModal from './ApprovalModal';
+import { getServerFile } from 'src/utils/string-utils';
 
 // dayjs.extend(jalaali);
 // dayjs.extend(relativeTime);
@@ -71,7 +72,7 @@ export default function RequestCard({ request, onActionComplete }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   const { data: companyDetails, isFetching: isCompanyLoading } = useGetAgricultureIndustryCompanyDetailsQuery(
-    request?.company?.companyId,
+    request?.company?.id,
     { 
       skip: !expanded && !modalOpen,  
       refetchOnMountOrArgChange: true 
@@ -104,9 +105,9 @@ export default function RequestCard({ request, onActionComplete }) {
   const statusDetails = getStatusDetails(request.requestStatus);
   const StatusIcon = statusDetails.icon;
   
-  const logoUrl = company?.logo || 'assets/images/placeholders/company-logo.png';
+  const logoUrl = (company?.logo && getServerFile(company?.logo)) || 'assets/images/placeholders/company-logo.png';
   
-  const backgroundUrl = company?.backgroundImage || 'assets/images/placeholders/company-banner.png';
+  const backgroundUrl = (company?.backgroundImage && getServerFile(company?.backgroundImage)) || 'assets/images/placeholders/company-banner.png';
 
   const canTakeAction = request.requestStatus === "PENDING"; 
   const { requester } = request;
@@ -176,9 +177,9 @@ export default function RequestCard({ request, onActionComplete }) {
             </Tooltip>
           }
           title={
-            <Tooltip title={company?.name || request?.companyName || 'نامشخص'}>
+            <Tooltip title={company?.companyName || request?.companyName || 'نامشخص'}>
               <Typography width={150} variant="subtitle1" component="div" fontWeight="medium" noWrap>
-                {company?.name || request?.companyName || (
+                {company?.companyName || request?.companyName || (
                   <Skeleton width={150} />
                 )}
               </Typography>
@@ -253,7 +254,7 @@ export default function RequestCard({ request, onActionComplete }) {
             <div className="grid grid-cols-2 gap-16">
               <Typography variant="body2" color="text.secondary">درخواست کننده:</Typography>
               <Typography variant="body2">
-                {requester ? `${requester.name} ` : 'نامشخص'}
+                {requester ? `${typeof requester.name === 'string' ? requester.name : requester.firstName || requester.username || 'نامشخص'} ` : 'نامشخص'}
               </Typography>
               
               <Typography variant="body2" color="text.secondary">تاریخ درخواست:</Typography>
@@ -281,7 +282,7 @@ export default function RequestCard({ request, onActionComplete }) {
                 <>
                   <Typography variant="body2" color="text.secondary">پاسخ دهنده:</Typography>
                   <Typography variant="body2">
-                    {`${request.responder.name || ''}`}
+                    {typeof request.responder.name === 'string' ? request.responder.name : request.responder.firstName || request.responder.username || 'نامشخص'}
                   </Typography>
                 </>
               )}

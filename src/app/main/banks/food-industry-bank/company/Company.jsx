@@ -161,7 +161,7 @@ function Company() {
               <Tab className="h-64" label="لوگو و عکس پس‌زمینه" />
               <Tab className="h-64" label="مکان روی نقشه" />
               <Tab className="h-64" label="اطلاعات بیشتر" />
-              <Tab className="h-64" label="تنظیمات" />
+              {/*<Tab className="h-64" label="تنظیمات" />*/}
               <Tab className="h-64" label="آرشیوها" /> 
               <Tab className="h-64" label="تاریخچه نسخه‌ها" /> 
               {/* <Tab */}
@@ -193,9 +193,9 @@ function Company() {
               {tabValue === 6 && <CompanyMainImagesTab />}
               {tabValue === 7 && <MapTab tabValue={tabValue} myIndex={7} />}
               {tabValue === 8 && <RegistrarTab />}
-              {tabValue === 9 && <SettingsTab />}
-              {tabValue === 10 && <ArchivesTab />} 
-              {tabValue === 11 && <VersionHistoryTab />} 
+              {/*{tabValue === 9 && <SettingsTab />}*/}
+              {tabValue === 9 && <ArchivesTab />}
+              {tabValue === 10 && <VersionHistoryTab />}
             </div>
 
               {/* <div className={tabValue !== 1 ? "hidden" : ""}>

@@ -72,6 +72,19 @@ function ArchiveTaskHeader({ entityType, entityId, onCreateTaskClick }) {
           color="primary"
           startIcon={<AddIcon />}
           onClick={onCreateTaskClick}
+          className="whitespace-nowrap rounded-full"
+          sx={{
+            px: 3.5,
+            py: 1,
+            minHeight: 40,
+            borderRadius: '9999px',
+            textTransform: 'none',
+            fontWeight: 700,
+            whiteSpace: 'nowrap',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 1
+          }}
         >
           ایجاد وظیفه آرشیو جدید
         </Button>

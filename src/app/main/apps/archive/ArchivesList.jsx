@@ -275,7 +275,7 @@ function ArchiveList({
         <>
           <Grid container spacing={2}>
             {archivesData.data.map((archive) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={archive.id}>
+              <Grid item xs={12} sm={6} md={6} lg={6} key={archive.id}>
                 <ArchiveCard 
                   archive={archive}
                   selected={selectedArchives.includes(archive.id)}

@@ -1,5 +1,6 @@
 // src/app/components/finance/TransactionsTable.jsx
-import React, { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Paper, 
   Table, 
@@ -24,15 +25,21 @@ import {
   Select,
   MenuItem,
   TextField,
-  DialogActions
+  DialogActions,
+  Tooltip
 } from '@mui/material';
 import { motion } from 'framer-motion';
-import { useGetMyTransactionsQuery } from '../FinanceDashboardApi';
 import CloseIcon from '@mui/icons-material/Close';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import SearchIcon from '@mui/icons-material/Search';
+import debounce from 'lodash.debounce';
+import { useGetMyTransactionsQuery } from '../FinanceDashboardApi';
 import TransactionDetails from './TransactionDetails';
+import UserInfoModal from './UserInfoModal';
 
 const TransactionsTable = () => {
+  const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [orderBy, setOrderBy] = useState('createdAt');
@@ -43,15 +50,34 @@ const TransactionsTable = () => {
     status: '',
     serviceName: '',
     fromDate: '',
-    toDate: ''
+    toDate: '',
+    search: ''
   });
   const [openFilters, setOpenFilters] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [openUserModal, setOpenUserModal] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+
+  const debouncedSetSearch = useMemo(
+    () => debounce((value) => {
+      setFilters((prev) => ({ ...prev, search: value }));
+      setPage(0);
+    }, 500),
+    []
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedSetSearch.cancel();
+    };
+  }, [debouncedSetSearch]);
   
   const { data, isLoading, isFetching } = useGetMyTransactionsQuery({
     pageNumber: page,
     pageSize: rowsPerPage,
     sortBy: orderBy,
-    // sortDirection: order,
+    sortDir: order,
     ...filters
   });
   
@@ -77,6 +103,8 @@ const TransactionsTable = () => {
   
   const handleCloseDetails = () => {
     setOpenDetails(false);
+    // Restore body scroll
+    document.body.style.overflow = 'unset';
   };
   
   const handleOpenFilters = () => {
@@ -103,18 +131,46 @@ const TransactionsTable = () => {
     setOpenFilters(false);
   };
   
+  const handleBackToDashboard = () => {
+    navigate('/dashboards/finance');
+  };
+  
+  const handleOpenUserModal = (userId) => {
+    setSelectedUserId(userId);
+    setOpenUserModal(true);
+  };
+  
+  const handleCloseUserModal = () => {
+    setOpenUserModal(false);
+    setSelectedUserId(null);
+  };
+  
   const getStatusChipColor = (status) => {
     switch (status) {
       case 'COMPLETED':
+      case 'موفق':
         return 'success';
       case 'PENDING':
+      case 'در انتظار':
         return 'warning';
       case 'FAILED':
+      case 'ناموفق':
         return 'error';
       default:
         return 'default';
     }
   };
+  
+  const getStatusLabel = (transaction) => {
+    return transaction.statusStr || transaction.status || 'نامشخص';
+  };
+  
+  // Cleanup effect to restore scroll when component unmounts
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
   
   const pageVariants = {
     initial: {
@@ -145,17 +201,51 @@ const TransactionsTable = () => {
       variants={pageVariants}
     >
       <Paper elevation={3} className="p-24">
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-          <Typography variant="h6" component="h2">
-            لیست تراکنش‌ها
-          </Typography>
+        <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={3}>
+          <Box>
           <Button
-            variant="outlined"
-            startIcon={<FilterListIcon />}
-            onClick={handleOpenFilters}
-          >
-            فیلتر
-          </Button>
+          className='mt-2'
+              variant="outlined"
+              startIcon={<ArrowForwardIcon />}
+              onClick={handleBackToDashboard}
+              color="primary"
+            >
+              بازگشت به داشبورد مالی
+            </Button>
+            <Typography variant="h6" component="h2"  mt={2} ml={2} mb={2}>
+              لیست تراکنش‌ها
+            </Typography>
+            
+          </Box>
+          <Box display="flex" alignItems="center" gap={1}>
+            <IconButton color="primary" onClick={() => setShowSearch((s) => !s)}>
+              <SearchIcon />
+            </IconButton>
+            <motion.div
+              initial={{ width: 0, opacity: 0 }}
+              animate={showSearch ? { width: 240, opacity: 1 } : { width: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{ overflow: 'hidden' }}
+            >
+              <TextField
+                size="small"
+                placeholder="جستجو..."
+                value={searchValue}
+                onChange={(e) => {
+                  setSearchValue(e.target.value);
+                  debouncedSetSearch(e.target.value);
+                }}
+                dir="rtl"
+              />
+            </motion.div>
+            <Button
+              variant="outlined"
+              startIcon={<FilterListIcon />}
+              onClick={handleOpenFilters}
+            >
+              فیلتر
+            </Button>
+          </Box>
         </Box>
         
         {isFetching && (
@@ -165,10 +255,10 @@ const TransactionsTable = () => {
         )}
         
         <TableContainer>
-          <Table>
+          <Table dir="rtl">
             <TableHead>
               <TableRow>
-                <TableCell>
+                <TableCell align="center" sx={{ textAlign: 'center' }}>
                   <TableSortLabel
                     active={orderBy === 'id'}
                     direction={orderBy === 'id' ? order : 'asc'}
@@ -177,7 +267,7 @@ const TransactionsTable = () => {
                     شناسه
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>
+                <TableCell align="center" sx={{ textAlign: 'center' }}>
                   <TableSortLabel
                     active={orderBy === 'serviceName'}
                     direction={orderBy === 'serviceName' ? order : 'asc'}
@@ -186,7 +276,7 @@ const TransactionsTable = () => {
                     سرویس
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>
+                <TableCell align="center" sx={{ textAlign: 'center' }}>
                   <TableSortLabel
                     active={orderBy === 'amount'}
                     direction={orderBy === 'amount' ? order : 'asc'}
@@ -195,7 +285,7 @@ const TransactionsTable = () => {
                     مبلغ
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>
+                <TableCell align="center" sx={{ textAlign: 'center' }}>
                   <TableSortLabel
                     active={orderBy === 'status'}
                     direction={orderBy === 'status' ? order : 'asc'}
@@ -204,7 +294,7 @@ const TransactionsTable = () => {
                     وضعیت
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>
+                <TableCell align="center" sx={{ textAlign: 'center' }}>
                   <TableSortLabel
                     active={orderBy === 'createdAt'}
                     direction={orderBy === 'createdAt' ? order : 'asc'}
@@ -213,37 +303,68 @@ const TransactionsTable = () => {
                     تاریخ
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>عملیات</TableCell>
+                <TableCell align="center" sx={{ textAlign: 'center' }}>کاربر</TableCell>
+                <TableCell align="center" sx={{ textAlign: 'center' }}>عملیات</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {data?.data.map((transaction) => (
                 <TableRow key={transaction.id} hover>
-                  <TableCell>{transaction.referenceCode}</TableCell>
-                  <TableCell>{transaction.serviceNameFa || transaction.serviceName}</TableCell>
-                  <TableCell>{new Intl.NumberFormat('fa-IR').format(transaction.amount)} ریال</TableCell>
-                  <TableCell>
+                  <TableCell align="center" sx={{ textAlign: 'center' }}>{transaction.id}</TableCell>
+                  <TableCell align="center" sx={{ textAlign: 'center' }}>{transaction.serviceNameFa || transaction.serviceName}</TableCell>
+                  <TableCell align="center" sx={{ textAlign: 'center' }}>{new Intl.NumberFormat('fa-IR').format(transaction.amount)} ریال</TableCell>
+                  <TableCell align="center" sx={{ textAlign: 'center' }}>
                     <Chip 
-                      label={transaction.statusStr}
-                      color={getStatusChipColor(transaction.status)}
+                      label={getStatusLabel(transaction)}
+                      color={getStatusChipColor(getStatusLabel(transaction))}
                       size="small"
                     />
                   </TableCell>
-                  <TableCell>{transaction.createdStr}</TableCell>
-                  <TableCell>
-                    <Button 
-                      variant="text" 
-                      color="primary"
-                      onClick={() => handleOpenDetails(transaction)}
-                    >
-                      جزئیات
-                    </Button>
+                  <TableCell align="center" sx={{ textAlign: 'center' }}>
+                    <Box dir="rtl">
+                      <Typography variant="body2" component="div" dir="rtl">
+                        {transaction.createdStr || transaction.createdAtStr}
+                      </Typography>
+                      <Typography variant="caption" color="textSecondary" component="div" dir="ltr">
+                        {transaction.createdTimeStr || transaction.createdAtTimeStr}
+                      </Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell align="center" sx={{ textAlign: 'center' }}>
+                    <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
+                      <Typography variant="body2">
+                        {transaction.username || 'نامشخص'}
+                      </Typography>
+                      {transaction.userId && (
+                        <Tooltip title="مشاهده اطلاعات کاربر">
+                          <IconButton
+                            size="small"
+                            color="primary"
+                            onClick={() => handleOpenUserModal(transaction.userId)}
+                          >
+                            <SearchIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                    </Box>
+                  </TableCell>
+                  <TableCell align="center" sx={{ textAlign: 'center' }}>
+                    <Box display="flex" gap={1} justifyContent="center">
+                      <Button 
+                        variant="text" 
+                        color="primary"
+                        onClick={() => handleOpenDetails(transaction)}
+                        size="small"
+                      >
+                        جزئیات
+                      </Button>
+                    </Box>
                   </TableCell>
                 </TableRow>
               ))}
               {data?.data.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} align="center">
+                  <TableCell colSpan={7} align="center">
                     <Typography variant="body2" color="textSecondary">
                       تراکنشی یافت نشد
                     </Typography>
@@ -291,7 +412,7 @@ const TransactionsTable = () => {
           <DialogContent dividers>
             {selectedTransaction && (
               <TransactionDetails 
-                transactionId={selectedTransaction.id} 
+                transaction={selectedTransaction} 
                 onClose={handleCloseDetails} 
               />
             )}
@@ -329,9 +450,9 @@ const TransactionsTable = () => {
                   label="وضعیت"
                 >
                   <MenuItem value="">همه</MenuItem>
-                  <MenuItem value="COMPLETED">تکمیل شده</MenuItem>
-                  <MenuItem value="PENDING">در انتظار</MenuItem>
-                  <MenuItem value="FAILED">ناموفق</MenuItem>
+                  <MenuItem value="SUCCESS">موفق</MenuItem>
+                  <MenuItem value="IN_PROGRESS">در حال انجام</MenuItem>
+                  <MenuItem value="FAIL">ناموفق</MenuItem>
                 </Select>
               </FormControl>
               
@@ -381,6 +502,13 @@ const TransactionsTable = () => {
             </Button>
           </DialogActions>
         </Dialog>
+        
+        {/* User Info Modal */}
+        <UserInfoModal
+          open={openUserModal}
+          onClose={handleCloseUserModal}
+          userId={selectedUserId}
+        />
       </Paper>
     </motion.div>
   );
