@@ -153,7 +153,6 @@ import WebsiteConfig from "@/app/main/apps/settings/WebsiteConfig.jsx";
 const WebsiteConfigsPageTab = lazy(
 	() => import("./tabs/website-configs/WebsiteConfigsPageTab")
 );
-const SubscriptionTab = lazy(() => import("./tabs/subscription/SubscriptionTab"));
 const DiscountTab = lazy(() => import("./tabs/discount/DiscountTab"));
 const BundleList = lazy(() => import("./tabs/bundles/BundleList"));
 const BundlePageTab = lazy(() => import("./tabs/bundles/BundleTab"));
@@ -253,10 +252,6 @@ const SettingsAppConfig = {
 				{
 					path: "bundle",
 					element: <BundlePageTab />,
-				},
-				{
-					path: "subscription",
-					element: <SubscriptionTab />,
 				},
 				{
 					path: "discount",

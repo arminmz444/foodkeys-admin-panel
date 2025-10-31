@@ -82,6 +82,24 @@ const navigationConfig = [
     ],
   },
   {
+    id: 'subscriptions',
+    title: 'اشتراک‌ها',
+    subtitle: 'مدیریت اشتراک‌ها',
+    type: 'group',
+    icon: 'heroicons-outline:credit-card',
+    translate: 'مدیریت اشتراک',
+    children: [
+      {
+        id: 'subscriptions.list',
+        title: 'مدیریت اشتراک‌ها',
+        type: 'item',
+        icon: 'heroicons-outline:credit-card',
+        url: '/apps/subscriptions',
+        subtitle: 'لیست تمامی اشتراک های فعال و غیر فعال',
+      },
+    ],
+  },
+  {
     id: "category",
     title: "category",
     subtitle: "Category section of your app",

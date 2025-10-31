@@ -1029,6 +1029,11 @@ function SubscriptionTable() {
 					saveToStore={false}
 					enableRowAction
 					enableBuiltInEditing={false}
+					enableFilters={true}
+					enableColumnFilters={true}
+					enableGlobalFilter={true}
+					enableFacetedValues={true}
+					columnFilterDisplayMode="popover"
 					serviceIdentifier="subscriptionList"
 					renderTopToolbarCustomActions={() => (<></>)}
 				/>

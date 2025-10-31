@@ -344,14 +344,6 @@ const SettingsAppNavigation = {
 			subtitle: "تنظیمات پلن‌های تمامی بانک‌ها",
 		},
 		{
-			id: "apps.settings.subscription",
-			icon: "heroicons-outline:credit-card",
-			title: "مدیریت اشتراک‌ها",
-			type: "item",
-			url: "/apps/settings/subscription",
-			subtitle: "لیست تمامی اشتراک های فعال و غیر فعال",
-		},
-		{
 			id: "apps.settings.discount",
 			icon: "heroicons-outline:credit-card",
 			title: "مدیریت تخفیف‌ها",
