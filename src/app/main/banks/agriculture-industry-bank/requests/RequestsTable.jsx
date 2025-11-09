@@ -10,7 +10,7 @@ import EntityStatusField from 'app/shared-components/data-table/EntityStatusFiel
 import FuseSvgIcon from '@fuse/core/FuseSvgIcon/index.js';
 import { PersonOffOutlined } from '@mui/icons-material';
 import { z } from 'zod';
-import { useGetAllAgricultureIndustryCompanyRequests } from '../AgricultureIndustryApi';
+import { useGetAllAgricultureIndustryCompanyRequestsQuery } from '../AgricultureIndustryApi';
 import {
 	useCreateCategoryMutation,
 	useDeleteCategoryMutation,
@@ -223,7 +223,7 @@ function RequestsTable() {
 				>
 					<GenericCrudTable
 						columns={columns}
-						useListQueryHook={useGetAllAgricultureIndustryCompanyRequests}
+						useListQueryHook={useGetAllAgricultureIndustryCompanyRequestsQuery}
 						useCreateMutationHook={useCreateCategoryMutation}
 						useUpdateMutationHook={useUpdateCategoryMutation}
 						useDeleteMutationHook={useDeleteCategoryMutation}
