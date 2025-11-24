@@ -15,28 +15,43 @@ const FoodIndustryBankApi = api
   .injectEndpoints({
     endpoints: (build) => ({
       getAllFoodIndustryCompanies: build.query({
-        query: ({ pageNumber, pageSize, search, sort, filter }) => ({
-          url: `/company/?categoryId=1&pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}&sort=${(sort && Object.entries(sort)?.length && JSON.stringify(sort)) || ''}&filter=${(filter && Object.entries(filter)?.length && JSON.stringify(filter)) || ''}`,
-          method: 'GET'
-        }),
-        transformResponse: (response) => {
-          const data = { data: response?.data };
+  query: ({ pageNumber, pageSize, search, sort, filter }) => {
+    const sortParam =
+      sort && Object.entries(sort)?.length
+        ? encodeURIComponent(JSON.stringify(sort))
+        : '';
 
-          if (response && response.pagination) {
-            data.totalPages = response.pagination.totalPages;
-            data.totalElements = response.pagination.totalElements;
-            data.pageSize = response.pagination.pageSize;
-            data.pageIndex = response.pagination.pageNumber;
-          }
+    const filterParam =
+      filter && Object.entries(filter)?.length
+        ? encodeURIComponent(JSON.stringify(filter))
+        : '';
 
-          return data;
-        },
-        providesTags: ['foodCompanyList'],
-        // Disable caching to prevent stale data
-        keepUnusedDataFor: 0,
-        // Force refetch on every request
-        refetchOnMountOrArgChange: true
-      }),
+    return {
+      url: `/company/?categoryId=1` +
+           `&pageNumber=${pageNumber}` +
+           `&pageSize=${pageSize}` +
+           `&search=${encodeURIComponent(search ?? '')}` +
+           `&sort=${sortParam}` +
+           `&filter=${filterParam}`,
+      method: 'GET',
+    };
+  },
+  transformResponse: (response) => {
+    const data = { data: response?.data };
+
+    if (response && response.pagination) {
+      data.totalPages = response.pagination.totalPages;
+      data.totalElements = response.pagination.totalElements;
+      data.pageSize = response.pagination.pageSize;
+      data.pageIndex = response.pagination.pageNumber;
+    }
+
+    return data;
+  },
+  providesTags: ['foodCompanyList'],
+  keepUnusedDataFor: 0,
+  refetchOnMountOrArgChange: true,
+}),
       getEmployeeCommentsByEntity: build.query({
         query: ({ entityType, entityId, pageNumber, pageSize }) => ({
           url: `/employee/comment/entity/${entityType}/${entityId}/page`,
