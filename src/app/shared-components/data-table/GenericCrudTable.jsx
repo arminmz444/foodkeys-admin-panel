@@ -616,19 +616,37 @@ function GenericCrudTable(props) {
 				// 	// 	// handleGlobalFilterChange(e.target.value);
 				// 	// }
 				// },
-				muiFilterTextFieldProps: {
-					variant: "outlined",
-					size: "small",
-					sx: {
-						"& .MuiInputBase-root": {
-							padding: "0px 8px",
-							height: "32px!important",
-							minHeight: "32px!important",
-							direction: "rtl",
-							textAlign: "right",
+			muiFilterTextFieldProps: {
+				variant: "outlined",
+				size: "small",
+				sx: {
+					"& .MuiInputBase-root": {
+						padding: "0px 8px",
+						height: "32px!important",
+						minHeight: "32px!important",
+						direction: "rtl",
+						textAlign: "right",
+						color: "#FFF",
+						backgroundColor: "rgba(255, 255, 255, 0.1)",
+					},
+					"& .MuiInputBase-input": {
+						color: "#FFF",
+						"&::placeholder": {
+							color: "rgba(255, 255, 255, 0.7)",
+							opacity: 1,
 						},
 					},
+					"& .MuiOutlinedInput-notchedOutline": {
+						borderColor: "rgba(255, 255, 255, 0.3)",
+					},
+					"&:hover .MuiOutlinedInput-notchedOutline": {
+						borderColor: "rgba(255, 255, 255, 0.5)",
+					},
+					"& .MuiSvgIcon-root": {
+						color: "#FFF",
+					},
 				},
+			},
 				muiSelectAllCheckboxProps: {
 					className: "w-48",
 				},
@@ -812,9 +830,25 @@ function GenericCrudTable(props) {
 		},
 		muiFilterTextFieldProps: {
 			sx: {
-				color: "#FFF", // Filter icon color
-				"&:hover": {
-					color: "#FFD700", // Filter icon color on hover
+				"& .MuiInputBase-root": {
+					color: "#FFF", // Input text color
+					backgroundColor: "rgba(255, 255, 255, 0.1)", // Slight background for visibility
+				},
+				"& .MuiInputBase-input": {
+					color: "#FFF", // Ensure input text is white
+					"&::placeholder": {
+						color: "rgba(255, 255, 255, 0.7)", // Placeholder color
+						opacity: 1,
+					},
+				},
+				"& .MuiOutlinedInput-notchedOutline": {
+					borderColor: "rgba(255, 255, 255, 0.3)", // Border color
+				},
+				"&:hover .MuiOutlinedInput-notchedOutline": {
+					borderColor: "rgba(255, 255, 255, 0.5)", // Border color on hover
+				},
+				"& .MuiSvgIcon-root": {
+					color: "#FFF", // Icon color (for select dropdowns, etc.)
 				},
 			},
 		},
